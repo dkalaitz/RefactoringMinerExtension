@@ -18,14 +18,17 @@ import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.util.GitServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RefactoringMiner {
 	private static Path path = null;
+	private final static Logger logger = LoggerFactory.getLogger(RefactoringMiner.class);
 	public static void main(String[] args) throws Exception {
 		if (args.length < 1) {
 			throw argumentException();
 		}
-
+		logger.info("Running Python Version");
 		final String option = args[0];
 		if (option.equalsIgnoreCase("-h") || option.equalsIgnoreCase("--h") || option.equalsIgnoreCase("-help")
 				|| option.equalsIgnoreCase("--help")) {

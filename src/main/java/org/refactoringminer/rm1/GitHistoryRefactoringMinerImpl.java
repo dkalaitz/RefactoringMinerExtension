@@ -21,7 +21,6 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -79,6 +78,7 @@ import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.astDiff.models.ProjectASTDiff;
 import org.refactoringminer.astDiff.matchers.ProjectASTDiffer;
 import org.refactoringminer.util.GitServiceImpl;
+import org.refactoringminer.util.PathFileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -305,27 +305,35 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 	}
 
 	public static void populateFileContents(Repository repository, RevCommit commit,
-			Set<String> filePaths, Map<String, String> fileContents, Set<String> repositoryDirectories) throws Exception {
-		logger.info("Processing {} {} ...", repository.getDirectory().getParent().toString(), commit.getName());
+											Set<String> filePaths, Map<String, String> fileContents, Set<String> repositoryDirectories) throws Exception {
+		logger.info("Processing repository: {} at commit: {}", repository.getDirectory().getParent(), commit.getName());
 		RevTree parentTree = commit.getTree();
 		try (TreeWalk treeWalk = new TreeWalk(repository)) {
 			treeWalk.addTree(parentTree);
 			treeWalk.setRecursive(true);
 			while (treeWalk.next()) {
 				String pathString = treeWalk.getPathString();
-				if(filePaths.contains(pathString)) {
+				// Check if the file is supported and log the access
+				if (filePaths.contains(pathString)) {
 					ObjectId objectId = treeWalk.getObjectId(0);
 					ObjectLoader loader = repository.open(objectId);
 					StringWriter writer = new StringWriter();
 					IOUtils.copy(loader.openStream(), writer);
 					fileContents.put(pathString, writer.toString());
 				}
-				if(pathString.endsWith(".java") && pathString.contains("/")) {
+
+				// Log if the file is a supported type and whether it is a Python file
+				if (PathFileUtils.isSupportedFile(pathString) && pathString.contains("/")) {
+					logger.info("Found supported file: {}", pathString); // Log every supported file
+					if (pathString.endsWith(".py")) { // Check if it's a Python file
+						logger.info("Accessing Python file: {}", pathString);
+					}
+
 					String directory = pathString.substring(0, pathString.lastIndexOf("/"));
 					repositoryDirectories.add(directory);
-					//include sub-directories
+					// Include sub-directories
 					String subDirectory = new String(directory);
-					while(subDirectory.contains("/")) {
+					while (subDirectory.contains("/")) {
 						subDirectory = subDirectory.substring(0, subDirectory.lastIndexOf("/"));
 						repositoryDirectories.add(subDirectory);
 					}
@@ -333,6 +341,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 			}
 		}
 	}
+
 
 	public static void populateFileContentsAndSave(Repository repository, RevCommit commit,
 			Set<String> filePaths, Map<String, String> fileContents, Set<String> repositoryDirectories, File rootFolder) throws Exception {
@@ -355,7 +364,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 					File currentFilePath = new File(rootFolder, repoName + "-" + commit.getId().getName() + "/" + pathString);
 					FileUtils.writeStringToFile(currentFilePath, fileContent);
 				}
-				if(pathString.endsWith(".java") && pathString.contains("/")) {
+				if(PathFileUtils.isSupportedFile(pathString) && pathString.contains("/")) {
 					String directory = pathString.substring(0, pathString.lastIndexOf("/"));
 					repositoryDirectories.add(directory);
 					//include sub-directories
@@ -569,7 +578,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 			List<String> filesCurrent = new ArrayList<String>();
 			Map<String, String> renamedFilesHint = new HashMap<String, String>();
 			for (GHCommit.File commitFile : commitFiles) {
-				if (commitFile.getFileName().endsWith(".java")) {
+				if (PathFileUtils.isSupportedFile(commitFile.getFileName())) {
 					if (commitFile.getStatus().equals("modified")) {
 						filesBefore.add(commitFile.getFileName());
 						filesCurrent.add(commitFile.getFileName());
@@ -677,7 +686,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 
 	private static final String systemFileSeparator = Matcher.quoteReplacement(File.separator);
 
-	private static List<String> getJavaFilePaths(File folder) throws IOException {
+	/*private static List<String> getJavaFilePaths(File folder) throws IOException {
 		Stream<Path> walk = Files.walk(Paths.get(folder.toURI()));
 		List<String> paths = walk.map(x -> x.toString())
 				.filter(f -> f.endsWith(".java"))
@@ -685,7 +694,16 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 				.collect(Collectors.toList());
 		walk.close();
 		return paths;
+	}*/
+	private static List<String> getFilePathsWithExtension(File folder, String fileExtension) throws IOException {
+		try (Stream<Path> walk = Files.walk(folder.toPath())) {
+			return walk.map(Path::toString)
+					.filter(f -> f.endsWith(fileExtension))
+					.map(f -> f.substring(folder.getPath().length() + 1).replace(File.separator, "/"))
+					.collect(Collectors.toList());
+		}
 	}
+
 
 	private static Set<String> populateDirectories(Map<String, String> fileContents) {
 		Set<String> repositoryDirectories = new LinkedHashSet<>();
@@ -747,8 +765,8 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 					Set<String> repositoryDirectoriesCurrent = new LinkedHashSet<String>();
 					Map<String, String> fileContentsBefore = new LinkedHashMap<String, String>();
 					Map<String, String> fileContentsCurrent = new LinkedHashMap<String, String>();
-					populateFileContents(nextFile, getJavaFilePaths(nextFile), fileContentsCurrent, repositoryDirectoriesCurrent);
-					populateFileContents(previousFile, getJavaFilePaths(previousFile), fileContentsBefore, repositoryDirectoriesBefore);
+					populateFileContents(nextFile, getFilePathsWithExtension(nextFile, ".java"), fileContentsCurrent, repositoryDirectoriesCurrent);
+					populateFileContents(previousFile, getFilePathsWithExtension(previousFile, ".java"), fileContentsBefore, repositoryDirectoriesBefore);
 					List<MoveSourceFolderRefactoring> moveSourceFolderRefactorings = processIdenticalFiles(fileContentsBefore, fileContentsCurrent, Collections.emptyMap(), false); 
 					UMLModel parentUMLModel = createModel(fileContentsBefore, repositoryDirectoriesBefore);
 					UMLModel currentUMLModel = createModel(fileContentsCurrent, repositoryDirectoriesCurrent);
@@ -761,7 +779,8 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 				else if(previousFile.isFile() && nextFile.isFile()) {
 					String previousFileName = previousFile.getName();
 					String nextFileName = nextFile.getName();
-					if(previousFileName.endsWith(".java") && nextFileName.endsWith(".java")) {
+					if((previousFileName.endsWith(".java") && nextFileName.endsWith(".java")) ||
+							(PathFileUtils.isPythonFile(previousFileName) && PathFileUtils.isPythonFile(nextFileName))) {
 						Set<String> repositoryDirectoriesBefore = new LinkedHashSet<String>();
 						Set<String> repositoryDirectoriesCurrent = new LinkedHashSet<String>();
 						Map<String, String> fileContentsBefore = new LinkedHashMap<String, String>();
@@ -794,6 +813,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		File projectFolder = metadataFolder.getParentFile();
 		GitService gitService = new GitServiceImpl();
 		RevWalk walk = new RevWalk(repository);
+
 		try {
 			RevCommit commit = walk.parseCommit(repository.resolve(commitId));
 			if (commit.getParentCount() > 0) {
@@ -936,6 +956,8 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		GHRepository repository = getGitHubRepository(cloneURL);
 		final String commitId = repository.queryCommits().from(currentCommitId).list().iterator().next().getSHA1();
 		logger.info("Processing {} {} ...", cloneURL, commitId);
+		logger.info("Processing began");
+
 		List<GHCommit.File> commitFiles = new ArrayList<>();
 		GHCommit currentCommit = new GHRepositoryWrapper(repository).getCommit(commitId, commitFiles);
 		//if parents.size() == 0 then currentCommit is the initial commit of the repository, but then all files will have an ADDED status
@@ -944,8 +966,16 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		ExecutorService pool = Executors.newFixedThreadPool(commitFiles.size());
 		for (GHCommit.File commitFile : commitFiles) {
 			String fileName = commitFile.getFileName();
-			if (commitFile.getFileName().endsWith(".java")) {
+			logger.info("Processing file {}", fileName);
+			if (PathFileUtils.isSupportedFile(commitFile.getFileName())) {
 				commitFileNames.add(fileName);
+				logger.info("Adding filename: {}", fileName);
+				// Additional logging to check for Python files
+				if (fileName.endsWith(".py")) {
+					logger.info("Detected Python file: {}", fileName);
+				} else {
+					logger.info("Ignored non-Python file: {}", fileName);
+				}
 				if (commitFile.getStatus().equals("modified")) {
 					Runnable r = () -> {
 						try {
@@ -1248,7 +1278,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		ExecutorService pool = Executors.newFixedThreadPool(commitFiles.size());
 		for (GHCommit.File commitFile : commitFiles) {
 			String fileName = commitFile.getFileName();
-			if (commitFile.getFileName().endsWith(".java")) {
+			if (PathFileUtils.isSupportedFile(commitFile.getFileName())) {
 				commitFileNames.add(fileName);
 				if (commitFile.getStatus().equals("modified")) {
 					Runnable r = () -> {
@@ -1670,7 +1700,7 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 		ExecutorService pool = Executors.newFixedThreadPool(changedFiles);
 		for(GHPullRequestFileDetail commitFile : files) {
 			String fileName = commitFile.getFilename();
-			if (commitFile.getFilename().endsWith(".java")) {
+			if (PathFileUtils.isSupportedFile(commitFile.getFilename())) {
 				commitFileNames.add(fileName);
 				if (commitFile.getStatus().equals("modified")) {
 					Runnable r = () -> {
@@ -1900,8 +1930,8 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 					Set<String> repositoryDirectoriesCurrent = new LinkedHashSet<String>();
 					Map<String, String> fileContentsBefore = new LinkedHashMap<String, String>();
 					Map<String, String> fileContentsCurrent = new LinkedHashMap<String, String>();
-					populateFileContents(nextFile, getJavaFilePaths(nextFile), fileContentsCurrent, repositoryDirectoriesCurrent);
-					populateFileContents(previousFile, getJavaFilePaths(previousFile), fileContentsBefore, repositoryDirectoriesBefore);
+					populateFileContents(nextFile, getFilePathsWithExtension(nextFile, ".java"), fileContentsCurrent, repositoryDirectoriesCurrent);
+					populateFileContents(previousFile, getFilePathsWithExtension(previousFile, ".java"), fileContentsBefore, repositoryDirectoriesBefore);
 					List<MoveSourceFolderRefactoring> moveSourceFolderRefactorings = processIdenticalFiles(fileContentsBefore, fileContentsCurrent, Collections.emptyMap(), true); 
 					UMLModel parentUMLModel = createModelForASTDiff(fileContentsBefore, repositoryDirectoriesBefore);
 					UMLModel currentUMLModel = createModelForASTDiff(fileContentsCurrent, repositoryDirectoriesCurrent);
@@ -1912,7 +1942,8 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 				else if(previousFile.isFile() && nextFile.isFile()) {
 					String previousFileName = previousFile.getName();
 					String nextFileName = nextFile.getName();
-					if(previousFileName.endsWith(".java") && nextFileName.endsWith(".java")) {
+					if(previousFileName.endsWith(".java") && nextFileName.endsWith(".java")
+					|| PathFileUtils.isPythonFile(previousFileName) && PathFileUtils.isPythonFile(nextFileName)) {
 						Set<String> repositoryDirectoriesBefore = new LinkedHashSet<String>();
 						Set<String> repositoryDirectoriesCurrent = new LinkedHashSet<String>();
 						Map<String, String> fileContentsBefore = new LinkedHashMap<String, String>();
