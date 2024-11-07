@@ -5,6 +5,7 @@ plugins {
     id 'maven-publish'
     id 'signing'
     id 'idea'
+    id 'antlr'
 //    id 'checkstyle'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
@@ -53,6 +54,10 @@ test {
 }
 
 dependencies {
+
+    antlr 'org.antlr:antlr4:4.13.2'
+    implementation 'org.antlr:antlr4-runtime:4.13.2'
+
     implementation 'org.eclipse.jgit:org.eclipse.jgit:6.10.0.202406032230-r'
     implementation 'org.slf4j:slf4j-api:2.0.16'
     implementation 'org.slf4j:slf4j-simple:2.0.16'
@@ -77,6 +82,28 @@ dependencies {
     implementation('org.rendersnake:rendersnake:1.9.0') {
         exclude group: 'javax.servlet', module: 'servlet-api'
     }
+
+}
+
+sourceSets.main.java.srcDirs += 'build/generated-src/antlr/main' // Ensure generated sources are compiled
+
+tasks.generateGrammarSource {
+    //source = fileTree('src/main/pythongrammar')
+    outputDirectory = file('build/generated/antlr') // Specify where to generate the Java classes
+    arguments += ['-visitor', '-long-messages', '-package', 'antlr']
+}
+
+tasks.named('generateGrammarSource') {
+    dependsOn 'clean'  // Ensure a clean run for generating code
+}
+
+tasks.register('sourcesJar', Jar) {
+    from sourceSets.main.allSource  // Include all source files in the JAR
+    archiveClassifier.set('sources')  // The classifier will be 'sources'
+}
+
+tasks.named('sourcesJar') {
+    dependsOn tasks.named('generateGrammarSource')  // Ensure generateGrammarSource runs before sourcesJar
 }
 
 java {
