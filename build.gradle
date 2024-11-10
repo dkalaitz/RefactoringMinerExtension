@@ -85,13 +85,30 @@ dependencies {
 
 }
 
-sourceSets.main.java.srcDirs += 'build/generated-src/antlr/main' // Ensure generated sources are compiled
+sourceSets {
+/*    main {
+        java {
+            srcDirs = ['src/main/java', 'build/generated/antlr/main']
+        }
+    }*/
+    test {
+        java {
+            srcDirs = ['src/test/java', 'build/generated/antlr/test/testpython']
+        }
+    }
+}
+
 
 tasks.generateGrammarSource {
-    //source = fileTree('src/main/pythongrammar')
-    outputDirectory = file('build/generated/antlr') // Specify where to generate the Java classes
-    arguments += ['-visitor', '-long-messages', '-package', 'antlr']
+    outputDirectory = file('build/generated/antlr/main') // Specify where to generate the Java classes
+    arguments += ['-visitor', '-long-messages', '-package', 'antlr'] // Include necessary arguments for ANTLR
 }
+
+tasks.generateTestGrammarSource {
+    outputDirectory = file('build/generated/antlr/test/testpython') // Output for test source set
+    arguments += ['-visitor', '-long-messages', '-package', 'antlr'] // Same arguments as generateGrammarSource
+}
+
 
 tasks.named('generateGrammarSource') {
     dependsOn 'clean'  // Ensure a clean run for generating code
@@ -104,6 +121,10 @@ tasks.register('sourcesJar', Jar) {
 
 tasks.named('sourcesJar') {
     dependsOn tasks.named('generateGrammarSource')  // Ensure generateGrammarSource runs before sourcesJar
+}
+
+test {
+    dependsOn generateGrammarSource
 }
 
 java {

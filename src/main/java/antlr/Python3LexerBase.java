@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.*;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-abstract class Python3LexerBase extends Lexer {
+public abstract class Python3LexerBase extends Lexer {
     // A queue where extra tokens are pushed on (see the NEWLINE lexer rule).
     private java.util.LinkedList<Token> tokens = new java.util.LinkedList<>();
     // The stack that keeps track of the indentation level.
