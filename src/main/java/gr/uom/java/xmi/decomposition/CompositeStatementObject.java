@@ -26,13 +26,34 @@ public class CompositeStatementObject extends AbstractStatement {
 	private Optional<TryStatementObject> tryContainer;
 	private LocationInfo locationInfo;
 
-	public CompositeStatementObject(CompilationUnit cu, String filePath, ASTNode statement, int depth, CodeElementType codeElementType) {
+	public CompositeStatementObject(CompilationUnit cu, String sourceFolder, String filePath, ASTNode statement, int depth, CodeElementType codeElementType, String javaFileContent) {
 		super();
 		this.setDepth(depth);
-		this.locationInfo = new LocationInfo(cu, filePath, statement, codeElementType);
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
 		this.statementList = new ArrayList<AbstractStatement>();
 		this.expressionList = new ArrayList<AbstractExpression>();
 		this.variableDeclarations = new ArrayList<VariableDeclaration>();
+		int start = statement.getStartPosition();
+		int end = start + statement.getLength();
+		String whole = javaFileContent.substring(start, end);
+		if(whole.contains("{")) {
+			this.actualSignature = whole.substring(0, whole.indexOf("{") + 1);
+		}
+		else {
+			if(whole.contains("\n")) {
+				String[] lineArray = whole.split("\\r?\\n");
+				int chars = 0;
+				for(String line : lineArray) {
+					chars += line.length();
+					if(line.endsWith(")")) {
+						break;
+					}
+				}
+				this.actualSignature = whole.substring(0, chars);
+			}
+			else
+				this.actualSignature = whole;
+		}
 	}
 
 	public void addStatement(AbstractStatement statement) {
