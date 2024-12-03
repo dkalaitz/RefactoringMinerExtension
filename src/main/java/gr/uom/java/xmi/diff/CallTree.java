@@ -1,10 +1,10 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.UMLOperation;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-
-import gr.uom.java.xmi.UMLOperation;
 
 public class CallTree {
 	private CallTreeNode root;

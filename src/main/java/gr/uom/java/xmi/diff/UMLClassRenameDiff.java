@@ -1,11 +1,10 @@
 package gr.uom.java.xmi.diff;
 
-import org.apache.commons.lang3.tuple.Pair;
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
-
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLClass;
 import gr.uom.java.xmi.UMLClassMatcher.MatchResult;
+import org.apache.commons.lang3.tuple.Pair;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
 
 public class UMLClassRenameDiff extends UMLClassBaseDiff {
 	private MatchResult matchResult;

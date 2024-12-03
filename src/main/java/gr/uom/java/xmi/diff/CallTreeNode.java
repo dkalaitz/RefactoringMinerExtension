@@ -1,11 +1,11 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.AbstractCall;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CallTreeNode {
 	private VariableDeclarationContainer originalOperation;

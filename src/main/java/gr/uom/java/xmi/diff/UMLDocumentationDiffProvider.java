@@ -1,8 +1,8 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.Optional;
-
 import gr.uom.java.xmi.VariableDeclarationContainer;
+
+import java.util.Optional;
 
 public interface UMLDocumentationDiffProvider {
 	public Optional<UMLJavadocDiff> getJavadocDiff();

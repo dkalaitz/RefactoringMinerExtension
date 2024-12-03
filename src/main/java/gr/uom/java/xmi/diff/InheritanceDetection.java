@@ -3,11 +3,7 @@ package gr.uom.java.xmi.diff;
 import gr.uom.java.xmi.UMLGeneralization;
 import gr.uom.java.xmi.UMLRealization;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class InheritanceDetection {
 	private Map<String, LinkedHashSet<String>> subclassMap;

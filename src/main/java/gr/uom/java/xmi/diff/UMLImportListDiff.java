@@ -1,15 +1,10 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
-
 import gr.uom.java.xmi.UMLImport;
 import gr.uom.java.xmi.UMLType;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.*;
 
 public class UMLImportListDiff {
 	private Set<UMLImport> removedImports;

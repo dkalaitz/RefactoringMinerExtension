@@ -1,25 +1,17 @@
 package org.refactoringminer.utils;
 
-import static org.refactoringminer.util.RefactoringRelationship.parentOf;
-
-import java.io.File;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.jgit.lib.Repository;
 import org.refactoringminer.api.GitHistoryRefactoringMiner;
 import org.refactoringminer.api.GitService;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.GitServiceImpl;
 import org.refactoringminer.util.RefactoringRelationship;
+
+import java.io.File;
+import java.io.PrintStream;
+import java.util.*;
+
+import static org.refactoringminer.util.RefactoringRelationship.parentOf;
 
 public class ResultComparator {
 

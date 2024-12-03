@@ -7,7 +7,6 @@ import org.junit.jupiter.api.parallel.Isolated;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.refactoringminer.RefactoringMiner;
-import org.refactoringminer.util.GitServiceImpl;
 
 import java.io.File;
 import java.io.FileReader;

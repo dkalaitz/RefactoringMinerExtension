@@ -16,23 +16,13 @@
  */
 package org.apache.commons.cli2.option;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-import java.util.StringTokenizer;
-
-import org.apache.commons.cli2.Argument;
-import org.apache.commons.cli2.DisplaySetting;
-import org.apache.commons.cli2.HelpLine;
-import org.apache.commons.cli2.Option;
-import org.apache.commons.cli2.OptionException;
-import org.apache.commons.cli2.WriteableCommandLine;
+import org.apache.commons.cli2.*;
 import org.apache.commons.cli2.resource.ResourceConstants;
 import org.apache.commons.cli2.resource.ResourceHelper;
 import org.apache.commons.cli2.validation.InvalidArgumentException;
 import org.apache.commons.cli2.validation.Validator;
+
+import java.util.*;
 
 /**
  * An implementation of an Argument.

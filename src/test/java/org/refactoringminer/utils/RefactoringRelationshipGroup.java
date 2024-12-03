@@ -1,10 +1,10 @@
 package org.refactoringminer.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.RefactoringRelationship;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RefactoringRelationshipGroup {
 

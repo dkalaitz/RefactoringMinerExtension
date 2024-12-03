@@ -17,15 +17,9 @@
 
 package org.apache.commons.csv;
 
-import static org.apache.commons.csv.Constants.BACKSPACE;
-import static org.apache.commons.csv.Constants.CR;
-import static org.apache.commons.csv.Constants.END_OF_STREAM;
-import static org.apache.commons.csv.Constants.FF;
-import static org.apache.commons.csv.Constants.LF;
-import static org.apache.commons.csv.Constants.TAB;
-import static org.apache.commons.csv.Constants.UNDEFINED;
-
 import java.io.IOException;
+
+import static org.apache.commons.csv.Constants.*;
 
 /**
  * Abstract lexer class; contains common utility routines shared by lexers

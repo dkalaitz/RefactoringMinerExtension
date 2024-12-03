@@ -1,10 +1,10 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.Comparator;
-
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
 import gr.uom.java.xmi.decomposition.CompositeStatementObject;
+
+import java.util.Comparator;
 
 public class CodeFragmentComparator implements Comparator<AbstractCodeFragment> {
 

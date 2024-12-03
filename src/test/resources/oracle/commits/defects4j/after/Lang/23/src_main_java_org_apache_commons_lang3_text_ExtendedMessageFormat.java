@@ -16,17 +16,13 @@
  */
 package org.apache.commons.lang3.text;
 
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.Validate;
+
 import java.text.Format;
 import java.text.MessageFormat;
 import java.text.ParsePosition;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Map;
-
-import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.Validate;
+import java.util.*;
 
 /**
  * Extends <code>java.text.MessageFormat</code> to allow pluggable/additional formatting

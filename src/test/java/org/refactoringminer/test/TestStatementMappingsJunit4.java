@@ -1,14 +1,10 @@
 package org.refactoringminer.test;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
+import gr.uom.java.xmi.UMLModel;
+import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
+import gr.uom.java.xmi.decomposition.LeafExpression;
+import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import gr.uom.java.xmi.diff.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
@@ -18,22 +14,9 @@ import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 
-import gr.uom.java.xmi.UMLModel;
-import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
-import gr.uom.java.xmi.decomposition.LeafExpression;
-import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
-import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
-import gr.uom.java.xmi.diff.InlineOperationRefactoring;
-import gr.uom.java.xmi.diff.MergeOperationRefactoring;
-import gr.uom.java.xmi.diff.MoveCodeRefactoring;
-import gr.uom.java.xmi.diff.ParameterizeTestRefactoring;
-import gr.uom.java.xmi.diff.RenameOperationRefactoring;
-import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
-import gr.uom.java.xmi.diff.UMLAnonymousClassDiff;
-import gr.uom.java.xmi.diff.UMLClassBaseDiff;
-import gr.uom.java.xmi.diff.UMLClassDiff;
-import gr.uom.java.xmi.diff.UMLEnumConstantDiff;
-import gr.uom.java.xmi.diff.UMLModelDiff;
+import java.io.File;
+import java.io.FileReader;
+import java.util.*;
 
 public class TestStatementMappingsJunit4 {
 	private static final String REPOS = System.getProperty("user.dir") + "/src/test/resources/oracle/commits";

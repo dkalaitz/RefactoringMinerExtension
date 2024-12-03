@@ -16,15 +16,15 @@
  */
 package org.apache.commons.cli2.option;
 
-import java.util.Iterator;
-import java.util.ListIterator;
-import java.util.Set;
-
 import org.apache.commons.cli2.DisplaySetting;
 import org.apache.commons.cli2.Option;
 import org.apache.commons.cli2.WriteableCommandLine;
 import org.apache.commons.cli2.resource.ResourceConstants;
 import org.apache.commons.cli2.resource.ResourceHelper;
+
+import java.util.Iterator;
+import java.util.ListIterator;
+import java.util.Set;
 
 /**
  * A base implementation of Option providing limited ground work for further

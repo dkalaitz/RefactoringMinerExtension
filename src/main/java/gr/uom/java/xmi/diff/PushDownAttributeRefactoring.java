@@ -1,11 +1,10 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import gr.uom.java.xmi.UMLAttribute;
 import org.refactoringminer.api.RefactoringType;
 
-import gr.uom.java.xmi.UMLAttribute;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PushDownAttributeRefactoring extends MoveAttributeRefactoring {
 

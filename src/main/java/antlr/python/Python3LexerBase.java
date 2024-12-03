@@ -1,4 +1,4 @@
-package antlr;
+package antlr.python;
 
 import org.antlr.v4.runtime.*;
 

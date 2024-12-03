@@ -1,17 +1,13 @@
 package org.refactoringminer.utils;
 
+import org.refactoringminer.api.RefactoringType;
+import org.refactoringminer.util.RefactoringRelationship;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
-
-import org.refactoringminer.api.RefactoringType;
-import org.refactoringminer.util.RefactoringRelationship;
 
 public class RefFinderResultReader {
 

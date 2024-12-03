@@ -1,5 +1,6 @@
 package org.refactoringminer.astDiff.utils;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.converter.ArgumentConversionException;
 import org.junit.jupiter.params.converter.ArgumentConverter;
@@ -9,9 +10,9 @@ import javax.json.JsonObject;
 import javax.json.JsonString;
 import javax.json.JsonValue;
 import java.io.Serializable;
-import java.util.*;
-
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @JsonSerialize(using = CaseInfoSerializer.class)
 public class CaseInfo implements Serializable {

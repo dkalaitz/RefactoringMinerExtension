@@ -16,24 +16,14 @@
  */
 package org.apache.commons.lang3.time;
 
+import org.apache.commons.lang3.Validate;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.text.DateFormat;
-import java.text.DateFormatSymbols;
-import java.text.FieldPosition;
-import java.text.Format;
-import java.text.ParsePosition;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.text.*;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import org.apache.commons.lang3.Validate;
 
 /**
  * <p>FastDateFormat is a fast and thread-safe version of

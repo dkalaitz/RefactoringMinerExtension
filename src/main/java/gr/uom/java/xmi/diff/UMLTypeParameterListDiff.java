@@ -1,13 +1,12 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.UMLTypeParameter;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import gr.uom.java.xmi.UMLTypeParameter;
 
 public class UMLTypeParameterListDiff {
 	private Set<UMLTypeParameter> removedTypeParameters;

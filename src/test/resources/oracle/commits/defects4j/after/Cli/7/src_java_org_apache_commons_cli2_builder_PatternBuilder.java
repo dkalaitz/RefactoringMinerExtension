@@ -16,18 +16,13 @@
  */
 package org.apache.commons.cli2.builder;
 
+import org.apache.commons.cli2.Argument;
+import org.apache.commons.cli2.Option;
+import org.apache.commons.cli2.validation.*;
+
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
-
-import org.apache.commons.cli2.Argument;
-import org.apache.commons.cli2.Option;
-import org.apache.commons.cli2.validation.ClassValidator;
-import org.apache.commons.cli2.validation.DateValidator;
-import org.apache.commons.cli2.validation.FileValidator;
-import org.apache.commons.cli2.validation.NumberValidator;
-import org.apache.commons.cli2.validation.UrlValidator;
-import org.apache.commons.cli2.validation.Validator;
 
 /**
  * Builds Options using a String pattern

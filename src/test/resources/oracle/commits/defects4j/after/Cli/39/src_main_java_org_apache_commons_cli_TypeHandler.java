@@ -20,10 +20,8 @@ package org.apache.commons.cli;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import java.util.Date;
 
 /**

@@ -1,12 +1,11 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.UMLType;
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
-
-import gr.uom.java.xmi.UMLType;
 
 public class UMLImplementedInterfaceListDiff {
 	private Set<UMLType> removedInterfaces;

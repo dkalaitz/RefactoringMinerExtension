@@ -1,18 +1,13 @@
 package gr.uom.java.xmi.diff;
 
-import java.text.BreakIterator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.jsoup.Jsoup;
-
 import gr.uom.java.xmi.UMLDocElement;
 import gr.uom.java.xmi.UMLJavadoc;
 import gr.uom.java.xmi.UMLTagElement;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jsoup.Jsoup;
+
+import java.text.BreakIterator;
+import java.util.*;
 
 public class UMLJavadocDiff {
 	private UMLJavadoc javadocBefore;

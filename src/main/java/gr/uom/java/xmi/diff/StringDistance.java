@@ -1,17 +1,16 @@
 package gr.uom.java.xmi.diff;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-import java.util.regex.Pattern;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.text.similarity.LevenshteinDistance;
-
 import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.AbstractDelta;
 import com.github.difflib.patch.Chunk;
 import com.github.difflib.patch.Patch;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class StringDistance {
 	private static final int MAX_STRING_LENGTH = 1100;

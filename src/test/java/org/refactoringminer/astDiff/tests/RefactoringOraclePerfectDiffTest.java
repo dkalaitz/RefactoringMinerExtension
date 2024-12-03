@@ -10,12 +10,16 @@ import org.refactoringminer.astDiff.utils.MappingExportModel;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.refactoringminer.astDiff.utils.ExportUtils.*;
-import static org.refactoringminer.astDiff.utils.UtilMethods.*;
+import static org.refactoringminer.astDiff.utils.UtilMethods.getCommitsMappingsPath;
+import static org.refactoringminer.astDiff.utils.UtilMethods.getProjectDiffLocally;
 
 /**
  * @author  Pourya Alikhani Fard pouryafard75@gmail.com

@@ -1,10 +1,10 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class CandidateMergeMethodRefactoring {
 	private Set<VariableDeclarationContainer> mergedMethods = new LinkedHashSet<>();

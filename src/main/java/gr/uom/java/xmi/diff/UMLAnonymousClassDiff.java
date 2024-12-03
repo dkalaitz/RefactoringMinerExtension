@@ -1,19 +1,14 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
-import org.apache.commons.lang3.tuple.Pair;
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
-
 import gr.uom.java.xmi.UMLAnonymousClass;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLInitializer;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import org.apache.commons.lang3.tuple.Pair;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
+
+import java.util.*;
 
 public class UMLAnonymousClassDiff extends UMLAbstractClassDiff {
 	private UMLAbstractClassDiff classDiff;

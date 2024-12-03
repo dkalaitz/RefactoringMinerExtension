@@ -1,6 +1,6 @@
-package antlr;
-
+package antlr.python;// Generated from C:/Users/popos/Desktop/RefactoringMiner/src/main/antlr/Python3Parser.g4 by ANTLR 4.13.2
 import org.antlr.v4.runtime.tree.ParseTreeListener;
+
 
 /**
  * This interface defines a complete listener for a parse tree produced by
@@ -978,12 +978,12 @@ public interface Python3ParserListener extends ParseTreeListener {
 	 */
 	void exitStar_expr(Python3Parser.Star_exprContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link Python3Parser#expr}.
+	 * Enter a parse tree produced by.
 	 * @param ctx the parse tree
 	 */
 	void enterExpr(Python3Parser.ExprContext ctx);
 	/**
-	 * Exit a parse tree produced by {@link Python3Parser#expr}.
+	 * Exit a parse tree produced.
 	 * @param ctx the parse tree
 	 */
 	void exitExpr(Python3Parser.ExprContext ctx);

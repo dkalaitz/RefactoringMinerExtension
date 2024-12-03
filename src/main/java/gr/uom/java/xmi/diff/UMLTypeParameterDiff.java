@@ -1,8 +1,8 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.Objects;
-
 import gr.uom.java.xmi.UMLTypeParameter;
+
+import java.util.Objects;
 
 public class UMLTypeParameterDiff {
 	private UMLTypeParameter removedTypeParameter;

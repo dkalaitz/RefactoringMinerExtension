@@ -1,19 +1,13 @@
 package gr.uom.java.xmi.diff;
 
-import java.text.BreakIterator;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.lang3.tuple.Pair;
-
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.UMLComment;
 import gr.uom.java.xmi.UMLCommentGroup;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.text.BreakIterator;
+import java.util.*;
 
 public class UMLCommentListDiff {
 	private List<Pair<UMLComment, UMLComment>> commonComments;

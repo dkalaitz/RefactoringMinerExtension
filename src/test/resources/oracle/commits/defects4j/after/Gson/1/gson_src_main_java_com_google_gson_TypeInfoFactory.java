@@ -16,12 +16,7 @@
 
 package com.google.gson;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
+import java.lang.reflect.*;
 
 /**
  * A static factory class used to construct the "TypeInfo" objects.

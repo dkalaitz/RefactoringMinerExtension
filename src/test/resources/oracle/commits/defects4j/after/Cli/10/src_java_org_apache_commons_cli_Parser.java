@@ -16,13 +16,7 @@
  */
 package org.apache.commons.cli;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * <p><code>Parser</code> creates {@link CommandLine}s.</p>

@@ -1,19 +1,11 @@
 package org.refactoringminer.utils;
 
-import java.util.List;
-
+import gr.uom.java.xmi.diff.*;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringHandler;
-
-import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
-import gr.uom.java.xmi.diff.ExtractSuperclassRefactoring;
-import gr.uom.java.xmi.diff.InlineOperationRefactoring;
-import gr.uom.java.xmi.diff.MoveAttributeRefactoring;
-import gr.uom.java.xmi.diff.MoveClassRefactoring;
-import gr.uom.java.xmi.diff.MoveOperationRefactoring;
-import gr.uom.java.xmi.diff.RenameClassRefactoring;
-import gr.uom.java.xmi.diff.RenameOperationRefactoring;
 import org.refactoringminer.util.RefactoringRelationship;
+
+import java.util.List;
 
 public class RefactoringCollector extends RefactoringHandler {
   private final RefactoringSet rs;

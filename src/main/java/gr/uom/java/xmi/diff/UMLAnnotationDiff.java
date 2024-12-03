@@ -1,14 +1,10 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.decomposition.AbstractExpression;
+
+import java.util.AbstractMap.SimpleEntry;
+import java.util.*;
 
 public class UMLAnnotationDiff {
 	private UMLAnnotation removedAnnotation;

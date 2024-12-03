@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.refactoringminer.astDiff.utils.ExportUtils.*;
-import static org.refactoringminer.astDiff.utils.UtilMethods.*;
+import static org.refactoringminer.astDiff.utils.UtilMethods.getCommitsMappingsPath;
 
 /* Created by pourya on 2023-02-28 4:48 p.m. */
 public class SpecificCasesTest {

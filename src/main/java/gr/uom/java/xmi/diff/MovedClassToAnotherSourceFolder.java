@@ -1,8 +1,7 @@
 package gr.uom.java.xmi.diff;
 
-import org.refactoringminer.util.PrefixSuffixUtils;
-
 import gr.uom.java.xmi.UMLClass;
+import org.refactoringminer.util.PrefixSuffixUtils;
 
 public class MovedClassToAnotherSourceFolder {
 	//private String className;

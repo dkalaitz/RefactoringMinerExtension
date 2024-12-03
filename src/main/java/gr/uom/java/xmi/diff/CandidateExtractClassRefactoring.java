@@ -1,8 +1,8 @@
 package gr.uom.java.xmi.diff;
 
-import java.util.List;
-
 import gr.uom.java.xmi.UMLType;
+
+import java.util.List;
 
 public class CandidateExtractClassRefactoring implements Comparable<CandidateExtractClassRefactoring> {
 	private UMLClassBaseDiff classDiff;

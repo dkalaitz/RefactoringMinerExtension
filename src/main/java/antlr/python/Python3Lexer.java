@@ -1,4 +1,5 @@
-package antlr;
+// Generated from C:/Users/popos/Desktop/RefactoringMiner/src/main/antlr/Python3Lexer.g4 by ANTLR 4.13.2
+package antlr.python;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.*;
@@ -142,7 +143,7 @@ public class Python3Lexer extends Python3LexerBase {
 	}
 
 	@Override
-	public String getGrammarFileName() { return "antlr-python-grammar/Python3Lexer.g4"; }
+	public String getGrammarFileName() { return "Python3Lexer.g4"; }
 
 	@Override
 	public String[] getRuleNames() { return ruleNames; }

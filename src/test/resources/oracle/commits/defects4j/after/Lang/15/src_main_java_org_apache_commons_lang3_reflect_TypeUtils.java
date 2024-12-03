@@ -16,20 +16,10 @@
  */
 package org.apache.commons.lang3.reflect;
 
-import java.lang.reflect.Array;
-import java.lang.reflect.GenericArrayType;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.lang.reflect.TypeVariable;
-import java.lang.reflect.WildcardType;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.commons.lang3.ClassUtils;
+
+import java.lang.reflect.*;
+import java.util.*;
 
 /**
  * <p> Utility methods focusing on type inspection, particularly with regard to

@@ -1,12 +1,13 @@
 package org.kohsuke.github;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GHRepositoryWrapperTest {
 	private final GitHistoryRefactoringMinerImpl gitHistoryRefactoringMiner = new GitHistoryRefactoringMinerImpl();

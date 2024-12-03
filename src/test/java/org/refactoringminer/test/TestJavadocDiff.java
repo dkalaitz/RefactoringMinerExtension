@@ -1,14 +1,13 @@
 package org.refactoringminer.test;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+import gr.uom.java.xmi.UMLClass;
+import gr.uom.java.xmi.UMLComment;
+import gr.uom.java.xmi.UMLDocElement;
+import gr.uom.java.xmi.UMLModel;
+import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
+import gr.uom.java.xmi.diff.InlineOperationRefactoring;
+import gr.uom.java.xmi.diff.UMLClassDiff;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.jupiter.api.Assertions;
@@ -18,14 +17,10 @@ import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl.ChangedFileInfo;
 
-import gr.uom.java.xmi.UMLClass;
-import gr.uom.java.xmi.UMLComment;
-import gr.uom.java.xmi.UMLDocElement;
-import gr.uom.java.xmi.UMLModel;
-import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
-import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
-import gr.uom.java.xmi.diff.InlineOperationRefactoring;
-import gr.uom.java.xmi.diff.UMLClassDiff;
+import java.io.File;
+import java.io.FileReader;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TestJavadocDiff {
 	private static final String REPOS = System.getProperty("user.dir") + "/src/test/resources/oracle/commits";

@@ -16,27 +16,10 @@
  */
 package org.apache.commons.cli2.option;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import org.apache.commons.cli2.Argument;
-import org.apache.commons.cli2.DisplaySetting;
-import org.apache.commons.cli2.Group;
-import org.apache.commons.cli2.HelpLine;
-import org.apache.commons.cli2.Option;
-import org.apache.commons.cli2.OptionException;
-import org.apache.commons.cli2.WriteableCommandLine;
+import org.apache.commons.cli2.*;
 import org.apache.commons.cli2.resource.ResourceConstants;
+
+import java.util.*;
 
 /**
  * An implementation of Group
