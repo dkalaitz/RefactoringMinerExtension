@@ -1,6 +1,7 @@
-package antlr.python.ast.elements;
+package antlr.python.ast.node.child;
 
-import antlr.python.ast.PythonASTVisitor;
+import antlr.python.ast.node.ASTNode;
+import antlr.python.ast.visitor.PythonASTVisitor;
 
 import java.util.List;
 

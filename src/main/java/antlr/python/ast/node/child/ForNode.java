@@ -1,15 +1,16 @@
-package antlr.python.ast.elements;
+package antlr.python.ast.node.child;
 
-import antlr.python.ast.PythonASTVisitor;
+import antlr.python.ast.node.ASTNode;
+import antlr.python.ast.visitor.PythonASTVisitor;
 
 import java.util.List;
 
 // Node representing a "for" loop in the AST
-import java.util.List;
+
 
 public class ForNode extends ASTNode {
-    private List<ASTNode> iterables;  // List of iterables (e.g., the list or range being iterated over)
-    private List<ASTNode> body;       // List of statements in the body of the for loop
+    private final List<ASTNode> iterables;  // List of iterables (e.g., the list or range being iterated over)
+    private final List<ASTNode> body;       // List of statements in the body of the for loop
 
     // Constructor
     public ForNode(List<ASTNode> iterables, List<ASTNode> body) {

@@ -1,4 +1,4 @@
-package antlr.python;
+package antlr.python.base;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;

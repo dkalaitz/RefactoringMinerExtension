@@ -1,5 +1,5 @@
 // Generated from C:/Users/popos/Desktop/RefactoringMiner/src/main/antlr/Python3Lexer.g4 by ANTLR 4.13.2
-package antlr.python;
+package antlr.python.base;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.*;
