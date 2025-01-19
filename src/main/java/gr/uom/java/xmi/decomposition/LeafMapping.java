@@ -31,6 +31,7 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 	private boolean equalNumberOfAssertions;
 	private boolean ifParentWithIdenticalElse;
 	private boolean ifParentWithIdenticalThen;
+	private boolean isKeyword;
 
 	public LeafMapping(AbstractCodeFragment statement1, AbstractCodeFragment statement2,
 			VariableDeclarationContainer operation1, VariableDeclarationContainer operation2) {
@@ -61,6 +62,9 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 					ifParentWithIdenticalElse = true;
 				}
 			}
+		}
+		if(statement1.isKeyword()) {
+			isKeyword = true;
 		}
 	}
 
@@ -384,10 +388,18 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 				boolean zeroDistanceWithMoreThanTwoParents1 = nLevelParentEditDistance1 == 0 && levelParentEditDistance1.size() > 2;
 				boolean zeroDistanceWithMoreThanTwoParents2 = nLevelParentEditDistance2 == 0 && levelParentEditDistance2.size() > 2;
 				if(identicalCompositeChildren1 && !identicalCompositeChildren2 && !zeroDistanceWithMoreThanTwoParents2) {
-					return -1;
+					boolean skip = false;
+					if(nLevelParentEditDistance2 == 0 && this.isKeyword)
+						skip = true;
+					if(!skip)
+						return -1;
 				}
 				else if(!identicalCompositeChildren1 && identicalCompositeChildren2 && !zeroDistanceWithMoreThanTwoParents1) {
-					return 1;
+					boolean skip = false;
+					if(nLevelParentEditDistance1 == 0 && o.isKeyword)
+						skip = true;
+					if(!skip)
+						return 1;
 				}
 				if(identicalCompositeChildren1 && identicalCompositeChildren2 && levelParentEditDistance1.size() > 2 && levelParentEditDistance2.size() > 2
 						&& nLevelParentEditDistance1 > 0 && nLevelParentEditDistance2 > 0) {
@@ -417,6 +429,16 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 						double difference = Math.abs(levelParentEditDistance1.get(0) - levelParentEditDistance2.get(0));
 						double min = Math.min(levelParentEditDistance1.get(0), levelParentEditDistance2.get(0));
 						if(difference > min) {
+							return Double.compare(levelParentEditDistance1.get(0), levelParentEditDistance2.get(0));
+						}
+					}
+					else if(levelParentEditDistance1.size() == 2 && levelParentEditDistance1.get(1).equals(1.0) &&
+							levelParentEditDistance2.size() == 2 && levelParentEditDistance2.get(1).equals(1.0) &&
+							!levelParentEditDistance1.get(0).equals(levelParentEditDistance2.get(0))) {
+						if(levelParentEditDistance1.get(0) < levelParentEditDistance2.get(0) && this.directParentHaveExpressionOverlap()) {
+							return Double.compare(levelParentEditDistance1.get(0), levelParentEditDistance2.get(0));
+						}
+						else if(levelParentEditDistance1.get(0) > levelParentEditDistance2.get(0) && o.directParentHaveExpressionOverlap()) {
 							return Double.compare(levelParentEditDistance1.get(0), levelParentEditDistance2.get(0));
 						}
 					}
@@ -992,6 +1014,41 @@ public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafM
 				}
 				return true;
 			}
+		}
+		return false;
+	}
+
+	private boolean directParentHaveExpressionOverlap() {
+		CompositeStatementObject parent1 = getFragment1().getParent();
+		while(parent1 != null && parent1.getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
+			parent1 = parent1.getParent();
+		}
+		CompositeStatementObject parent2 = getFragment2().getParent();
+		while(parent2 != null && parent2.getLocationInfo().getCodeElementType().equals(CodeElementType.BLOCK)) {
+			parent2 = parent2.getParent();
+		}
+		if(parent1 == null && parent2 == null) {
+			//method signature is the parent
+			return false;
+		}
+		else if(parent1 == null && parent2 != null) {
+			return false;
+		}
+		else if(parent1 != null && parent2 == null) {
+			return false;
+		}
+		List<AbstractExpression> expressions1 = parent1.getExpressions();
+		List<AbstractExpression> expressions2 = parent2.getExpressions();
+		if(expressions1.size() == expressions2.size()) {
+			int matches = 0;
+			for(int i=0; i<expressions1.size(); i++) {
+				AbstractExpression expr1 = expressions1.get(i);
+				AbstractExpression expr2 = expressions2.get(i);
+				if(expr1.getString().contains(expr2.getString()) || expr2.getString().contains(expr1.getString())) {
+					matches++;
+				}
+			}
+			return matches > 0;
 		}
 		return false;
 	}

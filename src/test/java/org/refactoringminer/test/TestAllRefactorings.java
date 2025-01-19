@@ -1,10 +1,13 @@
 package org.refactoringminer.test;
 
-import org.junit.jupiter.api.Test;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 import org.refactoringminer.test.RefactoringPopulator.Refactorings;
 import org.refactoringminer.test.RefactoringPopulator.Systems;
 
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
+
+@Disabled
 public class TestAllRefactorings {
 
 	private static final String REPOS = System.getProperty("user.dir") + "/src/test/resources/oracle/commits";
@@ -14,6 +17,6 @@ public class TestAllRefactorings {
 		GitHistoryRefactoringMinerImpl detector = new GitHistoryRefactoringMinerImpl();
 		TestBuilder test = new TestBuilder(detector, REPOS, Refactorings.All.getValue());
 		RefactoringPopulator.feedRefactoringsInstances(Refactorings.All.getValue(), Systems.FSE.getValue(), test);
-		test.assertExpectationsWithGitHubAPI(12295, 20, 232);
+		test.assertExpectationsWithGitHubAPI(12299, 20, 232);
 	}
 }

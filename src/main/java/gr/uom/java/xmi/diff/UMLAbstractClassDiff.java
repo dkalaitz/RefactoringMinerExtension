@@ -45,7 +45,8 @@ public abstract class UMLAbstractClassDiff {
 	protected List<Refactoring> refactorings;
 	protected UMLModelDiff modelDiff;
 	protected UMLAnnotationListDiff annotationListDiff;
-	private UMLImplementedInterfaceListDiff interfaceListDiff;
+	private UMLTypeListDiff interfaceListDiff;
+	private UMLTypeListDiff permittedTypeListDiff;
 	private UMLCommentListDiff commentListDiff;
 	private static final List<String> collectionAPINames = List.of("get", "add", "contains", "put", "putAll", "addAll", "equals");
 	
@@ -69,7 +70,8 @@ public abstract class UMLAbstractClassDiff {
 		this.originalClass = originalClass;
 		this.nextClass = nextClass;
 		this.modelDiff = modelDiff;
-		this.interfaceListDiff = new UMLImplementedInterfaceListDiff(originalClass.getImplementedInterfaces(), nextClass.getImplementedInterfaces());
+		this.interfaceListDiff = new UMLTypeListDiff(originalClass.getImplementedInterfaces(), nextClass.getImplementedInterfaces());
+		this.permittedTypeListDiff = new UMLTypeListDiff(originalClass.getPermittedTypes(), nextClass.getPermittedTypes());
 		processAnnotations();
 	}
 
@@ -175,21 +177,40 @@ public abstract class UMLAbstractClassDiff {
 		return commentListDiff;
 	}
 
-	public UMLImplementedInterfaceListDiff getInterfaceListDiff() {
+	public UMLTypeListDiff getInterfaceListDiff() {
 		return interfaceListDiff;
 	}
 
 	public void findInterfaceChanges(String nameBefore, String nameAfter) {
-		interfaceListDiff.findInterfaceChanges(nameBefore, nameAfter);
+		interfaceListDiff.findTypeChanges(nameBefore, nameAfter);
 	}
 
 	public void findInterfaceChanges(UMLType typeBefore, UMLType typeAfter) {
-		interfaceListDiff.findInterfaceChanges(typeBefore, typeAfter);
+		interfaceListDiff.findTypeChanges(typeBefore, typeAfter);
 	}
 
 	public boolean hasBothAddedAndRemovedInterfaces() {
 		if(interfaceListDiff != null) {
-			return interfaceListDiff.getAddedInterfaces().size() > 0 && interfaceListDiff.getRemovedInterfaces().size() > 0;
+			return interfaceListDiff.getAddedTypes().size() > 0 && interfaceListDiff.getRemovedTypes().size() > 0;
+		}
+		return false;
+	}
+
+	public UMLTypeListDiff getPermittedTypeListDiff() {
+		return permittedTypeListDiff;
+	}
+
+	public void findPermittedTypeChanges(String nameBefore, String nameAfter) {
+		permittedTypeListDiff.findTypeChanges(nameBefore, nameAfter);
+	}
+
+	public void findPermittedTypeChanges(UMLType typeBefore, UMLType typeAfter) {
+		permittedTypeListDiff.findTypeChanges(typeBefore, typeAfter);
+	}
+
+	public boolean hasBothAddedAndRemovedPermittedTypes() {
+		if(permittedTypeListDiff != null) {
+			return permittedTypeListDiff.getAddedTypes().size() > 0 && permittedTypeListDiff.getRemovedTypes().size() > 0;
 		}
 		return false;
 	}
@@ -256,7 +277,8 @@ public abstract class UMLAbstractClassDiff {
 
 	protected boolean isPartOfMethodMovedToAddedMethod(VariableDeclarationContainer removedOperation, VariableDeclarationContainer addedOperation, UMLOperationBodyMapper operationBodyMapper) {
 		if(removedOperations.size() != addedOperations.size()) {
-			if(removedOperation.hasTestAnnotation() && addedOperation.hasTestAnnotation() && addedOperation.getName().contains(removedOperation.getName())) {
+			if((removedOperation.hasTestAnnotation() && addedOperation.hasTestAnnotation() && addedOperation.getName().contains(removedOperation.getName())) ||
+					(removedOperation.getJavadoc() != null && removedOperation.getJavadoc().refersToModifiedClass(modelDiff) && addedOperation.getJavadoc() != null && addedOperation.getJavadoc().refersToModifiedClass(modelDiff))) {
 				List<AbstractCall> removedOperationInvocations = removedOperation.getAllOperationInvocations();
 				List<AbstractCall> addedOperationInvocations = addedOperation.getAllOperationInvocations();
 				Set<AbstractCall> movedInvocations = new LinkedHashSet<AbstractCall>(removedOperationInvocations);
@@ -405,8 +427,110 @@ public abstract class UMLAbstractClassDiff {
 		return false;
 	}
 
-	protected boolean isPartOfMethodMovedFromDeletedMethod(VariableDeclarationContainer removedOperation, VariableDeclarationContainer addedOperation, UMLOperationBodyMapper operationBodyMapper) {
+	protected boolean isPartOfMethodMovedFromDeletedMethod(VariableDeclarationContainer removedOperation, VariableDeclarationContainer addedOperation, UMLOperationBodyMapper operationBodyMapper, Set<UMLOperationBodyMapper> mapperSet) {
 		if(removedOperations.size() != addedOperations.size()) {
+			if((addedOperation.getName().contains(removedOperation.getName()) || removedOperation.getName().contains(addedOperation.getName())) && !addedOperation.hasParameterizedTestAnnotation()) {
+				//check if a mapper in the mapperSet calls removedOperation
+				boolean callsRemovedOperation = false;
+				for(UMLOperationBodyMapper mapper : mapperSet) {
+					for(AbstractCodeFragment fragment : mapper.getNonMappedLeavesT1()) {
+						for(AbstractCall call : fragment.getMethodInvocations()) {
+							if(call.matchesOperation(removedOperation, mapper.getContainer1(), this, modelDiff)) {
+								callsRemovedOperation = true;
+								break;
+							}
+						}
+						if(callsRemovedOperation) {
+							break;
+						}
+					}
+					if(!callsRemovedOperation) {
+						for(CompositeStatementObject composite : mapper.getNonMappedInnerNodesT1()) {
+							for(AbstractCall call : composite.getMethodInvocations()) {
+								if(call.matchesOperation(removedOperation, mapper.getContainer1(), this, modelDiff)) {
+									callsRemovedOperation = true;
+									break;
+								}
+							}
+							if(callsRemovedOperation) {
+								break;
+							}
+						}
+					}
+				}
+				List<AbstractCall> removedOperationInvocations = removedOperation.getAllOperationInvocations();
+				List<AbstractCall> addedOperationInvocations = addedOperation.getAllOperationInvocations();
+				Set<AbstractCall> movedInvocations = new LinkedHashSet<AbstractCall>(addedOperationInvocations);
+				movedInvocations.removeAll(removedOperationInvocations);
+				if(movedInvocations.size() > 0) {
+					for(UMLOperation deletedOperation : removedOperations) {
+						if(!deletedOperation.equals(removedOperation)) {
+							Set<AbstractCall> intersection = new LinkedHashSet<AbstractCall>(movedInvocations);
+							intersection.retainAll(deletedOperation.getAllOperationInvocations());
+							for(Iterator<AbstractCall> operationInvocationIterator = intersection.iterator(); operationInvocationIterator.hasNext();) {
+								AbstractCall invocation = operationInvocationIterator.next();
+								boolean lambdaGet = invocation.getName().equals("get") && invocation.arguments().size() == 0;
+								boolean collectionGet = invocation.getName().startsWith("get") && invocation.arguments().size() == 1;
+								if(!lambdaGet && (collectionAPINames.contains(invocation.getName()) || collectionGet)) {
+									operationInvocationIterator.remove();
+								}
+							}
+							List<AbstractCall> unmatchedCalls = new ArrayList<AbstractCall>(movedInvocations);
+							unmatchedCalls.removeAll(deletedOperation.getAllOperationInvocations());
+							if(movedInvocations.containsAll(intersection) && intersection.size() > 0 && intersection.size() >= unmatchedCalls.size()) {
+								for(CompositeStatementObject composite : operationBodyMapper.getNonMappedInnerNodesT2()) {
+									unmatchedCalls.removeAll(composite.getMethodInvocations());
+								}
+								for(AbstractCodeFragment fragment : operationBodyMapper.getNonMappedLeavesT2()) {
+									unmatchedCalls.removeAll(fragment.getMethodInvocations());
+								}
+								boolean callsDeletedOperation = false;
+								for(AbstractCodeFragment fragment : operationBodyMapper.getNonMappedLeavesT1()) {
+									for(AbstractCall call : fragment.getMethodInvocations()) {
+										if(call.matchesOperation(deletedOperation, operationBodyMapper.getContainer1(), this, modelDiff)) {
+											callsDeletedOperation = true;
+											break;
+										}
+									}
+									if(callsDeletedOperation) {
+										break;
+									}
+								}
+								if(!callsDeletedOperation) {
+									for(CompositeStatementObject composite : operationBodyMapper.getNonMappedInnerNodesT1()) {
+										for(AbstractCall call : composite.getMethodInvocations()) {
+											if(call.matchesOperation(deletedOperation, operationBodyMapper.getContainer1(), this, modelDiff)) {
+												callsDeletedOperation = true;
+												break;
+											}
+										}
+										if(callsDeletedOperation) {
+											break;
+										}
+									}
+								}
+								if(unmatchedCalls.isEmpty() && !callsDeletedOperation && !callsRemovedOperation) {
+									CandidateMergeMethodRefactoring newCandidate = new CandidateMergeMethodRefactoring();
+									newCandidate.addMergedMethod(removedOperation);
+									newCandidate.addMergedMethod(deletedOperation);
+									newCandidate.setNewMethodAfterMerge(addedOperation);
+									boolean alreadyInCandidates = false;
+									for(CandidateMergeMethodRefactoring oldCandidate : candidateMethodMerges) {
+										if(newCandidate.equals(oldCandidate)) {
+											alreadyInCandidates = true;
+											break;
+										}
+									}
+									if(!alreadyInCandidates) {
+										candidateMethodMerges.add(newCandidate);
+									}
+									return true;
+								}
+							}
+						}
+					}
+				}
+			}
 			for(UMLOperationBodyMapper mapper : operationBodyMapperList) {
 				List<AbstractCall> invocationsCalledInOperation1 = mapper.getContainer1().getAllOperationInvocations();
 				List<AbstractCall> invocationsCalledInOperation2 = mapper.getContainer2().getAllOperationInvocations();
@@ -1350,6 +1474,7 @@ public abstract class UMLAbstractClassDiff {
 					if(attribute != null) {
 						return attribute;
 					}
+					break;
 				}
 			}
 		}
@@ -1375,6 +1500,7 @@ public abstract class UMLAbstractClassDiff {
 					if(attribute != null) {
 						return attribute;
 					}
+					break;
 				}
 			}
 		}

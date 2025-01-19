@@ -1,10 +1,14 @@
 package org.refactoringminer.test;
 
-import gr.uom.java.xmi.UMLModel;
-import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
-import gr.uom.java.xmi.decomposition.LeafExpression;
-import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
-import gr.uom.java.xmi.diff.*;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
@@ -16,9 +20,23 @@ import org.refactoringminer.api.RefactoringHandler;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.*;
+import gr.uom.java.xmi.UMLModel;
+import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
+import gr.uom.java.xmi.decomposition.LeafExpression;
+import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper;
+import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
+import gr.uom.java.xmi.diff.InlineOperationRefactoring;
+import gr.uom.java.xmi.diff.MergeOperationRefactoring;
+import gr.uom.java.xmi.diff.MoveCodeRefactoring;
+import gr.uom.java.xmi.diff.ParameterizeTestRefactoring;
+import gr.uom.java.xmi.diff.RenameOperationRefactoring;
+import gr.uom.java.xmi.diff.SplitOperationRefactoring;
+import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
+import gr.uom.java.xmi.diff.UMLAnonymousClassDiff;
+import gr.uom.java.xmi.diff.UMLClassBaseDiff;
+import gr.uom.java.xmi.diff.UMLClassDiff;
+import gr.uom.java.xmi.diff.UMLEnumConstantDiff;
+import gr.uom.java.xmi.diff.UMLModelDiff;
 
 public class TestStatementMappings {
 	private static final String REPOS = System.getProperty("user.dir") + "/src/test/resources/oracle/commits";
@@ -160,7 +178,9 @@ public class TestStatementMappings {
 			"https://github.com/google/j2objc.git, d05d92de40542e85f9f26712d976e710be82914e, j2objc-d05d92de40542e85f9f26712d976e710be82914e.txt",
 			"https://github.com/facebook/buck.git, 7e104c3ed4b80ec8e9b72356396f879d1067cc40, buck-7e104c3ed4b80ec8e9b72356396f879d1067cc40.txt",
 			"https://github.com/k9mail/k-9.git, 9d44f0e06232661259681d64002dd53c7c43099d, k9mail-9d44f0e06232661259681d64002dd53c7c43099d.txt", // FIX 3472-3472==3541-3541
-			"https://github.com/tsantalis/RefactoringMiner.git, 447005f5c62ad6236aad9116e932f13c4d449546, miner-447005f5c62ad6236aad9116e932f13c4d449546.txt" // WithIntermediateDelegate
+			"https://github.com/tsantalis/RefactoringMiner.git, 447005f5c62ad6236aad9116e932f13c4d449546, miner-447005f5c62ad6236aad9116e932f13c4d449546.txt", // WithIntermediateDelegate
+			"https://github.com/hibernate/hibernate-orm.git, a1e8d7cb0dcb4bd58fc5d210031bd0fb28196034, hibernate-orm-a1e8d7cb0dcb4bd58fc5d210031bd0fb28196034.txt",
+			"https://github.com/junit-team/junit5.git, 5b4c642be9b1d09f9b9cebad7dd55fa40aae78bc, junit5-5b4c642be9b1d09f9b9cebad7dd55fa40aae78bc.txt"
 	})
 	public void testNestedExtractMethodStatementMappings(String url, String commitId, String testResultFileName) throws Exception {
 		GitHistoryRefactoringMinerImpl miner = new GitHistoryRefactoringMinerImpl();
@@ -517,7 +537,8 @@ public class TestStatementMappings {
 		"https://github.com/tsantalis/RefactoringMiner.git, 0894f346564f8b31cf836def67e952fb93a6036d, miner-0894f346564f8b31cf836def67e952fb93a6036d.txt",
 		"https://github.com/eclipse-jgit/jgit.git, 7ff6eb584cf8b83f83a3b5edf897feb53dbf42c0, jgit-7ff6eb584cf8b83f83a3b5edf897feb53dbf42c0.txt",
 		"https://github.com/jenkinsci/git-client-plugin.git, 6d261108e7471db380146f945bb228b5fc8c44cc, git-client-plugin-6d261108e7471db380146f945bb228b5fc8c44cc.txt",
-		"https://github.com/javaparser/javaparser.git, 548fb9c5a72776ec009c5f2f92b1a4c480a05030, javaparser-548fb9c5a72776ec009c5f2f92b1a4c480a05030.txt"
+		"https://github.com/javaparser/javaparser.git, 548fb9c5a72776ec009c5f2f92b1a4c480a05030, javaparser-548fb9c5a72776ec009c5f2f92b1a4c480a05030.txt",
+		"https://github.com/apache/ant.git, 52926715b4f4f53da4b63cf660a14f357d7a9b6e, ant-52926715b4f4f53da4b63cf660a14f357d7a9b6e.txt"
 	})
 	public void testExtractMethodStatementMappings(String url, String commit, String testResultFileName) throws Exception {
 		GitHistoryRefactoringMinerImpl miner = new GitHistoryRefactoringMinerImpl();
@@ -527,7 +548,7 @@ public class TestStatementMappings {
 			public void handle(String commitId, List<Refactoring> refactorings) {
 				List<UMLOperationBodyMapper> parentMappers = new ArrayList<>();
 				for (Refactoring ref : refactorings) {
-					if(ref instanceof ExtractOperationRefactoring) {
+					if(ref instanceof ExtractOperationRefactoring && ref.getRefactoringType().equals(RefactoringType.EXTRACT_OPERATION)) {
 						ExtractOperationRefactoring ex = (ExtractOperationRefactoring)ref;
 						UMLOperationBodyMapper bodyMapper = ex.getBodyMapper();
 						if(!bodyMapper.isNested()) {
@@ -1088,7 +1109,8 @@ public class TestStatementMappings {
 		"https://github.com/javaparser/javaparser.git, de5c17c37f15a1c134f518ed2754974cc4b9aa15, apply, true, javaparser-de5c17c37f15a1c134f518ed2754974cc4b9aa15.txt",
 		"https://github.com/hibernate/hibernate-orm.git, 8577a68e69d30d9e671024bf3330616000a3ec54, processElementAnnotations, true, hibernate-orm-8577a68e69d30d9e671024bf3330616000a3ec54.txt",
 		"https://github.com/checkstyle/checkstyle.git, bf69cf167c9432daabc7b6e4a426fff33650a057, visitToken, true, checkstyle-bf69cf167c9432daabc7b6e4a426fff33650a057.txt",
-		"https://github.com/hibernate/hibernate-orm.git, 016a02ff506b715e8217b8577594ac62b3f318ce, processElementAnnotations, true, hibernate-orm-016a02ff506b715e8217b8577594ac62b3f318ce.txt"
+		"https://github.com/hibernate/hibernate-orm.git, 016a02ff506b715e8217b8577594ac62b3f318ce, processElementAnnotations, true, hibernate-orm-016a02ff506b715e8217b8577594ac62b3f318ce.txt",
+		"https://github.com/javaparser/javaparser.git, acdac6790f4424f8097b3aa6c888e825cac485f9, inferTypes, true, javaparser-acdac6790f4424f8097b3aa6c888e825cac485f9.txt"
 	})
 	public void testRestructuredStatementMappings(String url, String commitId, String containerName, boolean breakOnFirstMatch, String testResultFileName) throws Exception {
 		GitHistoryRefactoringMinerImpl miner = new GitHistoryRefactoringMinerImpl();
@@ -1685,7 +1707,8 @@ public class TestStatementMappings {
 	@ParameterizedTest
 	@CsvSource({
 		"https://github.com/eclipse/jgit.git, 2fbcba41e365752681f635c706d577e605d3336a, jgit-2fbcba41e365752681f635c706d577e605d3336a.txt",
-		"https://github.com/eclipse/jgit.git, f5fe2dca3cb9f57891e1a4b18832fcc158d0c490, jgit-f5fe2dca3cb9f57891e1a4b18832fcc158d0c490.txt"
+		"https://github.com/eclipse/jgit.git, f5fe2dca3cb9f57891e1a4b18832fcc158d0c490, jgit-f5fe2dca3cb9f57891e1a4b18832fcc158d0c490.txt",
+		"https://github.com/square/okhttp.git, 0bfd6048574d61c138fd417051ae2a1bcb44638f, okhttp-0bfd6048574d61c138fd417051ae2a1bcb44638f.txt"
 	})
 	public void testMergeMethod(String cloneURL, String commitId, String testResultFileName) throws Exception {
 		GitHistoryRefactoringMinerImpl miner = new GitHistoryRefactoringMinerImpl();
@@ -1705,6 +1728,28 @@ public class TestStatementMappings {
 		});
 		
 		List<String> expected = IOUtils.readLines(new FileReader(EXPECTED_PATH + testResultFileName));
+		Assertions.assertTrue(expected.size() == actual.size() && expected.containsAll(actual) && actual.containsAll(expected));
+	}
+
+	@Test
+	public void testSplitMethod() throws Exception {
+		GitHistoryRefactoringMinerImpl miner = new GitHistoryRefactoringMinerImpl();
+		final List<String> actual = new ArrayList<>();
+		miner.detectAtCommitWithGitHubAPI("https://github.com/checkstyle/checkstyle.git", "08d6efe49d2960d9bd61bfb9cca65910f0c19b58", new File(REPOS), new RefactoringHandler() {
+			@Override
+			public void handle(String commitId, List<Refactoring> refactorings) {
+				for (Refactoring ref : refactorings) {
+					if(ref instanceof SplitOperationRefactoring) {
+						SplitOperationRefactoring ex = (SplitOperationRefactoring)ref;
+						for(UMLOperationBodyMapper bodyMapper : ex.getMappers()) {
+							mapperInfo(bodyMapper, actual);
+						}
+					}
+				}
+			}
+		});
+		
+		List<String> expected = IOUtils.readLines(new FileReader(EXPECTED_PATH + "checkstyle-08d6efe49d2960d9bd61bfb9cca65910f0c19b58.txt"));
 		Assertions.assertTrue(expected.size() == actual.size() && expected.containsAll(actual) && actual.containsAll(expected));
 	}
 
@@ -1729,6 +1774,32 @@ public class TestStatementMappings {
 			}
 		}
 		List<String> expected = IOUtils.readLines(new FileReader(EXPECTED_PATH + "junit5-48dd35c9002c80eeb666f56489785d1bf47f9aa4.txt"));
+		Assertions.assertTrue(expected.size() == actual.size() && expected.containsAll(actual) && actual.containsAll(expected));
+	}
+
+	@Test
+	public void testDoNotConsiderAsExtractedMethod() throws Exception {
+		final List<String> actual = new ArrayList<>();
+		Map<String, String> fileContentsBefore = new LinkedHashMap<String, String>();
+		Map<String, String> fileContentsCurrent = new LinkedHashMap<String, String>();
+		String contentsV1 = FileUtils.readFileToString(new File(EXPECTED_PATH + "FifoScheduler-v1.txt"));
+		String contentsV2 = FileUtils.readFileToString(new File(EXPECTED_PATH + "FifoScheduler-v2.txt"));
+		fileContentsBefore.put("src/main/java/org/apache/hadoop/yarn/server/resourcemanager/scheduler/fifo/FifoScheduler.java", contentsV1);
+		fileContentsCurrent.put("src/main/java/org/apache/hadoop/yarn/server/resourcemanager/scheduler/fifo/FifoScheduler.java", contentsV2);
+		UMLModel parentUMLModel = GitHistoryRefactoringMinerImpl.createModel(fileContentsBefore, new LinkedHashSet<String>());
+		UMLModel currentUMLModel = GitHistoryRefactoringMinerImpl.createModel(fileContentsCurrent, new LinkedHashSet<String>());
+		
+		UMLModelDiff modelDiff = parentUMLModel.diff(currentUMLModel);
+		List<UMLClassDiff> commonClassDiff = modelDiff.getCommonClassDiffList();
+		for(UMLClassDiff classDiff : commonClassDiff) {
+			for(UMLOperationBodyMapper mapper : classDiff.getOperationBodyMapperList()) {
+				if(mapper.getContainer1().getName().equals("completedContainer") && mapper.getContainer2().getName().equals("completedContainerInternal")) {
+					mapperInfo(mapper, actual);
+					break;
+				}
+			}
+		}
+		List<String> expected = IOUtils.readLines(new FileReader(EXPECTED_PATH + "hadoop-FifoScheduler.txt"));
 		Assertions.assertTrue(expected.size() == actual.size() && expected.containsAll(actual) && actual.containsAll(expected));
 	}
 

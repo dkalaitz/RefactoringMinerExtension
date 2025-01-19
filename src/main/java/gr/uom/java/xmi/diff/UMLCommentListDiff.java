@@ -1,13 +1,20 @@
 package gr.uom.java.xmi.diff;
 
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import java.text.BreakIterator;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.tuple.Pair;
+
 import gr.uom.java.xmi.UMLComment;
 import gr.uom.java.xmi.UMLCommentGroup;
 import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.text.BreakIterator;
-import java.util.*;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
 
 public class UMLCommentListDiff {
 	private List<Pair<UMLComment, UMLComment>> commonComments;
@@ -41,7 +48,7 @@ public class UMLCommentListDiff {
 		List<UMLCommentGroup> groupsAfterToBeRemoved = new ArrayList<UMLCommentGroup>();
 		for(UMLCommentGroup groupBefore : groupsBefore) {
 			for(UMLCommentGroup groupAfter : groupsAfter) {
-				if(groupBefore.sameText(groupAfter)) {
+				if(groupBefore.sameText(groupAfter) && !groupsAfterToBeRemoved.contains(groupAfter)) {
 					for(int i=0; i<groupBefore.getGroup().size(); i++) {
 						UMLComment commentBefore = groupBefore.getGroup().get(i);
 						UMLComment commentAfter = groupAfter.getGroup().get(i);
@@ -60,7 +67,7 @@ public class UMLCommentListDiff {
 		groupsAfter.removeAll(groupsAfterToBeRemoved);
 		for(UMLCommentGroup groupBefore : groupsBefore) {
 			for(UMLCommentGroup groupAfter : groupsAfter) {
-				if(groupBefore.modifiedMatchingText(groupAfter)) {
+				if(groupBefore.modifiedMatchingText(groupAfter) && !groupsAfterToBeRemoved.contains(groupAfter)) {
 					for(int i=0; i<groupBefore.getGroup().size(); i++) {
 						UMLComment commentBefore = groupBefore.getGroup().get(i);
 						UMLComment commentAfter = groupAfter.getGroup().get(i);
@@ -266,6 +273,38 @@ public class UMLCommentListDiff {
 	}
 
 	private void processModifiedComments(List<UMLComment> deletedComments, List<UMLComment> addedComments) {
+		if(deletedComments.isEmpty() || addedComments.isEmpty()) {
+			this.deletedComments.addAll(deletedComments);
+			this.addedComments.addAll(addedComments);
+			return;
+		}
+		List<UMLCommentGroup> groupsBefore = createCommentGroups(deletedComments);
+		List<UMLCommentGroup> groupsAfter = createCommentGroups(addedComments);
+		if(groupsBefore.size() <= groupsAfter.size()) {
+			for(UMLCommentGroup groupBefore : groupsBefore) {
+				for(UMLCommentGroup groupAfter : groupsAfter) {
+					processModifiedComments(groupBefore, groupAfter);
+				}
+			}
+		}
+		else {
+			for(UMLCommentGroup groupAfter : groupsAfter) {
+				for(UMLCommentGroup groupBefore : groupsBefore) {
+					processModifiedComments(groupBefore, groupAfter);
+				}
+			}
+		}
+		for(UMLCommentGroup group : groupsBefore) {
+			this.deletedComments.addAll(group.getGroup());
+		}
+		for(UMLCommentGroup group : groupsAfter) {
+			this.addedComments.addAll(group.getGroup());
+		}
+	}
+
+	private void processModifiedComments(UMLCommentGroup groupBefore, UMLCommentGroup groupAfter) {
+		List<UMLComment> deletedComments = groupBefore.getGroup();
+		List<UMLComment> addedComments = groupAfter.getGroup();
 		//match comments differing only in opening/closing quotes
 		if(deletedComments.size() <= addedComments.size()) {
 			for(UMLComment deletedComment : new ArrayList<>(deletedComments)) {
@@ -367,17 +406,26 @@ public class UMLCommentListDiff {
 						break;
 					}
 				}
-				if(longestSubSequence != null) {
+				if(longestSubSequence != null && nonPunctuationWords(longestSubSequence) > 1) {
 					//make all pair combinations
+					boolean entireSubSequenceMatched = false;
 					for(UMLComment deletedComment : deletedComments) {
-						if(containsAnySubSequence(deletedTokenSequenceMap.get(deletedComment), longestSubSequence)) {
+						List<String> containsAnySubSequenceInDeleted = containsAnySubSequence(deletedTokenSequenceMap.get(deletedComment), longestSubSequence);
+						if(containsAnySubSequenceInDeleted != null) {
 							for(UMLComment addedComment : addedComments) {
-								if(containsAnySubSequence(addedTokenSequenceMap.get(addedComment), longestSubSequence)) {
+								List<String> containsAnySubSequenceInAdded = containsAnySubSequence(addedTokenSequenceMap.get(addedComment), longestSubSequence);
+								if(containsAnySubSequenceInAdded != null) {
 									if(!alreadyMatchedComment(deletedComment, addedComment)) {
+										if(entireSubSequenceMatched && (!containsAnySubSequenceInDeleted.equals(longestSubSequence) || !containsAnySubSequenceInAdded.equals(longestSubSequence))) {
+											continue;
+										}
 										Pair<UMLComment, UMLComment> pair = Pair.of(deletedComment, addedComment);
 										commonComments.add(pair);
 										deletedToBeDeleted.add(deletedComment);
 										addedToBeDeleted.add(addedComment);
+										if(containsAnySubSequenceInAdded.equals(longestSubSequence) && containsAnySubSequenceInDeleted.equals(longestSubSequence)) {
+											entireSubSequenceMatched = true;
+										}
 									}
 								}
 							}
@@ -411,19 +459,28 @@ public class UMLCommentListDiff {
 						break;
 					}
 				}
-				if(longestSubSequence != null) {
+				if(longestSubSequence != null && nonPunctuationWords(longestSubSequence) > 1) {
 					//make all pair combinations
+					boolean entireSubSequenceMatched = false;
 					for(UMLComment deletedComment : deletedComments) {
-						if(containsAnySubSequence(deletedTokenSequenceMap.get(deletedComment), longestSubSequence)) {
+						List<String> containsAnySubSequenceInDeleted = containsAnySubSequence(deletedTokenSequenceMap.get(deletedComment), longestSubSequence);
+						if(containsAnySubSequenceInDeleted != null) {
 							for(UMLComment addedComment : addedComments) {
-								if(containsAnySubSequence(addedTokenSequenceMap.get(addedComment), longestSubSequence)) {
+								List<String> containsAnySubSequenceInAdded = containsAnySubSequence(addedTokenSequenceMap.get(addedComment), longestSubSequence);
+								if(containsAnySubSequenceInAdded != null) {
 									if(!alreadyMatchedComment(deletedComment, addedComment) ||
 											(longestSubSequence.containsAll(deletedTokenSequenceMap.get(deletedComment)) &&
 											deletedTokenSequenceMap.get(deletedComment).size() > 1)) {
+										if(entireSubSequenceMatched && (!containsAnySubSequenceInDeleted.equals(longestSubSequence) || !containsAnySubSequenceInAdded.equals(longestSubSequence))) {
+											continue;
+										}
 										Pair<UMLComment, UMLComment> pair = Pair.of(deletedComment, addedComment);
 										commonComments.add(pair);
 										deletedToBeDeleted.add(deletedComment);
 										addedToBeDeleted.add(addedComment);
+										if(containsAnySubSequenceInAdded.equals(longestSubSequence) && containsAnySubSequenceInDeleted.equals(longestSubSequence)) {
+											entireSubSequenceMatched = true;
+										}
 									}
 								}
 							}
@@ -506,8 +563,16 @@ public class UMLCommentListDiff {
 				}
 			}
 		}
-		this.deletedComments.addAll(deletedComments);
-		this.addedComments.addAll(addedComments);
+	}
+
+	private int nonPunctuationWords(List<String> longestSubSequence) {
+		int count = 0;
+		for(String str : longestSubSequence) {
+			if(!Pattern.matches("\\p{Punct}", str)) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	private boolean alreadyMatchedComment(UMLComment deletedComment, UMLComment addedComment) {
@@ -535,24 +600,24 @@ public class UMLCommentListDiff {
 		return Collections.emptyList();
 	}
 
-	private boolean containsAnySubSequence(List<String> list, List<String> longestSubSequence) {
+	private List<String> containsAnySubSequence(List<String> list, List<String> longestSubSequence) {
 		if(list.size() > 1 && Collections.indexOfSubList(longestSubSequence, list) != -1)
-			return true;
+			return longestSubSequence;
 		for(int i=longestSubSequence.size(); i>1; i--) {
 			List<String> subList = longestSubSequence.subList(0,i);
 			int index = Collections.indexOfSubList(list, subList);
 			if(index != -1) {
-				return true;
+				return subList;
 			}
 		}
 		for(int i=0; i<longestSubSequence.size(); i++) {
 			List<String> subList = longestSubSequence.subList(i,longestSubSequence.size());
 			int index = Collections.indexOfSubList(list, subList);
 			if(index != -1) {
-				return true;
+				return subList;
 			}
 		}
-		return false;
+		return null;
 	}
 
 	private List<String> splitToWords(String sentence) {

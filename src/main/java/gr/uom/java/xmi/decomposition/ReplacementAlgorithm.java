@@ -639,6 +639,8 @@ public class ReplacementAlgorithm {
 
 		findReplacements(variables1, creations2, replacementInfo, ReplacementType.VARIABLE_REPLACED_WITH_CLASS_INSTANCE_CREATION, container1, container2, classDiff);
 		findReplacements(creations1, variables2, replacementInfo, ReplacementType.VARIABLE_REPLACED_WITH_CLASS_INSTANCE_CREATION, container1, container2, classDiff);
+		findReplacements(variables1, convertLambdasToStringSet(lambdas2), replacementInfo, ReplacementType.VARIABLE_REPLACED_WITH_LAMBDA, container1, container2, classDiff);
+		findReplacements(convertLambdasToStringSet(lambdas1), variables2, replacementInfo, ReplacementType.VARIABLE_REPLACED_WITH_LAMBDA, container1, container2, classDiff);
 		if(statement1.getString().startsWith(JAVA.THROW_SPACE) && statement2.getString().startsWith(JAVA.THROW_SPACE) && creationCoveringTheEntireStatement2 != null && creations2.isEmpty()) {
 			findReplacements(variables1, Set.of(creationCoveringTheEntireStatement2.actualString()), replacementInfo, ReplacementType.VARIABLE_REPLACED_WITH_CLASS_INSTANCE_CREATION, container1, container2, classDiff);
 		}
@@ -3704,6 +3706,14 @@ public class ReplacementAlgorithm {
 		return set;
 	}
 
+	private static Set<String> convertLambdasToStringSet(List<LambdaExpressionObject> expressions) {
+		Set<String> set = new LinkedHashSet<>();
+		for(LambdaExpressionObject expression : expressions) {
+			set.add(expression.getString());
+		}
+		return set;
+	}
+
 	private static void replaceVariablesWithArguments(Set<String> variables, Map<String, String> parameterToArgumentMap) {
 		for(String parameter : parameterToArgumentMap.keySet()) {
 			String argument = parameterToArgumentMap.get(parameter);
@@ -4733,7 +4743,7 @@ public class ReplacementAlgorithm {
 								operationBodyMapper.getNonMappedLeavesT1().addAll(mapper.getNonMappedLeavesT1());
 								operationBodyMapper.getNonMappedLeavesT2().addAll(mapper.getNonMappedLeavesT2());
 								if(operationBodyMapper.getContainer1() != null && operationBodyMapper.getContainer2() != null) {
-									ReplaceAnonymousWithLambdaRefactoring ref = new ReplaceAnonymousWithLambdaRefactoring(anonymousClass1, lambda2, container1, container2);
+									ReplaceAnonymousWithLambdaRefactoring ref = new ReplaceAnonymousWithLambdaRefactoring(anonymousClass1, lambda2, statement1, statement2, container1, container2, mapper.getMappings());
 									operationBodyMapper.getRefactoringsAfterPostProcessing().add(ref);
 									operationBodyMapper.getRefactoringsAfterPostProcessing().addAll(mapper.getRefactorings());
 								}
