@@ -15,4 +15,10 @@ public class ParamNode extends ASTNode {
         visitor.visit(this);
     }
 
+    @Override
+    public String toString() {
+        return "ParamNode{" +
+                "paramName='" + paramName + '\'' +
+                '}';
+    }
 }

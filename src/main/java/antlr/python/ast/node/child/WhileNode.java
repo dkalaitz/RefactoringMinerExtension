@@ -18,5 +18,13 @@ public class WhileNode extends ASTNode {
     public void accept(PythonASTVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public String toString() {
+        return "WhileNode{" +
+                "condition=" + condition +
+                ", body=" + body +
+                '}';
+    }
 }
 

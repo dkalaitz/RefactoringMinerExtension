@@ -19,4 +19,12 @@ public class ElifNode extends ASTNode {
     public void accept(PythonASTVisitor visitor) {
         visitor.visit(this);  // Accept the visitor for traversing this node
     }
+
+    @Override
+    public String toString() {
+        return "ElifNode{" +
+                "condition=" + condition +
+                ", body=" + body +
+                '}';
+    }
 }

@@ -18,5 +18,12 @@ public class ElseNode extends ASTNode {
     public void accept(PythonASTVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public String toString() {
+        return "ElseNode{" +
+                "body=" + body +
+                '}';
+    }
 }
 

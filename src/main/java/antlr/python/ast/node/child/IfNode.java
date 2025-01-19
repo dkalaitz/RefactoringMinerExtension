@@ -23,5 +23,15 @@ public class IfNode extends ASTNode {
     public void accept(PythonASTVisitor visitor) {
         visitor.visit(this);  // Accept the visitor for traversing this node
     }
+
+    @Override
+    public String toString() {
+        return "IfNode{" +
+                "condition=" + condition +
+                ", body=" + body +
+                ", elifs=" + elifs +
+                ", elseBody=" + elseBody +
+                '}';
+    }
 }
 

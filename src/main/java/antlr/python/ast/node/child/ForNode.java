@@ -33,5 +33,13 @@ public class ForNode extends ASTNode {
     public void accept(PythonASTVisitor visitor) {
         visitor.visit(this);
     }
+
+    @Override
+    public String toString() {
+        return "ForNode{" +
+                "iterables=" + iterables +
+                ", body=" + body +
+                '}';
+    }
 }
 
