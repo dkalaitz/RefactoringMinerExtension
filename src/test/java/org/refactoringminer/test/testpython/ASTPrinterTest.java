@@ -1,10 +1,10 @@
 package org.refactoringminer.test.testpython;
 
-import antlr.python.base.Python3Lexer;
-import antlr.python.base.Python3Parser;
-import antlr.python.ast.visitor.ASTPrinter;
-import antlr.python.ast.builder.PythonASTBuilder;
-import antlr.python.node.ASTNode;
+import antlr.base.python.Python3Lexer;
+import antlr.base.python.Python3Parser;
+import antlr.ast.visitor.ASTPrinter;
+import antlr.ast.builder.python.PythonASTBuilder;
+import antlr.ast.node.ASTNode;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -24,10 +24,10 @@ public class ASTPrinterTest {
         // Example Python code
         String code = "class Calculator:\n" +
                 "    def add(self, x, y):\n" +
-                "        return x + y";
+                "        x = x + y\n" +
+                "        return x";
 
-       /* code = "if x==10:\n" +
-                "    y = 20\n";*/
+       // code = "x = 10";
       /*  code = "if x==10:\n" +
                 "    print(\"x is equal to 10\")\n" +
                 "elif x>10:\n" +
