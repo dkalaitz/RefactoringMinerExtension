@@ -41,7 +41,6 @@ public class TypeDeclaration extends ASTNode {
         }
     }
 
-    @Override
     public String toString() {
         return "TypeDeclaration{" +
                 "name='" + name + '\'' +

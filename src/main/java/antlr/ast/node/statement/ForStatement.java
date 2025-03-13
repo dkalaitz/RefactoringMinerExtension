@@ -1,31 +1,34 @@
 package antlr.ast.node.statement;
 
+import antlr.ast.node.misc.SingleVariableDeclaration;
 import antlr.ast.visitor.ASTVisitor;
 import antlr.ast.node.ASTNode;
 
 import java.util.List;
 
 public class ForStatement extends ASTNode {
-    private final List<ASTNode> loopVariables;
-    private final ASTNode loopBody;
-    private final ASTNode elseBody;
 
-    public ForStatement(List<ASTNode> loopVariables, ASTNode loopBody, ASTNode elseBody, int startLine, int startChar, int endLine, int endChar) {
+    private final List<SingleVariableDeclaration> initializers;
+    private final ASTNode condition;
+    private final List<ASTNode> updates;
+    private final ASTNode body;
+    private final ASTNode elseBody; // Optional (for Python-like behavior)
+
+    public ForStatement(List<SingleVariableDeclaration> initializers, ASTNode condition, List<ASTNode> updates,
+                        ASTNode body, ASTNode elseBody, int startLine, int startChar,
+                        int endLine, int endChar) {
         super("ForStatement", startLine, startChar, endLine, endChar);
-        this.loopVariables = loopVariables;
-        this.loopBody = loopBody;
+        this.initializers = initializers;
+        this.condition = condition;
+        this.updates = updates;
+        this.body = body;
         this.elseBody = elseBody;
-        if (loopVariables != null) loopVariables.forEach(this::addChild);
-        if (loopBody != null) addChild(loopBody);
+
+        if (initializers != null) initializers.forEach(this::addChild);
+        if (condition != null) addChild(condition);
+        if (updates != null) updates.forEach(this::addChild);
+        if (body != null) addChild(body);
         if (elseBody != null) addChild(elseBody);
-    }
-
-    public List<ASTNode> getLoopVariables() {
-        return loopVariables;
-    }
-
-    public ASTNode getLoopBody() {
-        return loopBody;
     }
 
     public ASTNode getElseBody() {
@@ -35,10 +38,25 @@ public class ForStatement extends ASTNode {
     @Override
     public void accept(ASTVisitor visitor) {
         visitor.visit(this);
-        for (ASTNode variable : loopVariables) {
-            variable.accept(visitor);
+        if (initializers != null) {
+            for (ASTNode initializer : initializers) initializer.accept(visitor);
         }
-        if (loopBody != null) loopBody.accept(visitor);
+        if (condition != null) condition.accept(visitor);
+        if (updates != null) {
+            for (ASTNode update : updates) update.accept(visitor);
+        }
+        if (body != null) body.accept(visitor);
         if (elseBody != null) elseBody.accept(visitor);
+    }
+
+    @Override
+    public String toString() {
+        return "ForStatement{" +
+                "initializers=" + initializers +
+                ", condition=" + condition +
+                ", updates=" + updates +
+                ", body=" + body +
+                ", elseBody=" + elseBody +
+                '}';
     }
 }

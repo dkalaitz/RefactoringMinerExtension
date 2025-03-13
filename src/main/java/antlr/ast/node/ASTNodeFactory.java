@@ -1,12 +1,11 @@
-package antlr.ast.builder.python;
+package antlr.ast.node;
 
-import antlr.ast.node.ASTNode;
 import antlr.ast.node.declaration.MethodDeclaration;
 import antlr.ast.node.declaration.TypeDeclaration;
 import antlr.ast.node.expression.Assignment;
 import antlr.ast.node.expression.InfixExpression;
-import antlr.ast.node.misc.Identifier;
-import antlr.ast.node.misc.Parameter;
+import antlr.ast.node.misc.SimpleName;
+import antlr.ast.node.misc.SingleVariableDeclaration;
 import antlr.ast.node.statement.Block;
 import antlr.ast.node.statement.IfStatement;
 import antlr.ast.node.statement.ForStatement;
@@ -32,12 +31,12 @@ public class ASTNodeFactory {
         return type;
     }
 
-    public static MethodDeclaration createMethodDeclaration(String name, ParserRuleContext ctx, List<Parameter> parameters, Block body) {
+    public static MethodDeclaration createMethodDeclaration(String name, ParserRuleContext ctx, List<SingleVariableDeclaration> singleVariableDeclarations, Block body) {
         MethodDeclaration method = new MethodDeclaration(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
                 ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
         method.setName(name);
-        if (parameters != null) {
-            parameters.forEach(method::addParameter);
+        if (singleVariableDeclarations != null) {
+            singleVariableDeclarations.forEach(method::addParameter);
         }
         if (body != null) {
             method.setBody(body);
@@ -45,13 +44,14 @@ public class ASTNodeFactory {
         return method;
     }
 
-    public static Parameter createParameter(String name, ParserRuleContext ctx) {
-        return new Parameter(name, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
+    public static SingleVariableDeclaration createSingleVariableDeclaration(String name, ParserRuleContext ctx) {
+        SimpleName simpleName = createSimpleName(name, ctx);
+        return new SingleVariableDeclaration(simpleName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
                 ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
     }
 
-    public static Identifier createIdentifier(String name, ParserRuleContext ctx) {
-        return new Identifier(name, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
+    public static SimpleName createSimpleName(String name, ParserRuleContext ctx) {
+        return new SimpleName(name, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
                 ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
     }
 
@@ -78,7 +78,7 @@ public class ASTNodeFactory {
                 ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
     }
 
-    public static InfixExpression createInfixExpression(ASTNode left, String operator, ASTNode right, ParserRuleContext ctx) {
+    public static InfixExpression createInfixExpression(ASTNode left, ASTNode right, String operator, ParserRuleContext ctx) {
         return new InfixExpression(left, operator, right, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
                 ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
     }
@@ -88,13 +88,16 @@ public class ASTNodeFactory {
                 ctx.getStart().getCharPositionInLine(), ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
     }
 
-    public static ForStatement createForStatement(List<ASTNode> loopVariables, Block loopBody, Block elseBody, ParserRuleContext ctx) {
-        return new ForStatement(loopVariables, loopBody, elseBody, ctx.getStart().getLine(),
-                ctx.getStart().getCharPositionInLine(), ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+    public static ForStatement createForStatement(List<SingleVariableDeclaration> initializers, ASTNode condition,
+                                                  List<ASTNode> updates, Block loopBody,
+                                                  Block elseBody, ParserRuleContext ctx) {
+        return new ForStatement(initializers, condition, updates, loopBody, elseBody,
+                ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
+                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
     }
 
-    public static WhileStatement createWhileStatement(ASTNode condition, Block body, ParserRuleContext ctx) {
+    public static WhileStatement createWhileStatement(ASTNode condition, Block body, Block elseBody, ParserRuleContext ctx) {
         return new WhileStatement("WhileStatement", ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine(), condition, body, elseBody);
     }
 }

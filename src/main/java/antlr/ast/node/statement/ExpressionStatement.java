@@ -13,4 +13,9 @@ public class ExpressionStatement extends ASTNode {
     public void accept(ASTVisitor visitor) {
 
     }
+
+
+    public String toString() {
+        return "ExpressionStatement{}";
+    }
 }

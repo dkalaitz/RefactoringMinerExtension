@@ -1,6 +1,6 @@
 package antlr.ast.node.declaration;
 
-import antlr.ast.node.misc.Parameter;
+import antlr.ast.node.misc.SingleVariableDeclaration;
 import antlr.ast.node.statement.Block;
 import antlr.ast.visitor.ASTVisitor;
 import antlr.ast.node.ASTNode;
@@ -12,7 +12,7 @@ import java.util.List;
 // Class representing a method within a type
 public class MethodDeclaration extends ASTNode {
     private String name;
-    private final List<Parameter> parameters = new ArrayList<>();
+    private final List<SingleVariableDeclaration> parameters = new ArrayList<>();
 
     private Block body;
 
@@ -28,12 +28,12 @@ public class MethodDeclaration extends ASTNode {
         this.name = name;
     }
 
-    public List<Parameter> getParameters() {
+    public List<SingleVariableDeclaration> getParameters() {
         return Collections.unmodifiableList(parameters);
     }
 
-    public void addParameter(Parameter parameter) {
-        parameters.add(parameter);
+    public void addParameter(SingleVariableDeclaration singleVariableDeclaration) {
+        parameters.add(singleVariableDeclaration);
     }
 
     public Block getBody() {
@@ -47,15 +47,14 @@ public class MethodDeclaration extends ASTNode {
     @Override
     public void accept(ASTVisitor visitor) {
         visitor.visit(this);
-        for (Parameter parameter : parameters) {
-            parameter.accept(visitor);
+        for (SingleVariableDeclaration singleVariableDeclaration : parameters) {
+            singleVariableDeclaration.accept(visitor);
         }
         if (body != null) {
             body.accept(visitor);
         }
     }
 
-    @Override
     public String toString() {
         return "MethodDeclaration{" +
                 "name='" + name + '\'' +

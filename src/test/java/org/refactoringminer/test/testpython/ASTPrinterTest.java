@@ -20,27 +20,58 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ASTPrinterTest {
 
     @Test
-    public void testASTVisitor() throws IOException {
+    public void testASTVisitor() {
         // Example Python code
         String code = "class Calculator:\n" +
                 "    def add(self, x, y):\n" +
                 "        x = x + y\n" +
                 "        return x";
+        printAST(code);
+    }
 
-       // code = "x = 10";
-      /*  code = "if x==10:\n" +
-                "    print(\"x is equal to 10\")\n" +
-                "elif x>10:\n" +
-                "   print(\"x is greater than 10\")\n" +
-                "elif x<10:\n" +
-                "   print(\"x is less than 10\")";;*/
-        Path pythonFilePath = Path.of("C:/Users/popos/Desktop/pyfiles/sample.py");
+    @Test
+    public void testASTVisitor_IfStatement() {
+        // Example Python code with if statement
+        String code = "class Calculator:\n" +
+                "    def add(self, x, y):\n" +
+                "        if x > y:\n" +
+                "            return x\n" +
+                "        else:\n" +
+                "            return y";
 
+        printAST(code);
+    }
 
+    @Test
+    public void testASTVisitor_ForLoop() {
+        // Example Python code with for loop
+        String code = "class ListProcessor:\n" +
+                "    def process_numbers(self, numbers):\n" +
+                "        sum = 0\n" +
+                "        for num in numbers:\n" +
+                "            sum = sum + num\n" +
+                "        return sum";
+
+        printAST(code);
+    }
+
+    @Test
+    public void testASTVisitor_WhileLoop() {
+        // Example Python code with for while
+        String code = "class Counter:\n" +
+                "    def count_up(self, limit):\n" +
+                "        i = 0\n" +
+                "        while i < limit:\n" +
+                "            i = i + 1\n" +
+                "            print(i)\n" +
+                "        return i";
+
+        printAST(code);
+    }
+
+    private void printAST(String code) {
         // Parse the code using ANTLR
 
-        CharStream charStream = CharStreams.fromPath(pythonFilePath);
-        //Python3Lexer lexer = new Python3Lexer(charStream);
         Python3Lexer lexer = new Python3Lexer(CharStreams.fromString(code));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         Python3Parser parser = new Python3Parser(tokens);
@@ -48,7 +79,7 @@ public class ASTPrinterTest {
 
         // Build the AST using the PythonASTBuilder
         PythonASTBuilder astBuilder = new PythonASTBuilder();
-        ASTNode ast = astBuilder.visit(parseTree);  // Build the AST
+        ASTNode ast = astBuilder.build(parseTree);  // Build the AST
 
         // Debug: Print the parse tree for reference
         System.out.println("Parse Tree:");
@@ -57,23 +88,29 @@ public class ASTPrinterTest {
         // Print the AST using the ASTPrinter
         System.out.println("\nAST Structure:");
         ASTPrinter printer = new ASTPrinter();
-        ast.accept(printer); // Traverse the AST and print it
+        ast.accept(printer);
     }
 
-  /*  @Test
-    public void testVisitTest() {
-        String code = "x > 10";
-        Python3Lexer lexer = new Python3Lexer(CharStreams.fromString(code));
+    private void printAST(Path pythonFilePath) throws IOException {
+        // Parse the code using ANTLR
+
+        CharStream charStream = CharStreams.fromPath(pythonFilePath);
+        Python3Lexer lexer = new Python3Lexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         Python3Parser parser = new Python3Parser(tokens);
+        Python3Parser.File_inputContext parseTree = parser.file_input();  // Generate the parse tree
 
-        Python3Parser.TestContext testCtx = parser.test();
+        // Build the AST using the PythonASTBuilder
         PythonASTBuilder astBuilder = new PythonASTBuilder();
+        ASTNode ast = astBuilder.build(parseTree);  // Build the AST
 
-        ASTNode conditionNode = astBuilder.visitTest(testCtx);
+        // Debug: Print the parse tree for reference
+        System.out.println("Parse Tree:");
+        System.out.println(parseTree.toStringTree(parser));
 
-        assertNotNull(conditionNode, "ConditionNode should not be null");
-        System.out.println("ConditionNode: " + conditionNode);
-    }*/
-
+        // Print the AST using the ASTPrinter
+        System.out.println("\nAST Structure:");
+        ASTPrinter printer = new ASTPrinter();
+        ast.accept(printer);
+    }
 }

@@ -38,7 +38,6 @@ public class IfStatement extends ASTNode {
         if (elseBody != null) elseBody.accept(visitor);
     }
 
-    @Override
     public String toString() {
         return "IfStatement{" +
                 "condition=" + condition +

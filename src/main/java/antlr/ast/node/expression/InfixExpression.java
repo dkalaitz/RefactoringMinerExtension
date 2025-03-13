@@ -36,7 +36,6 @@ public class InfixExpression extends ASTNode {
         if (right != null) right.accept(visitor);
     }
 
-    @Override
     public String toString() {
         return "InfixExpression{" +
                 "left=" + left +

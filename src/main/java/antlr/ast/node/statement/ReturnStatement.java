@@ -26,7 +26,6 @@ public class ReturnStatement extends ASTNode {
         }
     }
 
-    @Override
     public String toString() {
         return "ReturnStatement{" +
                 "expression=" + expression +

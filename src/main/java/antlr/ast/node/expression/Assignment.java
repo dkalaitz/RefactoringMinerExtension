@@ -34,7 +34,6 @@ public class Assignment extends ASTNode {
         rightSide.accept(visitor);
     }
 
-    @Override
     public String toString() {
         return "Assignment{" +
                 "leftSide=" + leftSide +

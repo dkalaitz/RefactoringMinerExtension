@@ -47,6 +47,9 @@ public abstract class ASTNode {
 
     public int getEndChar() { return endChar; }
 
+    @Override
+    public abstract String toString();
+
     // Accept method for visitor pattern
     public abstract void accept(ASTVisitor visitor);
 }
