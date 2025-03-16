@@ -1,9 +1,11 @@
 // Generated from C:/Users/popos/Desktop/RefactoringMiner/src/main/antlr/Python3Lexer.g4 by ANTLR 4.13.2
 package antlr.base.python;
 
-import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.*;
+import org.antlr.v4.runtime.atn.ATN;
+import org.antlr.v4.runtime.atn.ATNDeserializer;
+import org.antlr.v4.runtime.atn.LexerATNSimulator;
+import org.antlr.v4.runtime.atn.PredictionContextCache;
 import org.antlr.v4.runtime.dfa.DFA;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue", "this-escape"})

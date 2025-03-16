@@ -1,6 +1,9 @@
 package antlr.ast.builder.python;
 
-import antlr.ast.builder.python.component.*;
+import antlr.ast.builder.python.component.PyCompilationUnitASTBuilderPy;
+import antlr.ast.builder.python.component.PyDeclarationASTBuilderPy;
+import antlr.ast.builder.python.component.PyExpressionASTBuilderPy;
+import antlr.ast.builder.python.component.PyStatementASTBuilderPy;
 import antlr.ast.node.LangASTNode;
 import antlr.base.python.Python3Parser;
 import antlr.base.python.Python3ParserBaseVisitor;

@@ -1,7 +1,7 @@
 package antlr.ast.node.statement;
 
-import antlr.ast.visitor.LangASTVisitor;
 import antlr.ast.node.LangASTNode;
+import antlr.ast.visitor.LangASTVisitor;
 
 public class LangIfStatement extends LangASTNode {
     private final LangASTNode condition;

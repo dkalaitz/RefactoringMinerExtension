@@ -1,6 +1,9 @@
 package antlr.base.python;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonToken;
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.Token;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

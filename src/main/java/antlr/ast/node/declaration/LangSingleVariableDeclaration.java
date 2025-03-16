@@ -1,8 +1,8 @@
 package antlr.ast.node.declaration;
 
+import antlr.ast.node.LangASTNode;
 import antlr.ast.node.misc.LangSimpleName;
 import antlr.ast.visitor.LangASTVisitor;
-import antlr.ast.node.LangASTNode;
 
 /**
  * Represents a method/function parameter declaration in a JDT-like style

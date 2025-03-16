@@ -1,6 +1,7 @@
 package antlr.base.python;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.TokenStream;
 
 public abstract class Python3ParserBase extends Parser
 {

@@ -4,8 +4,8 @@ import antlr.ast.builder.python.PyASTBuilder;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.LangASTNodeFactory;
 import antlr.ast.node.declaration.LangMethodDeclaration;
-import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
+import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.statement.LangBlock;
 import antlr.base.python.Python3Parser;
 

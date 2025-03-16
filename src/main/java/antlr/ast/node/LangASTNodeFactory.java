@@ -1,6 +1,7 @@
 package antlr.ast.node;
 
 import antlr.ast.node.declaration.LangMethodDeclaration;
+import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangInfixExpression;
@@ -9,9 +10,7 @@ import antlr.ast.node.literal.LangBooleanLiteral;
 import antlr.ast.node.literal.LangIntegerLiteral;
 import antlr.ast.node.literal.LangStringLiteral;
 import antlr.ast.node.misc.LangSimpleName;
-import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.statement.*;
-import antlr.ast.node.statement.LangBlock;
 import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.base.python.Python3Parser;
 import org.antlr.v4.runtime.ParserRuleContext;

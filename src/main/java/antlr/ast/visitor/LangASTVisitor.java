@@ -1,6 +1,7 @@
 package antlr.ast.visitor;
 
 import antlr.ast.node.declaration.LangMethodDeclaration;
+import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangInfixExpression;
@@ -10,7 +11,6 @@ import antlr.ast.node.literal.LangIntegerLiteral;
 import antlr.ast.node.literal.LangListLiteral;
 import antlr.ast.node.literal.LangStringLiteral;
 import antlr.ast.node.misc.LangSimpleName;
-import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.statement.*;
 import antlr.ast.node.unit.LangCompilationUnit;
 

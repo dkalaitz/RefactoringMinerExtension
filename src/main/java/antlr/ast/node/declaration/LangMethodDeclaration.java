@@ -1,8 +1,8 @@
 package antlr.ast.node.declaration;
 
+import antlr.ast.node.LangASTNode;
 import antlr.ast.node.statement.LangBlock;
 import antlr.ast.visitor.LangASTVisitor;
-import antlr.ast.node.LangASTNode;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -2,8 +2,8 @@ package antlr.jdtmapper.lang.python;
 
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.declaration.LangMethodDeclaration;
-import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
+import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.statement.LangBlock;
 import antlr.ast.node.unit.LangCompilationUnit;
