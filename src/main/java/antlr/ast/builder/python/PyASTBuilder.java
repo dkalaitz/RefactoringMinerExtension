@@ -1,12 +1,12 @@
 package antlr.ast.builder.python;
 
-import antlr.ast.builder.python.component.PyCompilationUnitASTBuilderPy;
-import antlr.ast.builder.python.component.PyDeclarationASTBuilderPy;
-import antlr.ast.builder.python.component.PyExpressionASTBuilderPy;
-import antlr.ast.builder.python.component.PyStatementASTBuilderPy;
+import antlr.ast.builder.python.component.PyCompilationUnitASTBuilder;
+import antlr.ast.builder.python.component.PyDeclarationASTBuilder;
+import antlr.ast.builder.python.component.PyExpressionASTBuilder;
+import antlr.ast.builder.python.component.PyStatementASTBuilder;
 import antlr.ast.node.LangASTNode;
-import antlr.base.python.Python3Parser;
-import antlr.base.python.Python3ParserBaseVisitor;
+import antlr.base.lang.python.Python3Parser;
+import antlr.base.lang.python.Python3ParserBaseVisitor;
 
 /**
  * Βuilder class to traverse the ANTLR parse tree
@@ -14,20 +14,20 @@ import antlr.base.python.Python3ParserBaseVisitor;
  */
 public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> {
 
-    private final PyCompilationUnitASTBuilderPy compilationUnitBuilder;
-    private final PyDeclarationASTBuilderPy declarationBuilder;
-    private final PyExpressionASTBuilderPy expressionBuilder;
-    private final PyStatementASTBuilderPy statementBuilder;
+    private final PyCompilationUnitASTBuilder compilationUnitBuilder;
+    private final PyDeclarationASTBuilder declarationBuilder;
+    private final PyExpressionASTBuilder expressionBuilder;
+    private final PyStatementASTBuilder statementBuilder;
 
     public PyASTBuilder() {
-        this.compilationUnitBuilder = new PyCompilationUnitASTBuilderPy(this);
-        this.declarationBuilder = new PyDeclarationASTBuilderPy(this);
-        this.expressionBuilder = new PyExpressionASTBuilderPy(this);
-        this.statementBuilder = new PyStatementASTBuilderPy(this);
+        this.compilationUnitBuilder = new PyCompilationUnitASTBuilder(this);
+        this.declarationBuilder = new PyDeclarationASTBuilder(this);
+        this.expressionBuilder = new PyExpressionASTBuilder(this);
+        this.statementBuilder = new PyStatementASTBuilder(this);
     }
 
     public LangASTNode build(Python3Parser.File_inputContext ctx) {
-        return visit(ctx);
+        return visitFile_input(ctx);
     }
 
     // LangCompilationUnit related methods

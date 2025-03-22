@@ -9,10 +9,10 @@ import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.literal.LangBooleanLiteral;
 import antlr.ast.node.literal.LangIntegerLiteral;
 import antlr.ast.node.literal.LangStringLiteral;
-import antlr.ast.node.misc.LangSimpleName;
+import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.node.statement.*;
 import antlr.ast.node.unit.LangCompilationUnit;
-import antlr.base.python.Python3Parser;
+import antlr.base.lang.python.Python3Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.List;

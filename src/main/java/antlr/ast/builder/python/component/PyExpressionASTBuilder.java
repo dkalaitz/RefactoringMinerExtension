@@ -5,12 +5,12 @@ import antlr.ast.builder.python.PyASTBuilderUtil;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.LangASTNodeFactory;
 import antlr.ast.node.expression.LangMethodInvocation;
-import antlr.ast.node.misc.LangSimpleName;
-import antlr.base.python.Python3Parser;
+import antlr.ast.node.expression.LangSimpleName;
+import antlr.base.lang.python.Python3Parser;
 
-public class PyExpressionASTBuilderPy extends PyBaseASTBuilder {
+public class PyExpressionASTBuilder extends PyBaseASTBuilder {
 
-    public PyExpressionASTBuilderPy(PyASTBuilder mainBuilder) {
+    public PyExpressionASTBuilder(PyASTBuilder mainBuilder) {
         super(mainBuilder);
     }
 

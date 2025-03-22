@@ -1,4 +1,4 @@
-package antlr.base.python;
+package antlr.base.lang.python;
 
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.TokenStream;

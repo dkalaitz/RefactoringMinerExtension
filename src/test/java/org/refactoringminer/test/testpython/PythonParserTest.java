@@ -1,8 +1,8 @@
 package org.refactoringminer.test.testpython;
 
-import antlr.base.python.Python3Lexer;
-import antlr.base.python.Python3Parser;
-import antlr.base.python.PythonTreeListener;
+import antlr.base.lang.python.Python3Lexer;
+import antlr.base.lang.python.Python3Parser;
+import antlr.base.lang.python.PythonTreeListener;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

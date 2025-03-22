@@ -1,7 +1,7 @@
 package antlr.ast.node.declaration;
 
 import antlr.ast.node.LangASTNode;
-import antlr.ast.node.misc.LangSimpleName;
+import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.visitor.LangASTVisitor;
 
 /**

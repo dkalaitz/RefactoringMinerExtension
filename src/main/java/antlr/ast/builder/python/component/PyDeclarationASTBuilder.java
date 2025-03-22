@@ -7,20 +7,19 @@ import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.statement.LangBlock;
-import antlr.base.python.Python3Parser;
+import antlr.base.lang.python.Python3Parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PyDeclarationASTBuilderPy extends PyBaseASTBuilder {
+public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
 
-    public PyDeclarationASTBuilderPy(PyASTBuilder mainBuilder) {
+    public PyDeclarationASTBuilder(PyASTBuilder mainBuilder) {
         super(mainBuilder);
     }
 
-    
-    public LangASTNode visitClassdef(Python3Parser.ClassdefContext ctx) {
 
+    public LangASTNode visitClassdef(Python3Parser.ClassdefContext ctx) {
         LangTypeDeclaration langTypeDeclaration = LangASTNodeFactory.createTypeDeclaration(ctx);
 
         if (ctx.block() != null) {
@@ -31,6 +30,7 @@ public class PyDeclarationASTBuilderPy extends PyBaseASTBuilder {
                 if (statement instanceof LangMethodDeclaration) {
                     langTypeDeclaration.addMethod((LangMethodDeclaration) statement);
                 }
+
             }
         }
 

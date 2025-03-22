@@ -5,14 +5,14 @@ import antlr.ast.node.LangASTNode;
 import antlr.ast.node.LangASTNodeFactory;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.statement.LangBlock;
-import antlr.base.python.Python3Parser;
+import antlr.base.lang.python.Python3Parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PyStatementASTBuilderPy extends PyBaseASTBuilder {
+public class PyStatementASTBuilder extends PyBaseASTBuilder {
 
-    public PyStatementASTBuilderPy(PyASTBuilder mainBuilder) {
+    public PyStatementASTBuilder(PyASTBuilder mainBuilder) {
         super(mainBuilder);
     }
     

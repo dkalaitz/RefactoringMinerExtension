@@ -10,7 +10,7 @@ import antlr.ast.node.literal.LangBooleanLiteral;
 import antlr.ast.node.literal.LangIntegerLiteral;
 import antlr.ast.node.literal.LangListLiteral;
 import antlr.ast.node.literal.LangStringLiteral;
-import antlr.ast.node.misc.LangSimpleName;
+import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.node.statement.*;
 import antlr.ast.node.unit.LangCompilationUnit;
 

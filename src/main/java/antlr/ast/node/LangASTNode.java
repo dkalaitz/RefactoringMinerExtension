@@ -13,6 +13,7 @@ public abstract class LangASTNode {
     private final int endLine;              // Ending line in source code
     private final int startChar;            // Starting character offset
     private final int endChar;              // Ending character offset
+    private final int length;
     private LangASTNode parent;           // Parent node (null for root)
     private final List<LangASTNode> children;   // List of child nodes
 
@@ -22,6 +23,7 @@ public abstract class LangASTNode {
         this.startChar = startChar;
         this.endLine = endLine;
         this.endChar = endChar;
+        length = endChar - startChar + 1;
         this.children = new ArrayList<>();
     }
 
@@ -46,6 +48,8 @@ public abstract class LangASTNode {
     public int getEndLine() { return endLine; }
 
     public int getEndChar() { return endChar; }
+
+    public int getLength() { return length; }
 
     @Override
     public abstract String toString();

@@ -4,10 +4,10 @@ package org.refactoringminer.utils;
 import antlr.ast.builder.python.PyASTBuilder;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.visitor.LangASTPrinter;
-import antlr.base.python.Python3Lexer;
-import antlr.base.python.Python3Parser;
+import antlr.base.lang.python.Python3Lexer;
+import antlr.base.lang.python.Python3Parser;
 import antlr.jdtmapper.JdtASTMapper;
-import antlr.jdtmapper.JdtASTMapperFactory;
+import antlr.jdtmapper.LangJdtASTConverter;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -16,6 +16,8 @@ import org.eclipse.jdt.core.dom.ASTNode;
 
 import java.io.IOException;
 import java.nio.file.Path;
+
+import static antlr.jdtmapper.JdtASTMapperRegistry.getMapper;
 
 public class LangASTUtil {
 
@@ -66,15 +68,15 @@ public class LangASTUtil {
 
     public static ASTNode mapToJdt(String code) {
 
-        JdtASTMapper mapper = JdtASTMapperFactory.getMapper("python");
-        LangASTNode pyAST = parsePythonCodeToAST(code);
-
-        // Create AST
-        AST jdtAst = AST.newAST(AST.JLS17);
-
+//        JdtASTMapper mapper = getMapper("python");
+//        LangASTNode pyAST = parsePythonCodeToAST(code);
+//
+//        // Create AST
+//        AST jdtAst = AST.newAST(AST.JLS17);
 
         // Map to JDT
-        return mapper.map(pyAST, jdtAst);
+//        return mapper.map(pyAST, jdtAst);
+        return LangJdtASTConverter.getJdtASTFromLangParseTree("python", code);
     }
 
 
@@ -82,7 +84,7 @@ public class LangASTUtil {
         // Use the Python lexer and parser to parse the code
         Python3Lexer lexer = new Python3Lexer(CharStreams.fromString(code));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
-        Python3Parser parser = new antlr.base.python.Python3Parser(tokens);
+        Python3Parser parser = new Python3Parser(tokens);
         Python3Parser.File_inputContext fileInputContext = parser.file_input();
 
         // Build our AST using the PyASTBuilder

@@ -1,6 +1,6 @@
 package antlr.ast.builder.python;
 
-import antlr.base.python.Python3Parser;
+import antlr.base.lang.python.Python3Parser;
 
 public class PyASTBuilderUtil {
 

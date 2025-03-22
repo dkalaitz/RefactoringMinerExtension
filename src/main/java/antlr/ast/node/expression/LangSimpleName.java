@@ -1,4 +1,4 @@
-package antlr.ast.node.misc;
+package antlr.ast.node.expression;
 
 import antlr.ast.node.LangASTNode;
 import antlr.ast.visitor.LangASTVisitor;

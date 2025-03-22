@@ -11,6 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PyASTPrinterTest {
 
     @Test
+    public void testASTVisitorSimple() {
+        String code = "x = 10";
+        LangASTUtil.printAST(code);
+    }
+
+    @Test
     public void testASTVisitor() {
         // Example Python code
         String code = "class Calculator:\n" +

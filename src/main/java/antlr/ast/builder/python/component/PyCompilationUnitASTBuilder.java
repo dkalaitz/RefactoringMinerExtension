@@ -5,11 +5,11 @@ import antlr.ast.node.LangASTNode;
 import antlr.ast.node.LangASTNodeFactory;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.unit.LangCompilationUnit;
-import antlr.base.python.Python3Parser;
+import antlr.base.lang.python.Python3Parser;
 
-public class PyCompilationUnitASTBuilderPy extends PyBaseASTBuilder {
+public class PyCompilationUnitASTBuilder extends PyBaseASTBuilder {
 
-    public PyCompilationUnitASTBuilderPy(PyASTBuilder mainBuilder) {
+    public PyCompilationUnitASTBuilder(PyASTBuilder mainBuilder) {
         super(mainBuilder);
     }
 
@@ -21,15 +21,15 @@ public class PyCompilationUnitASTBuilderPy extends PyBaseASTBuilder {
         for (Python3Parser.StmtContext stmtCtx : ctx.stmt()) {
             LangASTNode child = mainBuilder.visit(stmtCtx);
             if (child != null) {
-                langCompilationUnit.addChild(child);
                 if (child instanceof LangTypeDeclaration) {
                     langCompilationUnit.addType((LangTypeDeclaration) child);
+                } else {
+                    langCompilationUnit.addChild(child); // Only add non-types as children
                 }
             }
         }
         System.out.println("LangCompilationUnit: " + langCompilationUnit.getChildren().toString());
         return langCompilationUnit;
     }
-
 
 }
