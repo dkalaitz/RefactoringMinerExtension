@@ -68,4 +68,20 @@ public abstract class BaseJdtASTMapper implements JdtASTMapper {
         };
     }
 
+    public static void setSourceRange(ASTNode node, LangASTNode langNode) {
+        if (langNode.getStartChar() >= 0 && langNode.getLength() > 0) {
+            node.setSourceRange(langNode.getStartChar(), langNode.getLength());
+        }
+    }
+
+    public static void validateNodePosition(ASTNode node, LangASTNode langNode) {
+        if (node.getStartPosition() < 0) {
+            System.err.println("Warning: Missing source position for " +
+                    node.getClass().getSimpleName() + " mapped from " +
+                    langNode.getClass().getSimpleName());
+        }
+    }
+
+
+
 }

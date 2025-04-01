@@ -15,11 +15,13 @@ public class PyExpressionMapper {
      * @param jdtAst The JDT AST to create nodes with
      * @return A JDT SimpleName node
      */
-    public SimpleName mapSimpleName(LangSimpleName langSimpleName, AST jdtAst) {
+    public SimpleName mapSimpleName(LangSimpleName langSimpleName, AST jdtAst, PyJdtASTMapper pyJdtASTMapper) {
         if (langSimpleName == null) return null;
 
-        // Create a new SimpleName node with the identifier from the LangSimpleName
-        return jdtAst.newSimpleName(langSimpleName.getIdentifier());
+        SimpleName simpleName = jdtAst.newSimpleName(langSimpleName.getIdentifier());
+        pyJdtASTMapper.setSourceRange(simpleName, langSimpleName);
+
+        return simpleName;
     }
 
     /**
@@ -62,6 +64,7 @@ public class PyExpressionMapper {
         if (langAssignment == null) return null;
 
         Assignment assignment = jdtAst.newAssignment();
+        pyJdtASTMapper.setSourceRange(assignment, langAssignment);
 
         // Map the left side (target) of the assignment
         Expression leftSide = (Expression) pyJdtASTMapper.map(langAssignment.getLeftSide(), jdtAst);
@@ -75,8 +78,6 @@ public class PyExpressionMapper {
         Assignment.Operator operator = mapAssignmentOperator(langAssignment.getOperator());
         assignment.setOperator(operator);
 
-
-        assignment.setSourceRange(langAssignment.getStartChar(), langAssignment.getLength());
 
         return assignment;
     }

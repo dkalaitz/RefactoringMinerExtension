@@ -35,13 +35,12 @@ public class PyStatementMapper {
         if (langBlock == null) return null;
 
         Block block = jdtAst.newBlock();
+        pyJdtASTMapper.setSourceRange(block, langBlock);
 
         // Map statements
         if (langBlock.getStatements() != null) {
-            System.out.println("Python block has " + langBlock.getStatements().size() + " statements");
 
             for (LangASTNode langStmt : langBlock.getStatements()) {
-                System.out.println("Processing Python statement: " + langStmt.getClass().getSimpleName());
 
                 // Use the main mapper to convert LangASTNode to JDT ASTNode
                 ASTNode jdtNode = pyJdtASTMapper.map(langStmt, jdtAst);
@@ -74,6 +73,7 @@ public class PyStatementMapper {
         if (langReturn == null) return null;
 
         ReturnStatement returnStatement = jdtAst.newReturnStatement();
+        pyJdtASTMapper.setSourceRange(returnStatement, langReturn);
 
         LangASTNode langExpression = langReturn.getExpression();
         if (langExpression != null) {

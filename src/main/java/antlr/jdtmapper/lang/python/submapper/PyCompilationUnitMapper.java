@@ -7,6 +7,8 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
 
+import java.util.ArrayList;
+
 /**
  * Maps Python compilation unit nodes to JDT compilation unit nodes
  */
@@ -36,15 +38,13 @@ public class PyCompilationUnitMapper {
 
         CompilationUnit cu = jdtAst.newCompilationUnit();
 
-        System.out.println("CompilationUnit: " + langCompilationUnit);
+        pyJdtASTMapper.setSourceRange(cu, langCompilationUnit);
 
         // Map type declarations (classes)
         if (langCompilationUnit.getTypes() != null) {
-            System.out.println("Types: " + langCompilationUnit.getTypes());
             for (LangTypeDeclaration typeDecl : langCompilationUnit.getTypes()) {
                 TypeDeclaration jdtType = pyJdtASTMapper.mapTypeDeclaration(typeDecl, jdtAst);
                 if (jdtType != null) {
-                    // Use helper method to add the type to compilation unit
                     addTypeToCompilationUnit(cu, jdtType);
                 }
             }

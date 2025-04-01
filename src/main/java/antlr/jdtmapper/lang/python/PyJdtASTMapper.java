@@ -46,7 +46,7 @@ public class PyJdtASTMapper extends BaseJdtASTMapper {
 
     @Override
     public SingleVariableDeclaration mapSingleVariableDeclaration(LangSingleVariableDeclaration langVar, AST jdtAst) {
-        return pyDeclarationMapper.mapSingleVariableDeclaration(langVar, jdtAst);
+        return pyDeclarationMapper.mapSingleVariableDeclaration(langVar, jdtAst, this);
     }
 
     public Assignment mapAssignment(LangAssignment langAssignment, AST jdtAst) {
@@ -54,7 +54,7 @@ public class PyJdtASTMapper extends BaseJdtASTMapper {
     }
 
     public SimpleName mapSimpleName(LangSimpleName langSimpleName, AST jdtAst) {
-        return pyExpressionMapper.mapSimpleName(langSimpleName, jdtAst);
+        return pyExpressionMapper.mapSimpleName(langSimpleName, jdtAst, this);
     }
 
     @Override
@@ -70,6 +70,16 @@ public class PyJdtASTMapper extends BaseJdtASTMapper {
     @Override
     public ReturnStatement mapReturnStatement(LangReturnStatement langReturnStatement, AST jdtAst) {
         return pyStatementMapper.mapReturnStatement(langReturnStatement, jdtAst, this);
+    }
+
+    // Add this to your PyJdtASTMapper class
+    private void debugSourceRanges(ASTNode node, LangASTNode langNode) {
+        System.out.println("Node: " + node.getClass().getSimpleName() +
+                " Position: " + node.getStartPosition() +
+                " Length: " + node.getLength() +
+                " From LangNode: " + langNode.getClass().getSimpleName() +
+                " Start: " + langNode.getStartChar() +
+                " Length: " + langNode.getLength());
     }
 
 }

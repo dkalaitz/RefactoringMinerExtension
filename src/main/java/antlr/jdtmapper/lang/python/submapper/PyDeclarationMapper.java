@@ -6,6 +6,8 @@ import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.jdtmapper.lang.python.PyJdtASTMapper;
 import org.eclipse.jdt.core.dom.*;
 
+import static antlr.jdtmapper.BaseJdtASTMapper.setSourceRange;
+
 /**
  * Maps Python declaration nodes to JDT declaration nodes
  */
@@ -71,6 +73,9 @@ public class PyDeclarationMapper {
         // Set class name
         typeDecl.setName(jdtAst.newSimpleName(langTypeDeclaration.getName()));
 
+        // Set source range
+        setSourceRange(typeDecl, langTypeDeclaration);
+
         // Python classes are public by default
         addModifier(typeDecl, jdtAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
 
@@ -83,6 +88,7 @@ public class PyDeclarationMapper {
                 }
             }
         }
+
 
         return typeDecl;
     }
@@ -97,8 +103,13 @@ public class PyDeclarationMapper {
      */
     public MethodDeclaration mapMethodDeclaration(LangMethodDeclaration langMethodDeclaration, AST jdtAst, PyJdtASTMapper pyJdtASTMapper) {
         if (langMethodDeclaration == null) return null;
+        System.out.println("Mapping method: " + langMethodDeclaration.getName());
+        System.out.println("Lang method source position: start=" + langMethodDeclaration.getStartChar() + ", length=" + langMethodDeclaration.getLength());
 
         MethodDeclaration methodDecl = jdtAst.newMethodDeclaration();
+
+        setSourceRange(methodDecl, langMethodDeclaration);
+       // pyJdtASTMapper.setSourceRange(methodDecl, langMethodDeclaration);
 
         // Set method name
         methodDecl.setName(jdtAst.newSimpleName(langMethodDeclaration.getName()));
@@ -109,20 +120,42 @@ public class PyDeclarationMapper {
         // Map parameters
         if (langMethodDeclaration.getParameters() != null) {
             for (LangSingleVariableDeclaration param : langMethodDeclaration.getParameters()) {
-                SingleVariableDeclaration jdtParam = mapSingleVariableDeclaration(param, jdtAst);
+                SingleVariableDeclaration jdtParam = mapSingleVariableDeclaration(param, jdtAst, pyJdtASTMapper);
                 if (jdtParam != null) {
                     addParameter(methodDecl, jdtParam);
                 }
             }
+        } else {
+            System.out.println("No parameters found");
         }
+
 
         // Map body if available
         if (langMethodDeclaration.getBody() != null) {
             methodDecl.setBody(pyJdtASTMapper.mapBlock(langMethodDeclaration.getBody(), jdtAst));
+            System.out.println("Body mapped successfully");
+        } else {
+            System.out.println("No body found");
         }
+
 
         // Set return type (in Python all methods return Object unless specified)
         methodDecl.setReturnType2(jdtAst.newSimpleType(jdtAst.newSimpleName("Object")));
+
+        System.out.println("Lang position: start=" + langMethodDeclaration.getStartChar() + ", length=" + langMethodDeclaration.getLength());
+        System.out.println("Lang end char" + langMethodDeclaration.getEndChar());
+
+        System.out.println("After setSourceRange - Method position: " + methodDecl.getStartPosition() + ", length: " + methodDecl.getLength());
+
+
+        // Print additional information about the method declaration
+        System.out.println("Method details:");
+        System.out.println("  - Name: " + methodDecl.getName());
+        System.out.println("  - Return type: " + (methodDecl.getReturnType2() != null ? methodDecl.getReturnType2().toString() : "null"));
+        System.out.println("  - Modifiers: " + methodDecl.modifiers());
+        System.out.println("  - Has body: " + (methodDecl.getBody() != null));
+        System.out.println("  - Parameters count: " + methodDecl.parameters().size());
+
 
         return methodDecl;
     }
@@ -134,7 +167,7 @@ public class PyDeclarationMapper {
      * @param jdtAst The JDT AST to create nodes with
      * @return A JDT SingleVariableDeclaration node
      */
-    public SingleVariableDeclaration mapSingleVariableDeclaration(LangSingleVariableDeclaration langVar, AST jdtAst) {
+    public SingleVariableDeclaration mapSingleVariableDeclaration(LangSingleVariableDeclaration langVar, AST jdtAst, PyJdtASTMapper pyJdtASTMapper) {
         if (langVar == null) return null;
 
         SingleVariableDeclaration varDecl = jdtAst.newSingleVariableDeclaration();
@@ -144,6 +177,8 @@ public class PyDeclarationMapper {
 
         // Python is dynamically typed, so use Object as the type
         varDecl.setType(jdtAst.newSimpleType(jdtAst.newSimpleName("Object")));
+
+        setSourceRange(varDecl, langVar);
 
         return varDecl;
     }

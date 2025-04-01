@@ -40,7 +40,7 @@ public class LangJdtASTConverter {
         return getCompatibleJdtAST(lang, (LangCompilationUnit) langAST);
     }
 
-    private static ParserRuleContext getParseTree(String lang, Parser parser){
+    public static ParserRuleContext getParseTree(String lang, Parser parser){
         ParserRuleContext parseTree;
         try {
             if ("python".equals(lang) || "py".equals(lang)) {
@@ -55,7 +55,7 @@ public class LangJdtASTConverter {
         return parseTree;
     }
 
-    private static LangASTNode getLangAST(String lang, ParserRuleContext parseTree){
+    public static LangASTNode getLangAST(String lang, ParserRuleContext parseTree){
         LangASTNode langAST;
         if ("python".equals(lang) || "py".equals(lang)) {
             PyASTBuilder astBuilder = new PyASTBuilder();
