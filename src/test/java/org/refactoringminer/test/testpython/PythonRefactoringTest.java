@@ -112,8 +112,8 @@ public class PythonRefactoringTest {
                 System.out.println("  sum operation: " + sumOperation);
 
                 // Check if they're considered equal except for name
-                boolean equals = addOperation.equalsExceptNameAndExceptions(sumOperation);
-                System.out.println("  equalsExceptNameAndExceptions: " + equals);
+//                boolean equals = addOperation.equalsExceptNameAndExceptions(sumOperation);
+//                System.out.println("  equalsExceptNameAndExceptions: " + equals);
 
                 // Print method body details
                 System.out.println("  add body hash: " + (addOperation.getBody() != null ? addOperation.getBody().getBodyHashCode() : "null"));
@@ -149,8 +149,8 @@ public class PythonRefactoringTest {
                             sumOperation.getParameters().get(i).getName());
                 }
 
-                System.out.println("  Parameters match: " + equals);
-                System.out.println("  equalsExceptNameAndExceptions: " + equals);
+//                System.out.println("  Parameters match: " + equals);
+//                System.out.println("  equalsExceptNameAndExceptions: " + equals);
                 System.out.println("  add body hash: " +
                         (addOperation.getBody() != null ? addOperation.getBody().getBodyHashCode() : "null"));
                 System.out.println("  sum body hash: " +

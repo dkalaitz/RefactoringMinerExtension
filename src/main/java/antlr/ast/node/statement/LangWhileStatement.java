@@ -8,8 +8,8 @@ public class LangWhileStatement extends LangASTNode {
     private final LangASTNode body;       // The body of the while loop
     private final LangASTNode elseBody;   // Optional 'else' body (for Python-style while-else)
 
-    public LangWhileStatement(String nodeType, int startLine, int startChar, int endLine, int endChar, LangASTNode condition, LangASTNode body, LangASTNode elseBody) {
-        super(nodeType, startLine, startChar, endLine, endChar);
+    public LangWhileStatement(int startLine, int startChar, int endLine, int endChar, LangASTNode condition, LangASTNode body, LangASTNode elseBody) {
+        super("LangWhileStatement", startLine, startChar, endLine, endChar);
         this.condition = condition;
         this.body = body;
         this.elseBody = elseBody;

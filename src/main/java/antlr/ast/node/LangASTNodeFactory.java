@@ -20,20 +20,26 @@ import java.util.List;
 public class LangASTNodeFactory {
 
     public static LangCompilationUnit createCompilationUnit(Python3Parser.File_inputContext ctx) {
-        return new LangCompilationUnit(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        return new LangCompilationUnit(ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex());
     }
 
     public static LangTypeDeclaration createTypeDeclaration(Python3Parser.ClassdefContext ctx) {
-        LangTypeDeclaration type = new LangTypeDeclaration(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        LangTypeDeclaration type = new LangTypeDeclaration(ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex());
         type.setName(ctx.name().getText());
         return type;
     }
 
     public static LangMethodDeclaration createMethodDeclaration(String name, ParserRuleContext ctx, List<LangSingleVariableDeclaration> langSingleVariableDeclarations, LangBlock body) {
-        LangMethodDeclaration method = new LangMethodDeclaration(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        LangMethodDeclaration method = new LangMethodDeclaration(ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex());
         method.setName(name);
         if (langSingleVariableDeclarations != null) {
             langSingleVariableDeclarations.forEach(method::addParameter);
@@ -46,18 +52,25 @@ public class LangASTNodeFactory {
 
     public static LangSingleVariableDeclaration createSingleVariableDeclaration(String name, ParserRuleContext ctx) {
         LangSimpleName langSimpleName = createSimpleName(name, ctx);
-        return new LangSingleVariableDeclaration(langSimpleName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        return new LangSingleVariableDeclaration(
+                langSimpleName,
+                ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex());
     }
 
     public static LangSimpleName createSimpleName(String name, ParserRuleContext ctx) {
-        return new LangSimpleName(name, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        return new LangSimpleName(name,
+                ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex());
     }
 
     public static LangBlock createBlock(ParserRuleContext ctx, List<LangASTNode> statements) {
-        LangBlock langBlock = new LangBlock(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        LangBlock langBlock = new LangBlock(ctx.getStart().getLine(), ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(), ctx.getStop().getStopIndex());
         if (statements != null) {
             statements.forEach(langBlock::addStatement);
         }
@@ -65,8 +78,12 @@ public class LangASTNodeFactory {
     }
 
     public static LangReturnStatement createReturnStatement(LangASTNode expression, ParserRuleContext ctx) {
-        LangReturnStatement langReturnStatement = new LangReturnStatement("LangReturnStatement", ctx.getStart().getLine(),
-                ctx.getStart().getCharPositionInLine(), ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        LangReturnStatement langReturnStatement =
+                new LangReturnStatement(
+                        ctx.getStart().getLine(),
+                        ctx.getStart().getStartIndex(),
+                        ctx.getStop().getLine(),
+                        ctx.getStop().getStopIndex());
         if (expression != null) {
             langReturnStatement.setExpression(expression);
         }
@@ -74,36 +91,60 @@ public class LangASTNodeFactory {
     }
 
     public static LangAssignment createAssignment(String operator, LangASTNode left, LangASTNode right, ParserRuleContext ctx) {
-        return new LangAssignment(operator, left, right, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        return new LangAssignment(operator,
+                left,
+                right,
+                ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex());
     }
 
     public static LangInfixExpression createInfixExpression(LangASTNode left, LangASTNode right, String operator, ParserRuleContext ctx) {
-        return new LangInfixExpression(left, operator, right, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        return new LangInfixExpression(left,
+                operator,
+                right,
+                ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex());
     }
 
     public static LangIfStatement createIfStatement(LangASTNode condition, LangBlock body, LangBlock elseBody, ParserRuleContext ctx) {
-        return new LangIfStatement(condition, body, elseBody, ctx.getStart().getLine(),
-                ctx.getStart().getCharPositionInLine(), ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        return new LangIfStatement(condition,
+                body,
+                elseBody,
+                ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex());
     }
 
     public static LangForStatement createForStatement(List<LangSingleVariableDeclaration> initializers, LangASTNode condition,
                                                       List<LangASTNode> updates, LangBlock loopBody,
                                                       LangBlock elseBody, ParserRuleContext ctx) {
         return new LangForStatement(initializers, condition, updates, loopBody, elseBody,
-                ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+                ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex());
     }
 
     public static LangWhileStatement createWhileStatement(LangASTNode condition, LangBlock body, LangBlock elseBody, ParserRuleContext ctx) {
-        return new LangWhileStatement("LangWhileStatement", ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine(), condition, body, elseBody);
+        return new LangWhileStatement(
+                ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex(),
+                condition, body, elseBody);
     }
 
     public static LangMethodInvocation createMethodInvocation(ParserRuleContext ctx) {
-        return new LangMethodInvocation(ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(), ctx.getStop().getCharPositionInLine());
+        return new LangMethodInvocation(
+                ctx.getStart().getLine(),
+                ctx.getStart().getStartIndex(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getStopIndex());
     }
 
     public static LangIntegerLiteral createIntegerLiteral(ParserRuleContext ctx, String value) {
@@ -111,9 +152,9 @@ public class LangASTNodeFactory {
             int intValue = Integer.parseInt(value);
             return new LangIntegerLiteral(
                     ctx.getStart().getLine(),
-                    ctx.getStart().getCharPositionInLine(),
+                    ctx.getStart().getStartIndex(),
                     ctx.getStop().getLine(),
-                    ctx.getStop().getCharPositionInLine(),
+                    ctx.getStop().getStopIndex(),
                     intValue
             );
         } catch (NumberFormatException e) {
@@ -121,15 +162,14 @@ public class LangASTNodeFactory {
         }
     }
 
-    // Factory method for creating LangStringLiteral nodes
     public static LangStringLiteral createStringLiteral(ParserRuleContext ctx, String value) {
         // Remove the surrounding quotes from the string value
         String unquotedValue = value.length() >= 2 ? value.substring(1, value.length() - 1) : value;
         return new LangStringLiteral(
                 ctx.getStart().getLine(),
-                ctx.getStart().getCharPositionInLine(),
+                ctx.getStart().getStartIndex(),
                 ctx.getStop().getLine(),
-                ctx.getStop().getCharPositionInLine(),
+                ctx.getStop().getStopIndex(),
                 unquotedValue
         );
     }
@@ -138,9 +178,9 @@ public class LangASTNodeFactory {
     public static LangBooleanLiteral createBooleanLiteral(ParserRuleContext ctx, boolean value) {
         return new LangBooleanLiteral(
                 ctx.getStart().getLine(),
-                ctx.getStart().getCharPositionInLine(),
+                ctx.getStart().getStartIndex(),
                 ctx.getStop().getLine(),
-                ctx.getStop().getCharPositionInLine(),
+                ctx.getStop().getStopIndex(),
                 value
         );
     }
@@ -148,9 +188,9 @@ public class LangASTNodeFactory {
     public static LangExpressionStatement createExpressionStatement(LangASTNode expression, ParserRuleContext ctx) {
         LangExpressionStatement statement = new LangExpressionStatement(
                 ctx.getStart().getLine(),
-                ctx.getStart().getCharPositionInLine(),
+                ctx.getStart().getStartIndex(),
                 ctx.getStop().getLine(),
-                ctx.getStop().getCharPositionInLine()
+                ctx.getStop().getStopIndex()
         );
 
         if (expression != null) {

@@ -6,9 +6,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.refactoringminer.utils.LangASTUtil;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.refactoringminer.utils.LangASTUtil.readResourceFile;
 
 @Isolated
 public class PyJdtASTMapperTest {
@@ -134,6 +136,46 @@ public class PyJdtASTMapperTest {
         }
 
         System.out.println("Successfully verified JDT AST structure");
+    }
+
+    @Test
+    public void testPythonSourcePositions() throws IOException {
+        String pythonCode = readResourceFile("python-samples/before/calculator.py");
+//        String pythonCode = "class Calculator:\n" +
+//                "    def add(self, x, y):\n" +
+//                "        x = x + y\n" +
+//                "        return x";
+
+        // Print the code with position markers
+        System.out.println("Source code with position markers:");
+        for (int i = 0; i < pythonCode.length(); i += 10) {
+            System.out.println(String.format("%3d: %s", i,
+                    pythonCode.substring(i, Math.min(i + 10, pythonCode.length()))));
+        }
+
+        // Convert and get the AST
+        CompilationUnit jdtAST = LangJdtASTConverter.getJdtASTFromLangParseTree("python", pythonCode);
+
+        jdtAST.accept(new ASTVisitor() {
+            @Override
+            public void preVisit(ASTNode node) {
+                // Log every node type we encounter
+                System.out.println("Found node: " + node.getClass().getSimpleName());
+
+                // For nodes with source information, log the details
+                if (node.getStartPosition() >= 0 && node.getLength() > 0) {
+                    System.out.println("  With position: " + node.getStartPosition() +
+                            ", length: " + node.getLength() +
+                            ", content: '" + pythonCode.substring(
+                            node.getStartPosition(),
+                            Math.min(node.getStartPosition() + node.getLength(), pythonCode.length())) +
+                            "'");
+                } else {
+                    System.out.println("  Without valid source position");
+                }
+            }
+        });
+
     }
 
 }

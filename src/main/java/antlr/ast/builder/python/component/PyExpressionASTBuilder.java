@@ -10,6 +10,8 @@ import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.node.statement.LangExpressionStatement;
 import antlr.base.lang.python.Python3Parser;
 
+import static antlr.ast.node.LangASTNodeFactory.createExpressionStatement;
+
 public class PyExpressionASTBuilder extends PyBaseASTBuilder {
 
     public PyExpressionASTBuilder(PyASTBuilder mainBuilder) {
@@ -115,19 +117,23 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
     }
 
     public LangASTNode visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
+
+        System.out.println("==== Expr_stmt positions ====");
+        System.out.println("Start token: " + ctx.getStart().getText());
+        System.out.println("Start line: " + ctx.getStart().getLine());
+        System.out.println("Start char pos in line: " + ctx.getStart().getCharPositionInLine());
+        System.out.println("Start char absolute pos: " + ctx.getStart().getStartIndex());
+        System.out.println("Stop token: " + ctx.getStop().getText());
+        System.out.println("Stop line: " + ctx.getStop().getLine());
+        System.out.println("Stop char pos in line: " + ctx.getStop().getCharPositionInLine());
+        System.out.println("Stop char absolute pos: " + ctx.getStop().getStopIndex());
+        System.out.println("========================");
+
         // Case 1: Simple expression without assignment
         if (ctx.ASSIGN().isEmpty() && ctx.augassign() == null) {
             LangASTNode expr = mainBuilder.visit(ctx.testlist_star_expr(0));
-
             // Create an expression statement to wrap the expression
-            LangExpressionStatement expressionStatement = new LangExpressionStatement(
-                    ctx.getStart().getLine(),
-                    ctx.getStart().getCharPositionInLine(),
-                    ctx.getStop().getLine(),
-                    ctx.getStop().getCharPositionInLine()
-            );
-            expressionStatement.setExpression(expr);
-            return expressionStatement;
+            return LangASTNodeFactory.createExpressionStatement(expr, ctx);
         }
 
         // For a simple assignment like "x = 10"
@@ -138,15 +144,8 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         LangAssignment assignment = LangASTNodeFactory.createAssignment(ctx.ASSIGN(0).getText(), left, right, ctx);
 
         // Wrap in expression statement with correct source position
-        LangExpressionStatement expressionStatement = new LangExpressionStatement(
-                ctx.getStart().getLine(),
-                ctx.getStart().getCharPositionInLine(),
-                ctx.getStop().getLine(),
-                ctx.getStop().getCharPositionInLine()
-        );
-        expressionStatement.setExpression(assignment);
+        return LangASTNodeFactory.createExpressionStatement(assignment, ctx);
 
-        return expressionStatement;
     }
 
 

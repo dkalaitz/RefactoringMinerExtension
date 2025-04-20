@@ -6,8 +6,8 @@ import antlr.ast.visitor.LangASTVisitor;
 public class LangReturnStatement extends LangASTNode {
     private LangASTNode expression;
 
-    public LangReturnStatement(String type, int startLine, int startChar, int endLine, int endChar) {
-        super(type, startLine, startChar, endLine, endChar);
+    public LangReturnStatement(int startLine, int startChar, int endLine, int endChar) {
+        super("LangReturnStatement", startLine, startChar, endLine, endChar);
     }
 
     public LangASTNode getExpression() {

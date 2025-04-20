@@ -102,6 +102,16 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
     
     public LangASTNode visitReturn_stmt(Python3Parser.Return_stmtContext ctx) {
         LangASTNode expression = ctx.testlist() != null ? mainBuilder.visit(ctx.testlist()) : null;
+        System.out.println("==== Return_stmt positions ====");
+        System.out.println("Start token: " + ctx.getStart().getText());
+        System.out.println("Start line: " + ctx.getStart().getLine());
+        System.out.println("Start char pos in line: " + ctx.getStart().getCharPositionInLine());
+        System.out.println("Start char absolute pos: " + ctx.getStart().getStartIndex());
+        System.out.println("Stop token: " + ctx.getStop().getText());
+        System.out.println("Stop line: " + ctx.getStop().getLine());
+        System.out.println("Stop char pos in line: " + ctx.getStop().getCharPositionInLine());
+        System.out.println("Stop char absolute pos: " + ctx.getStop().getStopIndex());
+        System.out.println("========================");
 
         // Create a LangReturnStatement using the factory
         return LangASTNodeFactory.createReturnStatement(expression, ctx);

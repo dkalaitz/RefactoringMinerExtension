@@ -16,12 +16,6 @@ public class LangExpressionStatement extends LangASTNode {
         super("LangExpressionStatement", startLine, startChar, endLine, endChar);
     }
 
-    public LangExpressionStatement(String nodeType, LangASTNode expression,
-                                   int startLine, int startChar, int endLine, int endChar) {
-        super(nodeType, startLine, startChar, endLine, endChar);
-        this.expression = expression;
-    }
-
     public LangASTNode getExpression() {
         return expression;
     }
