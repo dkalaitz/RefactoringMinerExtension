@@ -145,4 +145,20 @@ public class LangASTNodeFactory {
         );
     }
 
+    public static LangExpressionStatement createExpressionStatement(LangASTNode expression, ParserRuleContext ctx) {
+        LangExpressionStatement statement = new LangExpressionStatement(
+                ctx.getStart().getLine(),
+                ctx.getStart().getCharPositionInLine(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getCharPositionInLine()
+        );
+
+        if (expression != null) {
+            statement.setExpression(expression);
+        }
+
+        return statement;
+    }
+
+
 }

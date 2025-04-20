@@ -21,14 +21,12 @@ public abstract class LangASTNode {
         this.nodeType = nodeType;
         this.startLine = startLine;
         this.startChar = startChar;
+        this.endChar = endChar + 1;
         this.endLine = endLine;
-        this.endChar = endChar;
-        if (endChar >= startChar) {
-            this.length = endChar - startChar;
-        } else {
+        this.length = this.endChar - this.startChar;
+        if (this.endChar <= this.startChar) {
             System.err.println("Warning: Invalid source range for " + nodeType +
-                    " - start: " + startChar + ", end: " + endChar);
-            this.length = 0;
+                    " - start: " + this.startChar + ", end: " + this.endChar);
         }
         this.children = new ArrayList<>();
     }

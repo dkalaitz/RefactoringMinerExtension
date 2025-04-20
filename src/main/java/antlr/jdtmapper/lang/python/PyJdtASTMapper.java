@@ -7,9 +7,11 @@ import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangInfixExpression;
+import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.expression.LangSimpleName;
-import antlr.ast.node.statement.LangBlock;
-import antlr.ast.node.statement.LangReturnStatement;
+import antlr.ast.node.literal.LangIntegerLiteral;
+import antlr.ast.node.literal.LangStringLiteral;
+import antlr.ast.node.statement.*;
 import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.jdtmapper.BaseJdtASTMapper;
 import antlr.jdtmapper.lang.python.submapper.*;
@@ -70,6 +72,36 @@ public class PyJdtASTMapper extends BaseJdtASTMapper {
     @Override
     public ReturnStatement mapReturnStatement(LangReturnStatement langReturnStatement, AST jdtAst) {
         return pyStatementMapper.mapReturnStatement(langReturnStatement, jdtAst, this);
+    }
+
+    @Override
+    public MethodInvocation mapMethodInvocation(LangMethodInvocation langMethodInvocation, AST jdtAst) {
+        return null;
+    }
+
+    @Override
+    public IfStatement mapIfStatement(LangIfStatement langIfStatement, AST jdtAst) {
+        return null;
+    }
+
+    @Override
+    public ForStatement mapForStatement(LangForStatement langForStatement, AST jdtAst) {
+        return null;
+    }
+
+    @Override
+    public StringLiteral mapStringLiteral(LangStringLiteral langStringLiteral, AST jdtAst) {
+        return null;
+    }
+
+    @Override
+    public NumberLiteral mapNumberLiteral(LangIntegerLiteral langNumberLiteral, AST jdtAst) {
+        return null;
+    }
+
+    @Override
+    public ExpressionStatement mapExpressionStatement(LangExpressionStatement langExpressionStatement, AST jdtAst) {
+        return pyStatementMapper.mapExpressionStatement(langExpressionStatement, jdtAst, this);
     }
 
     // Add this to your PyJdtASTMapper class

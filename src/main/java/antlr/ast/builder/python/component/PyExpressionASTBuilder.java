@@ -4,8 +4,10 @@ import antlr.ast.builder.python.PyASTBuilder;
 import antlr.ast.builder.python.PyASTBuilderUtil;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.LangASTNodeFactory;
+import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.expression.LangSimpleName;
+import antlr.ast.node.statement.LangExpressionStatement;
 import antlr.base.lang.python.Python3Parser;
 
 public class PyExpressionASTBuilder extends PyBaseASTBuilder {
@@ -62,10 +64,10 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
                 }
 
                 // Create the method invocation with correct position
-                int startLine = ctx.getStart().getLine();
-                int startChar = ctx.getStart().getCharPositionInLine();
-                int endLine = trailerCtx.getStop().getLine();
-                int endChar = trailerCtx.getStop().getCharPositionInLine() + trailerCtx.getStop().getText().length();
+//                int startLine = ctx.getStart().getLine();
+//                int startChar = ctx.getStart().getCharPositionInLine();
+//                int endLine = trailerCtx.getStop().getLine();
+//                int endChar = trailerCtx.getStop().getCharPositionInLine() + trailerCtx.getStop().getText().length();
 
                 LangMethodInvocation langMethodInvocation = LangASTNodeFactory.createMethodInvocation(
                         ctx.getParent() // Use parent context for proper span
@@ -112,35 +114,75 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         return mainBuilder.visit(ctx.test(0));
     }
 
-    
     public LangASTNode visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
-
         // Case 1: Simple expression without assignment
         if (ctx.ASSIGN().isEmpty() && ctx.augassign() == null) {
-            return mainBuilder.visit(ctx.testlist_star_expr(0));
+            LangASTNode expr = mainBuilder.visit(ctx.testlist_star_expr(0));
+
+            // Create an expression statement to wrap the expression
+            LangExpressionStatement expressionStatement = new LangExpressionStatement(
+                    ctx.getStart().getLine(),
+                    ctx.getStart().getCharPositionInLine(),
+                    ctx.getStop().getLine(),
+                    ctx.getStop().getCharPositionInLine()
+            );
+            expressionStatement.setExpression(expr);
+            return expressionStatement;
         }
 
-        // TODO handle more complex assignments
-//        // Case 2: Augmented assignment (+=, -=, etc.)
-//        if (ctx.augassign() != null) {
-//            LangASTNode left = visit(ctx.testlist_star_expr(0));
-//            LangASTNode right = visit(ctx.test(0));
-//            String operator = ctx.augassign().getText();
-//
-//            return LangASTNodeFactory.createAugmentedAssignment(left, right, operator, ctx);
-//        }
-
-
-        // For a simple assignment like "x = 10", we might assume:
-        //  - ctx.testlist_star_expr(0) -> LHS
-        //  - ctx.testlist_star_expr(1) -> RHS
-        //  - ctx.ASSIGN(0) -> '=' token
-        //
-        LangASTNode left  = mainBuilder.visit(ctx.testlist_star_expr(0));
+        // For a simple assignment like "x = 10"
+        LangASTNode left = mainBuilder.visit(ctx.testlist_star_expr(0));
         LangASTNode right = mainBuilder.visit(ctx.testlist_star_expr(1));
 
-        return LangASTNodeFactory.createAssignment(ctx.ASSIGN(0).getText(), left, right, ctx);
+        // Create the assignment with correct source position
+        LangAssignment assignment = LangASTNodeFactory.createAssignment(ctx.ASSIGN(0).getText(), left, right, ctx);
+
+        // Wrap in expression statement with correct source position
+        LangExpressionStatement expressionStatement = new LangExpressionStatement(
+                ctx.getStart().getLine(),
+                ctx.getStart().getCharPositionInLine(),
+                ctx.getStop().getLine(),
+                ctx.getStop().getCharPositionInLine()
+        );
+        expressionStatement.setExpression(assignment);
+
+        return expressionStatement;
     }
+
+
+    // TODO: TO UNCOMMENT
+    
+//    public LangASTNode visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
+//
+//        // Case 1: Simple expression without assignment
+//        if (ctx.ASSIGN().isEmpty() && ctx.augassign() == null) {
+//            return mainBuilder.visit(ctx.testlist_star_expr(0));
+//        }
+//
+//        // TODO handle more complex assignments
+////        // Case 2: Augmented assignment (+=, -=, etc.)
+////        if (ctx.augassign() != null) {
+////            LangASTNode left = visit(ctx.testlist_star_expr(0));
+////            LangASTNode right = visit(ctx.test(0));
+////            String operator = ctx.augassign().getText();
+////
+////            return LangASTNodeFactory.createAugmentedAssignment(left, right, operator, ctx);
+////        }
+//
+//
+//        // For a simple assignment like "x = 10", we might assume:
+//        //  - ctx.testlist_star_expr(0) -> LHS
+//        //  - ctx.testlist_star_expr(1) -> RHS
+//        //  - ctx.ASSIGN(0) -> '=' token
+//        //
+//        LangASTNode left  = mainBuilder.visit(ctx.testlist_star_expr(0));
+//        LangASTNode right = mainBuilder.visit(ctx.testlist_star_expr(1));
+//
+//        LangAssignment langAssignment = LangASTNodeFactory.createAssignment(ctx.ASSIGN(0).getText(), left, right, ctx);
+//
+//        return LangASTNodeFactory.createExpressionStatement(langAssignment, ctx);
+//
+//    }
 
     
     public LangASTNode visitExpr(Python3Parser.ExprContext ctx) {

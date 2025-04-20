@@ -5,6 +5,8 @@ import antlr.jdtmapper.lang.python.PyJdtASTMapper;
 import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.StringLiteral;
 
+import static antlr.jdtmapper.BaseJdtASTMapper.setSourceRange;
+
 public class PyLiteralMapper {
 
     /**
@@ -22,7 +24,7 @@ public class PyLiteralMapper {
 
        // stringLiteral.setSourceRange(langStringLiteral.getStartChar(), langStringLiteral.getLength());
 
-        pyJdtASTMapper.setSourceRange(stringLiteral, langStringLiteral);
+        setSourceRange(stringLiteral, langStringLiteral);
 
         return stringLiteral;
     }

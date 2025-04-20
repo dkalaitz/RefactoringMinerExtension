@@ -15,7 +15,13 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import static antlr.jdtmapper.JdtASTMapperRegistry.getMapper;
 
@@ -91,6 +97,97 @@ public class LangASTUtil {
         PyASTBuilder pyASTBuilder = new PyASTBuilder();
         return pyASTBuilder.build(fileInputContext);
     }
+
+    /**
+     * Reads a resource file from various possible locations.
+     *
+     * @param resourcePath The path to the resource file
+     * @return The contents of the resource file as a string
+     * @throws IOException If the resource file cannot be found or read
+     */
+    public static String readResourceFile(String resourcePath) throws IOException {
+        InputStream is = null;
+        List<String> attemptedPaths = new ArrayList<>();
+
+        // Try multiple ways to load the resource
+
+        // 1. Try with classloader from Thread context - most reliable across environments
+        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        is = contextClassLoader.getResourceAsStream(resourcePath);
+        attemptedPaths.add("Thread.currentThread().getContextClassLoader().getResourceAsStream(\"" + resourcePath + "\")");
+
+        // 2. Try with a leading slash for absolute path from classpath root
+        if (is == null) {
+            is = LangASTUtil.class.getResourceAsStream("/" + resourcePath);
+            attemptedPaths.add("LangASTUtil.class.getResourceAsStream(\"/\" + resourcePath)");
+        }
+
+        // 3. Try without the leading slash (relative to the package)
+        if (is == null) {
+            is = LangASTUtil.class.getResourceAsStream(resourcePath);
+            attemptedPaths.add("LangASTUtil.class.getResourceAsStream(resourcePath)");
+        }
+
+        // 4. Try with ClassLoader from LangASTUtil
+        if (is == null) {
+            is = LangASTUtil.class.getClassLoader().getResourceAsStream(resourcePath);
+            attemptedPaths.add("LangASTUtil.class.getClassLoader().getResourceAsStream(resourcePath)");
+        }
+
+        // 5. Try with system classloader
+        if (is == null) {
+            is = ClassLoader.getSystemResourceAsStream(resourcePath);
+            attemptedPaths.add("ClassLoader.getSystemResourceAsStream(resourcePath)");
+        }
+
+        // 6. If still not found, try with direct file access as a fallback
+        if (is == null) {
+            try {
+                Path filePath = Paths.get(System.getProperty("user.dir"), "src/test/resources", resourcePath);
+                if (Files.exists(filePath)) {
+                    is = Files.newInputStream(filePath);
+                    attemptedPaths.add("Direct file access: " + filePath);
+                }
+            } catch (Exception e) {
+                // Ignore, we'll handle the null InputStream below
+            }
+        }
+
+        // If all attempts failed, provide detailed debugging information
+        if (is == null) {
+            System.err.println("❌ Resource not found: " + resourcePath);
+            System.err.println("Current working directory: " + System.getProperty("user.dir"));
+            System.err.println("Current class: " + LangASTUtil.class.getName());
+            System.err.println("Attempted to load from:");
+            for (String path : attemptedPaths) {
+                System.err.println(" - " + path);
+            }
+
+            // Debug: list test resources directory contents
+            try {
+                Path resourcesDir = Paths.get(System.getProperty("user.dir"), "src/test/resources");
+                if (Files.exists(resourcesDir)) {
+                    System.err.println("\nTest resources directory exists. Contents:");
+                    Files.walk(resourcesDir, 3)
+                            .forEach(p -> System.err.println(" - " + resourcesDir.relativize(p)));
+                } else {
+                    System.err.println("\nTest resources directory does not exist at: " + resourcesDir);
+                }
+            } catch (Exception e) {
+                System.err.println("Error listing resources directory: " + e.getMessage());
+            }
+
+            throw new IOException("Resource not found: " + resourcePath);
+        }
+
+        // Read the content
+        try {
+            return new String(is.readAllBytes(), StandardCharsets.UTF_8);
+        } finally {
+            is.close();
+        }
+    }
+
 
 
 

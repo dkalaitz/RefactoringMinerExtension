@@ -114,6 +114,12 @@ public class PyDeclarationMapper {
         // Set method name
         methodDecl.setName(jdtAst.newSimpleName(langMethodDeclaration.getName()));
 
+        setSignatureOffsets(methodDecl, langMethodDeclaration);
+//        methodDecl.setProperty("signatureStartOffset", Math.max(0, langMethodDeclaration.getStartChar()));
+//        methodDecl.setProperty("signatureEndOffset", Math.max(langMethodDeclaration.getStartChar() + 1,
+//                Math.min(langMethodDeclaration.getEndChar(), 76)));
+
+
         // Python methods are public by default
         addModifierToMethod(methodDecl, jdtAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
 
@@ -171,6 +177,7 @@ public class PyDeclarationMapper {
         if (langVar == null) return null;
 
         SingleVariableDeclaration varDecl = jdtAst.newSingleVariableDeclaration();
+        setSourceRange(varDecl, langVar);
 
         // Set variable name
         varDecl.setName(jdtAst.newSimpleName(langVar.getSimpleName().getIdentifier()));
@@ -178,9 +185,63 @@ public class PyDeclarationMapper {
         // Python is dynamically typed, so use Object as the type
         varDecl.setType(jdtAst.newSimpleType(jdtAst.newSimpleName("Object")));
 
-        setSourceRange(varDecl, langVar);
 
         return varDecl;
     }
+
+    /**
+     * Sets signature-specific offset information in PropertyDescriptor format
+     * for the UMLModelASTReader to use when extracting the actual signature.
+     *
+     * @param methodDecl The JDT MethodDeclaration to set properties on
+     * @param langMethodDecl The source LangMethodDeclaration with position info
+     */
+    private void setSignatureOffsets(MethodDeclaration methodDecl, LangMethodDeclaration langMethodDecl) {
+        int startChar = langMethodDecl.getStartChar();
+        int endChar = langMethodDecl.getEndChar();
+
+        // Calculate safe offsets - ensure they are valid and avoid StringIndexOutOfBoundsException
+        int safeStartOffset = Math.max(0, startChar);
+
+        // For Python methods, the signature ends at the colon before the method body
+        // Since we don't have direct access to the source code to find the colon,
+        // we'll use a conservative approach to estimate where the signature ends
+        int safeEndOffset;
+
+        if (langMethodDecl.getBody() != null) {
+            // If we have a body, use its start position as a guide
+            int bodyStart = langMethodDecl.getBody().getStartChar();
+            // The signature should end before the body starts
+            safeEndOffset = Math.max(safeStartOffset + 1, bodyStart);
+        } else {
+            // If no body, use a reasonable portion of the method length
+            safeEndOffset = Math.max(safeStartOffset + 1, endChar);
+        }
+
+        // Store these values as properties on the node
+        methodDecl.setProperty("signatureStartOffset", safeStartOffset);
+        methodDecl.setProperty("signatureEndOffset", safeEndOffset);
+
+        // Generate a fallback Python signature that UMLModelASTReader can use if needed
+        StringBuilder fallbackSignature = new StringBuilder("def ");
+        fallbackSignature.append(langMethodDecl.getName()).append("(");
+
+        if (langMethodDecl.getParameters() != null) {
+            boolean first = true;
+            for (LangSingleVariableDeclaration param : langMethodDecl.getParameters()) {
+                if (!first) fallbackSignature.append(", ");
+                fallbackSignature.append(param.getSimpleName().getIdentifier());
+                first = false;
+            }
+        }
+
+        fallbackSignature.append("):");
+        methodDecl.setProperty("fallbackPythonSignature", fallbackSignature.toString());
+
+        System.out.println("Setting signature offsets - start: " + safeStartOffset +
+                ", end: " + safeEndOffset);
+        System.out.println("Fallback signature: " + fallbackSignature.toString());
+    }
+
 
 }

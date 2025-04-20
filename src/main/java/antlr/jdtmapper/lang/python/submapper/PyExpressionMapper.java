@@ -6,6 +6,8 @@ import antlr.ast.node.expression.LangSimpleName;
 import antlr.jdtmapper.lang.python.PyJdtASTMapper;
 import org.eclipse.jdt.core.dom.*;
 
+import static antlr.jdtmapper.BaseJdtASTMapper.setSourceRange;
+
 public class PyExpressionMapper {
 
     /**
@@ -19,7 +21,7 @@ public class PyExpressionMapper {
         if (langSimpleName == null) return null;
 
         SimpleName simpleName = jdtAst.newSimpleName(langSimpleName.getIdentifier());
-        pyJdtASTMapper.setSourceRange(simpleName, langSimpleName);
+        setSourceRange(simpleName, langSimpleName);
 
         return simpleName;
     }
@@ -36,6 +38,8 @@ public class PyExpressionMapper {
         if (langInfix == null) return null;
 
         InfixExpression infixExpression = jdtAst.newInfixExpression();
+
+        setSourceRange(infixExpression, langInfix);
 
         // Map left operand
         Expression leftOperand = (Expression) pyJdtASTMapper.map(langInfix.getLeft(), jdtAst);
@@ -64,7 +68,7 @@ public class PyExpressionMapper {
         if (langAssignment == null) return null;
 
         Assignment assignment = jdtAst.newAssignment();
-        pyJdtASTMapper.setSourceRange(assignment, langAssignment);
+        setSourceRange(assignment, langAssignment);
 
         // Map the left side (target) of the assignment
         Expression leftSide = (Expression) pyJdtASTMapper.map(langAssignment.getLeftSide(), jdtAst);

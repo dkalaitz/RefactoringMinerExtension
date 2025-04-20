@@ -9,6 +9,8 @@ import org.eclipse.jdt.core.dom.TypeDeclaration;
 
 import java.util.ArrayList;
 
+import static antlr.jdtmapper.BaseJdtASTMapper.setSourceRange;
+
 /**
  * Maps Python compilation unit nodes to JDT compilation unit nodes
  */
@@ -38,7 +40,7 @@ public class PyCompilationUnitMapper {
 
         CompilationUnit cu = jdtAst.newCompilationUnit();
 
-        pyJdtASTMapper.setSourceRange(cu, langCompilationUnit);
+        setSourceRange(cu, langCompilationUnit);
 
         // Map type declarations (classes)
         if (langCompilationUnit.getTypes() != null) {
