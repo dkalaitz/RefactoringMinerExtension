@@ -17,18 +17,16 @@ public class PyCompilationUnitASTBuilder extends PyBaseASTBuilder {
         // Create the root LangCompilationUnit
         LangCompilationUnit langCompilationUnit = LangASTNodeFactory.createCompilationUnit(ctx);
 
-        // Visit all statements in the file and add them to the LangCompilationUnit
         for (Python3Parser.StmtContext stmtCtx : ctx.stmt()) {
             LangASTNode child = mainBuilder.visit(stmtCtx);
             if (child != null) {
                 if (child instanceof LangTypeDeclaration) {
                     langCompilationUnit.addType((LangTypeDeclaration) child);
                 } else {
-                    langCompilationUnit.addChild(child); // Only add non-types as children
+                    langCompilationUnit.addChild(child);
                 }
             }
         }
-        System.out.println("LangCompilationUnit: " + langCompilationUnit.getChildren().toString());
         return langCompilationUnit;
     }
 

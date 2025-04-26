@@ -89,6 +89,12 @@ public class PyDeclarationMapper {
             }
         }
 
+        Modifier publicModifier = jdtAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD);
+        publicModifier.setSourceRange(langTypeDeclaration.getStartChar(), 6); // "public" is 6 chars
+
+        // Add the modifier to the class declaration
+        addModifier(typeDecl, publicModifier);
+
 
         return typeDecl;
     }
@@ -119,9 +125,28 @@ public class PyDeclarationMapper {
 //        methodDecl.setProperty("signatureEndOffset", Math.max(langMethodDeclaration.getStartChar() + 1,
 //                Math.min(langMethodDeclaration.getEndChar(), 76)));
 
+        // Build a normalized Python signature string
+        // Create a standardized Python signature property
+//        StringBuilder pythonSignature = new StringBuilder("def ");
+//        pythonSignature.append(langMethodDeclaration.getName()).append("(");
+//
+//        if (langMethodDeclaration.getParameters() != null) {
+//            boolean first = true;
+//            for (LangSingleVariableDeclaration param : langMethodDeclaration.getParameters()) {
+//                if (!first) pythonSignature.append(", ");
+//                pythonSignature.append(param.getSimpleName().getIdentifier());
+//                first = false;
+//            }
+//        }
+//
+//        pythonSignature.append("):");
+//
+//        // Store signature as property on the method node
+//        methodDecl.setProperty("pythonMethodSignature", pythonSignature.toString());
+//
 
         // Python methods are public by default
-        addModifierToMethod(methodDecl, jdtAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
+       // addModifierToMethod(methodDecl, jdtAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD));
 
         // Map parameters
         if (langMethodDeclaration.getParameters() != null) {
@@ -135,6 +160,13 @@ public class PyDeclarationMapper {
             System.out.println("No parameters found");
         }
 
+        Modifier publicModifier = jdtAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD);
+
+// Set the source range on the modifier to match the start of the method
+        publicModifier.setSourceRange(langMethodDeclaration.getStartChar(), 6); // "public" is 6 chars
+
+// Add the modifier to the method declaration
+        methodDecl.modifiers().add(publicModifier);
 
         // Map body if available
         if (langMethodDeclaration.getBody() != null) {
@@ -161,7 +193,6 @@ public class PyDeclarationMapper {
         System.out.println("  - Modifiers: " + methodDecl.modifiers());
         System.out.println("  - Has body: " + (methodDecl.getBody() != null));
         System.out.println("  - Parameters count: " + methodDecl.parameters().size());
-
 
         return methodDecl;
     }
@@ -196,52 +227,32 @@ public class PyDeclarationMapper {
      * @param methodDecl The JDT MethodDeclaration to set properties on
      * @param langMethodDecl The source LangMethodDeclaration with position info
      */
-    private void setSignatureOffsets(MethodDeclaration methodDecl, LangMethodDeclaration langMethodDecl) {
-        int startChar = langMethodDecl.getStartChar();
-        int endChar = langMethodDecl.getEndChar();
-
-        // Calculate safe offsets - ensure they are valid and avoid StringIndexOutOfBoundsException
-        int safeStartOffset = Math.max(0, startChar);
-
-        // For Python methods, the signature ends at the colon before the method body
-        // Since we don't have direct access to the source code to find the colon,
-        // we'll use a conservative approach to estimate where the signature ends
-        int safeEndOffset;
-
-        if (langMethodDecl.getBody() != null) {
-            // If we have a body, use its start position as a guide
-            int bodyStart = langMethodDecl.getBody().getStartChar();
-            // The signature should end before the body starts
-            safeEndOffset = Math.max(safeStartOffset + 1, bodyStart);
-        } else {
-            // If no body, use a reasonable portion of the method length
-            safeEndOffset = Math.max(safeStartOffset + 1, endChar);
-        }
-
-        // Store these values as properties on the node
-        methodDecl.setProperty("signatureStartOffset", safeStartOffset);
-        methodDecl.setProperty("signatureEndOffset", safeEndOffset);
-
-        // Generate a fallback Python signature that UMLModelASTReader can use if needed
-        StringBuilder fallbackSignature = new StringBuilder("def ");
-        fallbackSignature.append(langMethodDecl.getName()).append("(");
+    public void setSignatureOffsets(MethodDeclaration methodDecl, LangMethodDeclaration langMethodDecl) {
+        // Create standardized Python signature correctly
+        StringBuilder pythonSignature = new StringBuilder("def ");
+        pythonSignature.append(langMethodDecl.getName()).append("(");
 
         if (langMethodDecl.getParameters() != null) {
-            boolean first = true;
+            boolean firstParam = true;
             for (LangSingleVariableDeclaration param : langMethodDecl.getParameters()) {
-                if (!first) fallbackSignature.append(", ");
-                fallbackSignature.append(param.getSimpleName().getIdentifier());
-                first = false;
+                if (!firstParam) pythonSignature.append(", ");
+                pythonSignature.append(param.getSimpleName().getIdentifier());
+                firstParam = false;
             }
         }
 
-        fallbackSignature.append("):");
-        methodDecl.setProperty("fallbackPythonSignature", fallbackSignature.toString());
+        pythonSignature.append("):");
 
-        System.out.println("Setting signature offsets - start: " + safeStartOffset +
-                ", end: " + safeEndOffset);
-        System.out.println("Fallback signature: " + fallbackSignature.toString());
+        // Store as property for UMLModelASTReader
+        methodDecl.setProperty("pythonMethodSignature", pythonSignature.toString());
+
+        // Set source range so the signature can be properly extracted
+        int startPos = langMethodDecl.getStartChar();
+        int endPos = langMethodDecl.getEndChar();
+        methodDecl.setProperty("signatureStartPosition", startPos);
+        methodDecl.setProperty("signatureEndPosition", endPos);
     }
+
 
 
 }

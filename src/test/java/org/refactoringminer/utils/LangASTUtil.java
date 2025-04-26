@@ -40,8 +40,8 @@ public class LangASTUtil {
         LangASTNode ast = astBuilder.build(parseTree);  // Build the AST
 
         // Debug: Print the parse tree for reference
-        System.out.println("Parse Tree:");
-        System.out.println(parseTree.toStringTree(parser));
+//        System.out.println("Parse Tree:");
+//        System.out.println(parseTree.toStringTree(parser));
 
         // Print the AST using the ASTPrinter
         System.out.println("\nAST Structure:");
