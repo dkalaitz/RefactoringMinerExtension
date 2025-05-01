@@ -43,7 +43,7 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> {
         return declarationBuilder.visitFuncdef(ctx);
     }
 
-    // Expression related methods
+    // Expression-related methods
     @Override
     public LangASTNode visitAtom(Python3Parser.AtomContext ctx) {
         return expressionBuilder.visitAtom(ctx);
@@ -68,7 +68,7 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> {
         return expressionBuilder.visitTrailer(ctx);
     }
 
-    // Statement related methods
+    // Statement-related methods
     @Override
     public LangASTNode visitBlock(Python3Parser.BlockContext ctx) {
         return statementBuilder.visitBlock(ctx);

@@ -1,6 +1,5 @@
 package antlr.jdtmapper.lang.python;
 
-import antlr.ast.builder.python.component.PyDeclarationASTBuilder;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
@@ -110,7 +109,7 @@ public class PyJdtASTMapper extends BaseJdtASTMapper {
                 " Position: " + node.getStartPosition() +
                 " Length: " + node.getLength() +
                 " From LangNode: " + langNode.getClass().getSimpleName() +
-                " Start: " + langNode.getStartChar() +
+                " Start: " + langNode.getStartOffset() +
                 " Length: " + langNode.getLength());
     }
 

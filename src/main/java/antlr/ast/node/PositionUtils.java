@@ -12,8 +12,8 @@ public class PositionUtils {
         return new PositionInfo(
                 getStartLine(ctx),
                 getEndLine(ctx),
-                getStartChar(ctx),
-                getEndChar(ctx),
+                getStartOffset(ctx),
+                getEndOffset(ctx),
                 getStartColumn(ctx),
                 getEndColumn(ctx)
         );
@@ -29,12 +29,12 @@ public class PositionUtils {
         return (stop != null) ? stop.getLine() : -1;
     }
 
-    public static int getStartChar(ParserRuleContext ctx) {
+    public static int getStartOffset(ParserRuleContext ctx) {
         Token start = (ctx == null) ? null : ctx.getStart();
         return (start != null) ? start.getStartIndex() : -1;
     }
 
-    public static int getEndChar(ParserRuleContext ctx) {
+    public static int getEndOffset(ParserRuleContext ctx) {
         Token stop = (ctx == null) ? null : ctx.getStop();
         return (stop != null) ? stop.getStopIndex() : -1;
     }

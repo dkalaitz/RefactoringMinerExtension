@@ -59,7 +59,7 @@ public class PyStatementMapper {
         ExpressionStatement expressionStatement = jdtAst.newExpressionStatement(mappedExpression);
 
         // Set source range directly from langExprStatement with explicit debug output
-        int startPos = langExprStatement.getStartChar();
+        int startPos = langExprStatement.getStartOffset();
         int length = langExprStatement.getLength();
         System.out.println("Setting ExpressionStatement source range: start=" + startPos + ", length=" + length);
         expressionStatement.setSourceRange(startPos, length);

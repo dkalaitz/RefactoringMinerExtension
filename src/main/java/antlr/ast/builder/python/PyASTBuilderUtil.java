@@ -4,10 +4,6 @@ import antlr.base.lang.python.Python3Parser;
 
 public class PyASTBuilderUtil {
 
-    /**
-     * Helper method to extract the operator between expressions.
-     * This is just an example; the actual implementation depends on your parser grammar.
-     */
     public static String extractOperator(Python3Parser.ExprContext ctx) {
 
         if (ctx.getChildCount() == 3) {

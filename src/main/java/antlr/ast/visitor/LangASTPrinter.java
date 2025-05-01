@@ -48,11 +48,11 @@ public class LangASTPrinter implements LangASTVisitor {
                 .append(" [")
                 .append(node.getStartLine())
                 .append(":")
-                .append(node.getStartChar())
+                .append(node.getStartOffset())
                 .append("-")
                 .append(node.getEndLine())
                 .append(":")
-                .append(node.getEndChar())
+                .append(node.getEndOffset())
                 .append("]");
 
         if (additionalInfo != null && !additionalInfo.isEmpty()) {

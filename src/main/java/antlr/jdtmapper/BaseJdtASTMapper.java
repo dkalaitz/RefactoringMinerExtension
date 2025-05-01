@@ -1,6 +1,5 @@
 package antlr.jdtmapper;
 
-import antlr.ast.builder.python.PyASTBuilder;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
@@ -41,7 +40,7 @@ public abstract class BaseJdtASTMapper implements JdtASTMapper {
         }
 
         System.out.println("Mapping " + langASTNode.getClass().getSimpleName() + " from " + langASTNode);
-        System.out.println("Source Ranges: " + langASTNode.getStartChar() + " - " + langASTNode.getEndChar() +
+        System.out.println("Source Ranges: " + langASTNode.getStartOffset() + " - " + langASTNode.getEndOffset() +
                 ", Length: " + langASTNode.getLength());
 
         ASTNode result = switch (langASTNode.getClass().getSimpleName()) {
@@ -101,12 +100,12 @@ public abstract class BaseJdtASTMapper implements JdtASTMapper {
         // Log the input values
         System.out.println("\nSetting source range for " + node.getClass().getSimpleName() +
                 " from " + langNode.getClass().getSimpleName() +
-                " - Start: " + langNode.getStartChar() +
-                " - End: " + langNode.getEndChar() +
+                " - Start: " + langNode.getStartOffset() +
+                " - End: " + langNode.getEndOffset() +
                 ", Length: " + langNode.getLength());
 
-        if (langNode.getStartChar() >= 0 && langNode.getLength() > 0) {
-            node.setSourceRange(langNode.getStartChar(), langNode.getLength());
+        if (langNode.getStartOffset() >= 0 && langNode.getLength() > 0) {
+            node.setSourceRange(langNode.getStartOffset(), langNode.getLength());
             System.out.println("  Source range set successfully");
         } else {
             System.out.println("  SKIPPED SETTING SOURCE RANGE - Invalid values");

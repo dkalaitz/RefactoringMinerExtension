@@ -11,8 +11,8 @@ public abstract class LangASTNode {
     private String nodeType;
     private int startLine;
     private int endLine;
-    private int startChar;
-    private int endChar;
+    private int startOffset;
+    private int endOffset;
     private int startColumn;
     private int endColumn;
     private int length;
@@ -26,32 +26,32 @@ public abstract class LangASTNode {
 
     public LangASTNode(String nodeType, PositionInfo positionInfo) {
         this.nodeType = nodeType;
-        this.startLine = positionInfo.getStartLine() + 1;
+        this.startLine = positionInfo.getStartLine();
         this.endLine = positionInfo.getEndLine();
-        this.startChar = positionInfo.getStartChar();
-        this.endChar = positionInfo.getEndChar() + 1;
+        this.startOffset = positionInfo.getStartChar();
+        this.endOffset = positionInfo.getEndChar() + 1;
         this.startColumn = positionInfo.getStartColumn();
         this.endColumn = positionInfo.getEndColumn();
-        this.length = this.endChar - this.startChar;
-        if (this.endChar <= this.startChar) {
+        this.length = this.endOffset - this.startOffset;
+        if (this.endOffset <= this.startOffset) {
             System.err.println("Warning: Invalid source range for " + nodeType +
-                    " - start: " + this.startChar + ", end: " + this.endChar);
+                    " - start: " + this.startOffset + ", end: " + this.endOffset);
         }
         this.children = new ArrayList<>();
     }
 
-    public LangASTNode(String nodeType, int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
+    public LangASTNode(String nodeType, int startLine, int startOffset, int endLine, int endOffset, int startColumn, int endColumn) {
         this.nodeType = nodeType;
-        this.startLine = startLine + 1;
-        this.startChar = startChar;
-        this.endChar = endChar + 1;
+        this.startLine = startLine;
         this.endLine = endLine;
+        this.startOffset = startOffset;
+        this.endOffset = endOffset + 1;
         this.startColumn = startColumn;
         this.endColumn = endColumn;
-        this.length = this.endChar - this.startChar;
-        if (this.endChar <= this.startChar) {
+        this.length = this.endOffset - this.startOffset;
+        if (this.endOffset <= this.startOffset) {
             System.err.println("Warning: Invalid source range for " + nodeType +
-                    " - start: " + this.startChar + ", end: " + this.endChar);
+                    " - start: " + this.startOffset + ", end: " + this.endOffset);
         }
         this.children = new ArrayList<>();
     }
@@ -89,20 +89,20 @@ public abstract class LangASTNode {
         this.endLine = endLine;
     }
 
-    public int getStartChar() {
-        return startChar;
+    public int getStartOffset() {
+        return startOffset;
     }
 
-    public void setStartChar(int startChar) {
-        this.startChar = startChar;
+    public void setStartOffset(int startOffset) {
+        this.startOffset = startOffset;
     }
 
-    public int getEndChar() {
-        return endChar;
+    public int getEndOffset() {
+        return endOffset;
     }
 
-    public void setEndChar(int endChar) {
-        this.endChar = endChar;
+    public void setEndOffset(int endOffset) {
+        this.endOffset = endOffset;
     }
 
     public int getStartColumn() {

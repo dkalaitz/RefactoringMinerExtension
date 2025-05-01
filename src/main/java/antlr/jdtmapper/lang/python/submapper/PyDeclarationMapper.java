@@ -90,7 +90,7 @@ public class PyDeclarationMapper {
         }
 
         Modifier publicModifier = jdtAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD);
-        publicModifier.setSourceRange(langTypeDeclaration.getStartChar(), 6); // "public" is 6 chars
+        publicModifier.setSourceRange(langTypeDeclaration.getStartOffset(), 6); // "public" is 6 chars
 
         // Add the modifier to the class declaration
         addModifier(typeDecl, publicModifier);
@@ -110,7 +110,7 @@ public class PyDeclarationMapper {
     public MethodDeclaration mapMethodDeclaration(LangMethodDeclaration langMethodDeclaration, AST jdtAst, PyJdtASTMapper pyJdtASTMapper) {
         if (langMethodDeclaration == null) return null;
         System.out.println("Mapping method: " + langMethodDeclaration.getName());
-        System.out.println("Lang method source position: start=" + langMethodDeclaration.getStartChar() + ", length=" + langMethodDeclaration.getLength());
+        System.out.println("Lang method source position: start=" + langMethodDeclaration.getStartOffset() + ", length=" + langMethodDeclaration.getLength());
 
         MethodDeclaration methodDecl = jdtAst.newMethodDeclaration();
 
@@ -163,7 +163,7 @@ public class PyDeclarationMapper {
         Modifier publicModifier = jdtAst.newModifier(Modifier.ModifierKeyword.PUBLIC_KEYWORD);
 
 // Set the source range on the modifier to match the start of the method
-        publicModifier.setSourceRange(langMethodDeclaration.getStartChar(), 6); // "public" is 6 chars
+        publicModifier.setSourceRange(langMethodDeclaration.getStartOffset(), 6); // "public" is 6 chars
 
 // Add the modifier to the method declaration
         methodDecl.modifiers().add(publicModifier);
@@ -180,8 +180,8 @@ public class PyDeclarationMapper {
         // Set return type (in Python all methods return Object unless specified)
         methodDecl.setReturnType2(jdtAst.newSimpleType(jdtAst.newSimpleName("Object")));
 
-        System.out.println("Lang position: start=" + langMethodDeclaration.getStartChar() + ", length=" + langMethodDeclaration.getLength());
-        System.out.println("Lang end char" + langMethodDeclaration.getEndChar());
+        System.out.println("Lang position: start=" + langMethodDeclaration.getStartOffset() + ", length=" + langMethodDeclaration.getLength());
+        System.out.println("Lang end char" + langMethodDeclaration.getEndOffset());
 
         System.out.println("After setSourceRange - Method position: " + methodDecl.getStartPosition() + ", length: " + methodDecl.getLength());
 
@@ -247,8 +247,8 @@ public class PyDeclarationMapper {
         methodDecl.setProperty("pythonMethodSignature", pythonSignature.toString());
 
         // Set source range so the signature can be properly extracted
-        int startPos = langMethodDecl.getStartChar();
-        int endPos = langMethodDecl.getEndChar();
+        int startPos = langMethodDecl.getStartOffset();
+        int endPos = langMethodDecl.getEndOffset();
         methodDecl.setProperty("signatureStartPosition", startPos);
         methodDecl.setProperty("signatureEndPosition", endPos);
     }
