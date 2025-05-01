@@ -1,6 +1,7 @@
 package antlr.ast.node;
 
 
+import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.ast.visitor.LangASTVisitor;
 
 import java.util.ArrayList;
@@ -62,7 +63,15 @@ public abstract class LangASTNode {
         this.children.add(child);
     }
 
-    // Accept method for visitor pattern
+    public LangCompilationUnit getRootCompilationUnit() {
+        LangASTNode current = this;
+        while (current != null && !(current instanceof LangCompilationUnit)) {
+            current = current.getParent();
+        }
+        return (LangCompilationUnit) current;
+    }
+
+    // Accept method for a visitor pattern
     public abstract void accept(LangASTVisitor visitor);
 
     public String getNodeType() {

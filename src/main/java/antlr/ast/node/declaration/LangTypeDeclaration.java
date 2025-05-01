@@ -26,6 +26,7 @@ public class LangTypeDeclaration extends LangASTNode {
 
     public void addMethod(LangMethodDeclaration method) {
         methods.add(method);
+        addChild(method);
     }
 
     @Override

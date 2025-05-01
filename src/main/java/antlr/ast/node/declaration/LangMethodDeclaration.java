@@ -28,6 +28,7 @@ public class LangMethodDeclaration extends LangASTNode {
 
     public void addParameter(LangSingleVariableDeclaration langSingleVariableDeclaration) {
         parameters.add(langSingleVariableDeclaration);
+        addChild(langSingleVariableDeclaration);
     }
 
     @Override
@@ -56,6 +57,7 @@ public class LangMethodDeclaration extends LangASTNode {
 
     public void setBody(LangBlock body) {
         this.body = body;
+        addChild(body);
     }
 
     public List<LangSingleVariableDeclaration> getParameters() {
