@@ -1,6 +1,7 @@
 package antlr.ast.node.statement;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
 /**
@@ -12,16 +13,14 @@ public class LangExpressionStatement extends LangASTNode {
 
     private LangASTNode expression;
 
-    public LangExpressionStatement(int startLine, int startChar, int endLine, int endChar) {
-        super("LangExpressionStatement", startLine, startChar, endLine, endChar);
+    public LangExpressionStatement() {super("LangExpressionStatement");}
+
+    public LangExpressionStatement(PositionInfo positionInfo) {
+        super("LangExpressionStatement", positionInfo);
     }
 
-    public LangASTNode getExpression() {
-        return expression;
-    }
-
-    public void setExpression(LangASTNode expression) {
-        this.expression = expression;
+    public LangExpressionStatement(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
+        super("LangExpressionStatement", startLine, startChar, endLine, endChar, startColumn, endColumn);
     }
 
     @Override
@@ -33,6 +32,15 @@ public class LangExpressionStatement extends LangASTNode {
             expression.accept(visitor);
         }
     }
+
+    public LangASTNode getExpression() {
+        return expression;
+    }
+
+    public void setExpression(LangASTNode expression) {
+        this.expression = expression;
+    }
+
 
     @Override
     public String toString() {

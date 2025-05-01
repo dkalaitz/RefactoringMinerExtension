@@ -86,7 +86,7 @@ public class LangASTPrinter implements LangASTVisitor {
 
     @Override
     public void visit(LangSingleVariableDeclaration node) {
-        appendNodeInfo(node, "parameter: " + node.getSimpleName().getIdentifier());
+        appendNodeInfo(node, "parameter: " + node.getLangSimpleName().getIdentifier());
     }
 
     @Override

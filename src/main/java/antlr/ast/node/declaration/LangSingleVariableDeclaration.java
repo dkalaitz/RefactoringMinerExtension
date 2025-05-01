@@ -1,6 +1,7 @@
 package antlr.ast.node.declaration;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.PositionInfo;
 import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -8,20 +9,31 @@ import antlr.ast.visitor.LangASTVisitor;
  * Represents a method/function parameter declaration in a JDT-like style
  */
 public class LangSingleVariableDeclaration extends LangASTNode {
-    private final LangSimpleName langSimpleName;
+    private LangSimpleName langSimpleName;
 
-    public LangSingleVariableDeclaration(LangSimpleName langSimpleName, int startLine, int startChar, int endLine, int endChar) {
-        super("LangSingleVariableDeclaration", startLine, startChar, endLine, endChar);
+    public LangSingleVariableDeclaration() {super("LangSingleVariableDeclaration");}
+
+    public LangSingleVariableDeclaration(LangSimpleName langSimpleName, PositionInfo positionInfo) {
+        super("LangSingleVariableDeclaration", positionInfo);
         this.langSimpleName = langSimpleName;
     }
 
-    public LangSimpleName getSimpleName() {
-        return langSimpleName;
+    public LangSingleVariableDeclaration(LangSimpleName langSimpleName, int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
+        super("LangSingleVariableDeclaration", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        this.langSimpleName = langSimpleName;
     }
 
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
+    }
+
+    public LangSimpleName getLangSimpleName() {
+        return langSimpleName;
+    }
+
+    public void setLangSimpleName(LangSimpleName langSimpleName) {
+        this.langSimpleName = langSimpleName;
     }
 
     public String toString() {

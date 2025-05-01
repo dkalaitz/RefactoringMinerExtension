@@ -211,7 +211,7 @@ public class PyDeclarationMapper {
         setSourceRange(varDecl, langVar);
 
         // Set variable name
-        varDecl.setName(jdtAst.newSimpleName(langVar.getSimpleName().getIdentifier()));
+        varDecl.setName(jdtAst.newSimpleName(langVar.getLangSimpleName().getIdentifier()));
 
         // Python is dynamically typed, so use Object as the type
         varDecl.setType(jdtAst.newSimpleType(jdtAst.newSimpleName("Object")));
@@ -236,7 +236,7 @@ public class PyDeclarationMapper {
             boolean firstParam = true;
             for (LangSingleVariableDeclaration param : langMethodDecl.getParameters()) {
                 if (!firstParam) pythonSignature.append(", ");
-                pythonSignature.append(param.getSimpleName().getIdentifier());
+                pythonSignature.append(param.getLangSimpleName().getIdentifier());
                 firstParam = false;
             }
         }

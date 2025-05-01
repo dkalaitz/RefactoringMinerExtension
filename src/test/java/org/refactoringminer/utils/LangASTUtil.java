@@ -45,6 +45,7 @@ public class LangASTUtil {
 
         // Print the AST using the ASTPrinter
         System.out.println("\nAST Structure:");
+        System.out.println(ast.toString());
         LangASTPrinter printer = new LangASTPrinter();
         ast.accept(printer);
     }

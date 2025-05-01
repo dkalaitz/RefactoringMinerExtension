@@ -8,21 +8,46 @@ import java.util.List;
 
 public abstract class LangASTNode {
 
-    private final String nodeType;          // Type of this node (e.g., "FunctionDeclaration", "ClassDeclaration")
-    private final int startLine;            // Starting line in source code
-    private final int endLine;              // Ending line in source code
-    private final int startChar;            // Starting character offset
-    private final int endChar;              // Ending character offset
-    private final int length;
-    private LangASTNode parent;           // Parent node (null for root)
-    private final List<LangASTNode> children;   // List of child nodes
+    private String nodeType;
+    private int startLine;
+    private int endLine;
+    private int startChar;
+    private int endChar;
+    private int startColumn;
+    private int endColumn;
+    private int length;
+    private LangASTNode parent;
+    private List<LangASTNode> children;
 
-    public LangASTNode(String nodeType, int startLine, int startChar, int endLine, int endChar) {
+    public LangASTNode(String nodeType) {
         this.nodeType = nodeType;
-        this.startLine = startLine;
+        this.children = new ArrayList<>();
+    }
+
+    public LangASTNode(String nodeType, PositionInfo positionInfo) {
+        this.nodeType = nodeType;
+        this.startLine = positionInfo.getStartLine() + 1;
+        this.endLine = positionInfo.getEndLine();
+        this.startChar = positionInfo.getStartChar();
+        this.endChar = positionInfo.getEndChar() + 1;
+        this.startColumn = positionInfo.getStartColumn();
+        this.endColumn = positionInfo.getEndColumn();
+        this.length = this.endChar - this.startChar;
+        if (this.endChar <= this.startChar) {
+            System.err.println("Warning: Invalid source range for " + nodeType +
+                    " - start: " + this.startChar + ", end: " + this.endChar);
+        }
+        this.children = new ArrayList<>();
+    }
+
+    public LangASTNode(String nodeType, int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
+        this.nodeType = nodeType;
+        this.startLine = startLine + 1;
         this.startChar = startChar;
         this.endChar = endChar + 1;
         this.endLine = endLine;
+        this.startColumn = startColumn;
+        this.endColumn = endColumn;
         this.length = this.endChar - this.startChar;
         if (this.endChar <= this.startChar) {
             System.err.println("Warning: Invalid source range for " + nodeType +
@@ -37,27 +62,90 @@ public abstract class LangASTNode {
         this.children.add(child);
     }
 
-    public List<LangASTNode> getChildren() { return children; }
+    // Accept method for visitor pattern
+    public abstract void accept(LangASTVisitor visitor);
 
-    public LangASTNode getParent() { return parent; }
+    public String getNodeType() {
+        return nodeType;
+    }
 
-    public void setParent(LangASTNode parent) { this.parent = parent; }
+    public void setNodeType(String nodeType) {
+        this.nodeType = nodeType;
+    }
 
-    public String getNodeType() { return nodeType; }
+    public int getStartLine() {
+        return startLine;
+    }
 
-    public int getStartLine() { return startLine; }
+    public void setStartLine(int startLine) {
+        this.startLine = startLine;
+    }
 
-    public int getStartChar() { return startChar; }
+    public int getEndLine() {
+        return endLine;
+    }
 
-    public int getEndLine() { return endLine; }
+    public void setEndLine(int endLine) {
+        this.endLine = endLine;
+    }
 
-    public int getEndChar() { return endChar; }
+    public int getStartChar() {
+        return startChar;
+    }
 
-    public int getLength() { return length; }
+    public void setStartChar(int startChar) {
+        this.startChar = startChar;
+    }
+
+    public int getEndChar() {
+        return endChar;
+    }
+
+    public void setEndChar(int endChar) {
+        this.endChar = endChar;
+    }
+
+    public int getStartColumn() {
+        return startColumn;
+    }
+
+    public void setStartColumn(int startColumn) {
+        this.startColumn = startColumn;
+    }
+
+    public int getEndColumn() {
+        return endColumn;
+    }
+
+    public void setEndColumn(int endColumn) {
+        this.endColumn = endColumn;
+    }
+
+    public int getLength() {
+        return length;
+    }
+
+    public void setLength(int length) {
+        this.length = length;
+    }
+
+    public LangASTNode getParent() {
+        return parent;
+    }
+
+    public void setParent(LangASTNode parent) {
+        this.parent = parent;
+    }
+
+    public List<LangASTNode> getChildren() {
+        return children;
+    }
+
+    public void setChildren(List<LangASTNode> children) {
+        this.children = children;
+    }
 
     @Override
     public abstract String toString();
 
-    // Accept method for visitor pattern
-    public abstract void accept(LangASTVisitor visitor);
 }

@@ -1,15 +1,18 @@
 package antlr.ast.node.statement;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
 public class LangIfStatement extends LangASTNode {
-    private final LangASTNode condition;
-    private final LangASTNode body;
-    private final LangASTNode elseBody;
+    private LangASTNode condition;
+    private LangASTNode body;
+    private LangASTNode elseBody;
 
-    public LangIfStatement(LangASTNode condition, LangASTNode body, LangASTNode elseBody, int startLine, int startChar, int endLine, int endChar) {
-        super("LangIfStatement", startLine, startChar, endLine, endChar);
+    public LangIfStatement() {super("LangIfStatement");}
+
+    public LangIfStatement(LangASTNode condition, LangASTNode body, LangASTNode elseBody, PositionInfo positionInfo) {
+        super("LangIfStatement", positionInfo);
         this.condition = condition;
         this.body = body;
         this.elseBody = elseBody;
@@ -18,16 +21,14 @@ public class LangIfStatement extends LangASTNode {
         if (elseBody != null) addChild(elseBody);
     }
 
-    public LangASTNode getCondition() {
-        return condition;
-    }
-
-    public LangASTNode getBody() {
-        return body;
-    }
-
-    public LangASTNode getElseBody() {
-        return elseBody;
+    public LangIfStatement(LangASTNode condition, LangASTNode body, LangASTNode elseBody, int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
+        super("LangIfStatement", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        this.condition = condition;
+        this.body = body;
+        this.elseBody = elseBody;
+        if (condition != null) addChild(condition);
+        if (body != null) addChild(body);
+        if (elseBody != null) addChild(elseBody);
     }
 
     @Override
@@ -36,6 +37,30 @@ public class LangIfStatement extends LangASTNode {
         if (condition != null) condition.accept(visitor);
         if (body != null) body.accept(visitor);
         if (elseBody != null) elseBody.accept(visitor);
+    }
+
+    public LangASTNode getCondition() {
+        return condition;
+    }
+
+    public void setCondition(LangASTNode condition) {
+        this.condition = condition;
+    }
+
+    public LangASTNode getBody() {
+        return body;
+    }
+
+    public void setBody(LangASTNode body) {
+        this.body = body;
+    }
+
+    public LangASTNode getElseBody() {
+        return elseBody;
+    }
+
+    public void setElseBody(LangASTNode elseBody) {
+        this.elseBody = elseBody;
     }
 
     public String toString() {

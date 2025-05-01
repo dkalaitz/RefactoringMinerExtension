@@ -1,23 +1,36 @@
 package antlr.ast.node.expression;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
 public class LangSimpleName extends LangASTNode {
-    private final String identifier;
+    private String identifier;
 
-    public LangSimpleName(String identifier, int startLine, int startChar, int endLine, int endChar) {
-        super("LangSimpleName", startLine, startChar, endLine, endChar);
+    public LangSimpleName() {super("LangSimpleName");}
+
+    public LangSimpleName(String identifier, PositionInfo positionInfo) {
+        super("LangSimpleName", positionInfo);
         this.identifier = identifier;
     }
 
-    public String getIdentifier() {
-        return identifier;
+    public LangSimpleName(String identifier, int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
+        super("LangSimpleName", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        this.identifier = identifier;
     }
 
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
+    }
+
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public String toString() {

@@ -1,14 +1,27 @@
 package antlr.ast.node.literal;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
 public class LangIntegerLiteral extends LangASTNode {
     private int value;
 
-    public LangIntegerLiteral(int startLine, int startChar, int endLine, int endChar, int value) {
-        super("LangIntegerLiteral", startLine, startChar, endLine, endChar);
+    public LangIntegerLiteral() {super("LangIntegerLiteral");}
+
+    public LangIntegerLiteral(PositionInfo positionInfo, int value) {
+        super("LangIntegerLiteral", positionInfo);
         this.value = value;
+    }
+
+    public LangIntegerLiteral(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn, int value) {
+        super("LangIntegerLiteral", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        this.value = value;
+    }
+
+    @Override
+    public void accept(LangASTVisitor visitor) {
+        visitor.visit(this);
     }
 
     public int getValue() {
@@ -25,8 +38,4 @@ public class LangIntegerLiteral extends LangASTNode {
                 '}';
     }
 
-    @Override
-    public void accept(LangASTVisitor visitor) {
-        visitor.visit(this);
-    }
 }

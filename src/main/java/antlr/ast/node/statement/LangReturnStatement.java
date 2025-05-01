@@ -1,13 +1,20 @@
 package antlr.ast.node.statement;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
 public class LangReturnStatement extends LangASTNode {
     private LangASTNode expression;
 
-    public LangReturnStatement(int startLine, int startChar, int endLine, int endChar) {
-        super("LangReturnStatement", startLine, startChar, endLine, endChar);
+    public LangReturnStatement() {super("LangReturnStatement");}
+
+    public LangReturnStatement(PositionInfo positionInfo) {
+        super("LangReturnStatement", positionInfo);
+    }
+
+    public LangReturnStatement(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
+        super("LangReturnStatement", startLine, startChar, endLine, endChar,  startColumn, endColumn);
     }
 
     public LangASTNode getExpression() {
