@@ -1,6 +1,7 @@
 package antlr.ast.node.statement;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -13,14 +14,14 @@ public class LangExpressionStatement extends LangASTNode {
 
     private LangASTNode expression;
 
-    public LangExpressionStatement() {super("LangExpressionStatement");}
+    public LangExpressionStatement() {super(NodeTypeEnum.EXPRESSION_STATEMENT);}
 
     public LangExpressionStatement(PositionInfo positionInfo) {
-        super("LangExpressionStatement", positionInfo);
+        super(NodeTypeEnum.EXPRESSION_STATEMENT, positionInfo);
     }
 
     public LangExpressionStatement(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangExpressionStatement", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.EXPRESSION_STATEMENT, startLine, startChar, endLine, endChar, startColumn, endColumn);
     }
 
     @Override

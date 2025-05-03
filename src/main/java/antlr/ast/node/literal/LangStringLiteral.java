@@ -1,21 +1,22 @@
 package antlr.ast.node.literal;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
 public class LangStringLiteral extends LangASTNode {
     private String value;
 
-    public LangStringLiteral() {super("LangStringLiteral");}
+    public LangStringLiteral() {super(NodeTypeEnum.STRING_LITERAL);}
 
     public LangStringLiteral(PositionInfo positionInfo, String value) {
-        super("LangStringLiteral", positionInfo);
+        super(NodeTypeEnum.STRING_LITERAL, positionInfo);
         this.value = value;
     }
 
     public LangStringLiteral(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn, String value) {
-        super("LangStringLiteral", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.STRING_LITERAL, startLine, startChar, endLine, endChar, startColumn, endColumn);
         this.value = value;
     }
 

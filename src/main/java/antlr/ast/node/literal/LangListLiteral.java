@@ -1,6 +1,7 @@
 package antlr.ast.node.literal;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -10,15 +11,15 @@ import java.util.List;
 public class LangListLiteral extends LangASTNode {
     private List<LangASTNode> elements;
 
-    public LangListLiteral() {super("LangListLiteral");}
+    public LangListLiteral() {super(NodeTypeEnum.LIST_LITERAL);}
 
     public LangListLiteral(PositionInfo positionInfo, List<LangASTNode> elements) {
-        super("LangListLiteral", positionInfo);
+        super(NodeTypeEnum.LIST_LITERAL, positionInfo);
         this.elements = elements;
     }
 
     public LangListLiteral(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangListLiteral", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.LIST_LITERAL, startLine, startChar, endLine, endChar, startColumn, endColumn);
         this.elements = new ArrayList<>();
     }
 

@@ -1,6 +1,7 @@
 package antlr.ast.node.declaration;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.node.statement.LangBlock;
 import antlr.ast.visitor.LangASTVisitor;
@@ -16,14 +17,14 @@ public class LangMethodDeclaration extends LangASTNode {
 
     private LangBlock body;
 
-    public LangMethodDeclaration() {super("LangMethodDeclaration");}
+    public LangMethodDeclaration() {super(NodeTypeEnum.METHOD_DECLARATION);}
 
     public LangMethodDeclaration(PositionInfo positionInfo) {
-        super("LangMethodDeclaration", positionInfo);
+        super(NodeTypeEnum.METHOD_DECLARATION, positionInfo);
     }
 
     public LangMethodDeclaration(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangMethodDeclaration", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.METHOD_DECLARATION, startLine, startChar, endLine, endChar, startColumn, endColumn);
     }
 
     public void addParameter(LangSingleVariableDeclaration langSingleVariableDeclaration) {

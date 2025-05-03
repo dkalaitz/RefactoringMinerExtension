@@ -1,6 +1,7 @@
 package antlr.ast.node.statement;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.visitor.LangASTVisitor;
@@ -15,11 +16,11 @@ public class LangForStatement extends LangASTNode {
     private LangASTNode body;
     private LangASTNode elseBody;
 
-    public LangForStatement() {super("LangForStatement");}
+    public LangForStatement() {super(NodeTypeEnum.FOR_STATEMENT);}
 
     public LangForStatement(List<LangSingleVariableDeclaration> initializers, LangASTNode condition, List<LangASTNode> updates,
                             LangASTNode body, LangASTNode elseBody, PositionInfo positionInfo) {
-        super("LangForStatement", positionInfo);
+        super(NodeTypeEnum.FOR_STATEMENT, positionInfo);
         this.initializers = initializers;
         this.condition = condition;
         this.updates = updates;
@@ -36,7 +37,7 @@ public class LangForStatement extends LangASTNode {
     public LangForStatement(List<LangSingleVariableDeclaration> initializers, LangASTNode condition, List<LangASTNode> updates,
                             LangASTNode body, LangASTNode elseBody, int startLine, int startChar,
                             int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangForStatement", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.FOR_STATEMENT, startLine, startChar, endLine, endChar, startColumn, endColumn);
         this.initializers = initializers;
         this.condition = condition;
         this.updates = updates;

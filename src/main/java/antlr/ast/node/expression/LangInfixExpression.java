@@ -1,6 +1,7 @@
 package antlr.ast.node.expression;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -9,10 +10,10 @@ public class LangInfixExpression extends LangASTNode {
     private String operator;
     private LangASTNode right;
 
-    public LangInfixExpression() {super("LangInfixExpression");}
+    public LangInfixExpression() {super(NodeTypeEnum.INFIX_EXPRESSION);}
 
     public LangInfixExpression(LangASTNode left, String operator, LangASTNode right, PositionInfo positionInfo) {
-        super("LangInfixExpression", positionInfo);
+        super(NodeTypeEnum.INFIX_EXPRESSION, positionInfo);
         this.left = left;
         this.operator = operator;
         this.right = right;
@@ -21,7 +22,7 @@ public class LangInfixExpression extends LangASTNode {
     }
 
     public LangInfixExpression(LangASTNode left, String operator, LangASTNode right, int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangInfixExpression", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.INFIX_EXPRESSION, startLine, startChar, endLine, endChar, startColumn, endColumn);
         this.left = left;
         this.operator = operator;
         this.right = right;

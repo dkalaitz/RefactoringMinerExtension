@@ -1,6 +1,7 @@
 package antlr.ast.node.expression;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -11,14 +12,14 @@ public class LangMethodInvocation extends LangASTNode {
     private LangASTNode expression;
     private List<LangASTNode> arguments;
 
-    public LangMethodInvocation() {super("LangMethodInvocation");}
+    public LangMethodInvocation() {super(NodeTypeEnum.METHOD_INVOCATION);}
 
     public LangMethodInvocation(PositionInfo positionInfo) {
-        super("LangMethodInvocation", positionInfo);
+        super(NodeTypeEnum.METHOD_INVOCATION, positionInfo);
     }
 
     public LangMethodInvocation(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangMethodInvocation", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.METHOD_INVOCATION, startLine, startChar, endLine, endChar, startColumn, endColumn);
         this.arguments = new ArrayList<>();
     }
 

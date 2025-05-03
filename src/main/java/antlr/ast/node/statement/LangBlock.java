@@ -1,6 +1,7 @@
 package antlr.ast.node.statement;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -11,14 +12,14 @@ import java.util.List;
 public class LangBlock extends LangASTNode {
     private List<LangASTNode> statements = new ArrayList<>();
 
-    public LangBlock() {super("LangBlock");}
+    public LangBlock() {super(NodeTypeEnum.BLOCK);}
 
     public LangBlock(PositionInfo positionInfo) {
-        super("LangBlock", positionInfo);
+        super(NodeTypeEnum.BLOCK, positionInfo);
     }
 
     public LangBlock(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangBlock", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.BLOCK, startLine, startChar, endLine, endChar, startColumn, endColumn);
     }
 
 

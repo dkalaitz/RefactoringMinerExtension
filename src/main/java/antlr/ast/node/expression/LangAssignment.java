@@ -1,6 +1,7 @@
 package antlr.ast.node.expression;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -9,10 +10,10 @@ public class LangAssignment extends LangASTNode {
     private LangASTNode leftSide;
     private LangASTNode rightSide;
 
-    public LangAssignment() {super("LangAssignment");}
+    public LangAssignment() {super(NodeTypeEnum.ASSIGNMENT);}
 
     public LangAssignment(String operator, LangASTNode leftSide, LangASTNode rightSide, PositionInfo positionInfo) {
-        super("LangAssignment", positionInfo);
+        super(NodeTypeEnum.ASSIGNMENT, positionInfo);
         this.operator = operator;
         this.leftSide = leftSide;
         this.rightSide = rightSide;
@@ -21,7 +22,7 @@ public class LangAssignment extends LangASTNode {
     }
 
     public LangAssignment(String operator, LangASTNode leftSide, LangASTNode rightSide, int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangAssignment", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.ASSIGNMENT, startLine, startChar, endLine, endChar, startColumn, endColumn);
         this.operator = operator;
         this.leftSide = leftSide;
         this.rightSide = rightSide;

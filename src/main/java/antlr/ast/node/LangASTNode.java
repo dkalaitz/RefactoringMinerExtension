@@ -9,7 +9,7 @@ import java.util.List;
 
 public abstract class LangASTNode {
 
-    private String nodeType;
+    private NodeTypeEnum nodeType;
     private int startLine;
     private int endLine;
     private int startOffset;
@@ -20,12 +20,12 @@ public abstract class LangASTNode {
     private LangASTNode parent;
     private List<LangASTNode> children;
 
-    public LangASTNode(String nodeType) {
+    public LangASTNode(NodeTypeEnum nodeType) {
         this.nodeType = nodeType;
         this.children = new ArrayList<>();
     }
 
-    public LangASTNode(String nodeType, PositionInfo positionInfo) {
+    public LangASTNode(NodeTypeEnum nodeType, PositionInfo positionInfo) {
         this.nodeType = nodeType;
         this.startLine = positionInfo.getStartLine();
         this.endLine = positionInfo.getEndLine();
@@ -41,7 +41,7 @@ public abstract class LangASTNode {
         this.children = new ArrayList<>();
     }
 
-    public LangASTNode(String nodeType, int startLine, int startOffset, int endLine, int endOffset, int startColumn, int endColumn) {
+    public LangASTNode(NodeTypeEnum nodeType, int startLine, int startOffset, int endLine, int endOffset, int startColumn, int endColumn) {
         this.nodeType = nodeType;
         this.startLine = startLine;
         this.endLine = endLine;
@@ -74,11 +74,11 @@ public abstract class LangASTNode {
     // Accept method for a visitor pattern
     public abstract void accept(LangASTVisitor visitor);
 
-    public String getNodeType() {
+    public NodeTypeEnum getNodeType() {
         return nodeType;
     }
 
-    public void setNodeType(String nodeType) {
+    public void setNodeType(NodeTypeEnum nodeType) {
         this.nodeType = nodeType;
     }
 

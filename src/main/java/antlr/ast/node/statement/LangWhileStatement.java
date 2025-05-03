@@ -1,6 +1,7 @@
 package antlr.ast.node.statement;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -9,17 +10,17 @@ public class LangWhileStatement extends LangASTNode {
     private LangASTNode body;
     private LangASTNode elseBody;
 
-    public LangWhileStatement(){super("LangWhileStatement");}
+    public LangWhileStatement(){super(NodeTypeEnum.WHILE_STATEMENT);}
 
     public LangWhileStatement(LangASTNode condition, LangASTNode body, LangASTNode elseBody, PositionInfo positionInfo) {
-        super("LangWhileStatement", positionInfo);
+        super(NodeTypeEnum.WHILE_STATEMENT, positionInfo);
         this.condition = condition;
         this.body = body;
         this.elseBody = elseBody;
     }
 
     public LangWhileStatement(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn, LangASTNode condition, LangASTNode body, LangASTNode elseBody) {
-        super("LangWhileStatement", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.WHILE_STATEMENT, startLine, startChar, endLine, endChar, startColumn, endColumn);
         this.condition = condition;
         this.body = body;
         this.elseBody = elseBody;

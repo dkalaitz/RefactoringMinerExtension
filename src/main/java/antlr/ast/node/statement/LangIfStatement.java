@@ -1,6 +1,7 @@
 package antlr.ast.node.statement;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -9,10 +10,10 @@ public class LangIfStatement extends LangASTNode {
     private LangASTNode body;
     private LangASTNode elseBody;
 
-    public LangIfStatement() {super("LangIfStatement");}
+    public LangIfStatement() {super(NodeTypeEnum.IF_STATEMENT);}
 
     public LangIfStatement(LangASTNode condition, LangASTNode body, LangASTNode elseBody, PositionInfo positionInfo) {
-        super("LangIfStatement", positionInfo);
+        super(NodeTypeEnum.IF_STATEMENT, positionInfo);
         this.condition = condition;
         this.body = body;
         this.elseBody = elseBody;
@@ -22,7 +23,7 @@ public class LangIfStatement extends LangASTNode {
     }
 
     public LangIfStatement(LangASTNode condition, LangASTNode body, LangASTNode elseBody, int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangIfStatement", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.IF_STATEMENT, startLine, startChar, endLine, endChar, startColumn, endColumn);
         this.condition = condition;
         this.body = body;
         this.elseBody = elseBody;

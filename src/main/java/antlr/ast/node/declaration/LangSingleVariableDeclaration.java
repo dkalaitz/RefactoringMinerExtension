@@ -1,6 +1,7 @@
 package antlr.ast.node.declaration;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.visitor.LangASTVisitor;
@@ -11,15 +12,15 @@ import antlr.ast.visitor.LangASTVisitor;
 public class LangSingleVariableDeclaration extends LangASTNode {
     private LangSimpleName langSimpleName;
 
-    public LangSingleVariableDeclaration() {super("LangSingleVariableDeclaration");}
+    public LangSingleVariableDeclaration() {super(NodeTypeEnum.SINGLE_VARIABLE_DECLARATION);}
 
     public LangSingleVariableDeclaration(LangSimpleName langSimpleName, PositionInfo positionInfo) {
-        super("LangSingleVariableDeclaration", positionInfo);
+        super(NodeTypeEnum.SINGLE_VARIABLE_DECLARATION, positionInfo);
         this.langSimpleName = langSimpleName;
     }
 
     public LangSingleVariableDeclaration(LangSimpleName langSimpleName, int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangSingleVariableDeclaration", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.SINGLE_VARIABLE_DECLARATION, startLine, startChar, endLine, endChar, startColumn, endColumn);
         this.langSimpleName = langSimpleName;
     }
 

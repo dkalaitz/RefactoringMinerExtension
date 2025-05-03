@@ -1,6 +1,7 @@
 package antlr.ast.node.unit;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.visitor.LangASTVisitor;
@@ -13,14 +14,14 @@ import java.util.List;
 public class LangCompilationUnit extends LangASTNode {
     private final List<LangTypeDeclaration> types = new ArrayList<>();
 
-    public LangCompilationUnit() {super("LangCompilationUnit");}
+    public LangCompilationUnit() {super(NodeTypeEnum.COMPILATION_UNIT);}
 
     public LangCompilationUnit(PositionInfo positionInfo) {
-        super("LangCompilationUnit", positionInfo);
+        super(NodeTypeEnum.COMPILATION_UNIT, positionInfo);
     }
 
     public LangCompilationUnit(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
-        super("LangCompilationUnit", startLine, startChar, endLine, endChar, startColumn, endColumn);
+        super(NodeTypeEnum.COMPILATION_UNIT, startLine, startChar, endLine, endChar, startColumn, endColumn);
     }
 
     public void addType(LangTypeDeclaration type) {
