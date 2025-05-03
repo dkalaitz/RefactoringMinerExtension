@@ -1,4 +1,4 @@
-package org.refactoringminer.test.testpython;
+package org.refactoringminer.test.python;
 
 
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,7 @@ public class PyASTPrinterTest {
 
     @Test
     public void testASTVisitorSimple() {
-        String code = "x = 10";
+        String code = "x = 10\n";
         LangASTUtil.printAST(code);
     }
 

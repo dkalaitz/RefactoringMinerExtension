@@ -1,10 +1,9 @@
-package org.refactoringminer.test.testpython;
+package org.refactoringminer.test.python;
 
 import antlr.jdtmapper.LangJdtASTConverter;
 import org.eclipse.jdt.core.dom.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
-import org.refactoringminer.utils.LangASTUtil;
 
 import java.io.IOException;
 import java.util.List;

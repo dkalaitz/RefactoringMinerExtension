@@ -1,4 +1,4 @@
-package org.refactoringminer.test.testpython;
+package org.refactoringminer.test.python;
 
 import antlr.base.lang.python.Python3Lexer;
 import antlr.base.lang.python.Python3Parser;

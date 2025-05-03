@@ -1,4 +1,4 @@
-package org.refactoringminer.test.testpython;
+package org.refactoringminer.test.python;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
