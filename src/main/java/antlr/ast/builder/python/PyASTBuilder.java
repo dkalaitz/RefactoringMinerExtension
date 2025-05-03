@@ -30,24 +30,20 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> {
         return visitFile_input(ctx);
     }
 
-    // LangCompilationUnit related methods
+    /** LangCompilationUnit related methods **/
     @Override
     public LangASTNode visitFile_input(Python3Parser.File_inputContext ctx) { return compilationUnitBuilder.visitFile_input(ctx); }
 
-    // Declaration related methods
+    /** Declaration related methods **/
     @Override
     public LangASTNode visitClassdef(Python3Parser.ClassdefContext ctx) { return declarationBuilder.visitClassdef(ctx); }
 
     @Override
-    public LangASTNode visitFuncdef(Python3Parser.FuncdefContext ctx) {
-        return declarationBuilder.visitFuncdef(ctx);
-    }
+    public LangASTNode visitFuncdef(Python3Parser.FuncdefContext ctx) { return declarationBuilder.visitFuncdef(ctx); }
 
-    // Expression-related methods
+    /** Expression-related methods **/
     @Override
-    public LangASTNode visitAtom(Python3Parser.AtomContext ctx) {
-        return expressionBuilder.visitAtom(ctx);
-    }
+    public LangASTNode visitAtom(Python3Parser.AtomContext ctx) { return expressionBuilder.visitAtom(ctx); }
 
     @Override
     public LangASTNode visitAtom_expr(Python3Parser.Atom_exprContext ctx) { return expressionBuilder.visitAtom_expr(ctx); }
@@ -56,44 +52,32 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> {
     public LangASTNode visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) { return expressionBuilder.visitExpr_stmt(ctx); }
 
     @Override
-    public LangASTNode visitExpr(Python3Parser.ExprContext ctx) {
-        return expressionBuilder.visitExpr(ctx);
-    }
+    public LangASTNode visitExpr(Python3Parser.ExprContext ctx) { return expressionBuilder.visitExpr(ctx); }
 
     @Override
     public LangASTNode visitComparison(Python3Parser.ComparisonContext ctx){ return expressionBuilder.visitComparison(ctx); }
 
     @Override
-    public LangASTNode visitTrailer(Python3Parser.TrailerContext ctx){
-        return expressionBuilder.visitTrailer(ctx);
-    }
+    public LangASTNode visitTrailer(Python3Parser.TrailerContext ctx){ return expressionBuilder.visitTrailer(ctx); }
 
-    // Statement-related methods
+    /** Statement-related methods **/
     @Override
-    public LangASTNode visitBlock(Python3Parser.BlockContext ctx) {
-        return statementBuilder.visitBlock(ctx);
-    }
+    public LangASTNode visitBlock(Python3Parser.BlockContext ctx) { return statementBuilder.visitBlock(ctx); }
 
     @Override
-    public LangASTNode visitStmt(Python3Parser.StmtContext ctx) {
-        return statementBuilder.visitStmt(ctx);
-    }
+    public LangASTNode visitStmt(Python3Parser.StmtContext ctx) { return statementBuilder.visitStmt(ctx); }
 
     @Override
     public LangASTNode visitSimple_stmt(Python3Parser.Simple_stmtContext ctx) { return statementBuilder.visitSimple_stmt(ctx); }
 
     @Override
-    public LangASTNode visitIf_stmt(Python3Parser.If_stmtContext ctx) {
-        return statementBuilder.visitIf_stmt(ctx);
-    }
+    public LangASTNode visitIf_stmt(Python3Parser.If_stmtContext ctx) { return statementBuilder.visitIf_stmt(ctx); }
 
     @Override
     public LangASTNode visitReturn_stmt(Python3Parser.Return_stmtContext ctx) { return statementBuilder.visitReturn_stmt(ctx); }
 
     @Override
-    public LangASTNode visitFor_stmt(Python3Parser.For_stmtContext ctx) {
-        return statementBuilder.visitFor_stmt(ctx);
-    }
+    public LangASTNode visitFor_stmt(Python3Parser.For_stmtContext ctx) { return statementBuilder.visitFor_stmt(ctx); }
 
     @Override
     public LangASTNode visitWhile_stmt(Python3Parser.While_stmtContext ctx) { return statementBuilder.visitWhile_stmt(ctx); }

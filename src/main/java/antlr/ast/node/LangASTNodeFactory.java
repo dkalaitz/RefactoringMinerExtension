@@ -8,6 +8,7 @@ import antlr.ast.node.expression.LangInfixExpression;
 import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.literal.LangBooleanLiteral;
 import antlr.ast.node.literal.LangIntegerLiteral;
+import antlr.ast.node.literal.LangListLiteral;
 import antlr.ast.node.literal.LangStringLiteral;
 import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.node.statement.*;
@@ -19,10 +20,12 @@ import java.util.List;
 
 public class LangASTNodeFactory {
 
+    /** Compilation Unit */
     public static LangCompilationUnit createCompilationUnit(Python3Parser.File_inputContext ctx) {
         return new LangCompilationUnit(PositionUtils.getPositionInfo(ctx));
     }
 
+    /** Declarations */
     public static LangTypeDeclaration createTypeDeclaration(Python3Parser.ClassdefContext ctx) {
         LangTypeDeclaration type = new LangTypeDeclaration(PositionUtils.getPositionInfo(ctx));
         type.setName(ctx.name().getText());
@@ -46,24 +49,9 @@ public class LangASTNodeFactory {
         return new LangSingleVariableDeclaration(langSimpleName, PositionUtils.getPositionInfo(ctx));
     }
 
+    /** Expressions */
     public static LangSimpleName createSimpleName(String name, ParserRuleContext ctx) {
         return new LangSimpleName(name, PositionUtils.getPositionInfo(ctx));
-    }
-
-    public static LangBlock createBlock(ParserRuleContext ctx, List<LangASTNode> statements) {
-        LangBlock langBlock = new LangBlock(PositionUtils.getPositionInfo(ctx));
-        if (statements != null) {
-            statements.forEach(langBlock::addStatement);
-        }
-        return langBlock;
-    }
-
-    public static LangReturnStatement createReturnStatement(LangASTNode expression, ParserRuleContext ctx) {
-        LangReturnStatement langReturnStatement = new LangReturnStatement(PositionUtils.getPositionInfo(ctx));
-        if (expression != null) {
-            langReturnStatement.setExpression(expression);
-        }
-        return langReturnStatement;
     }
 
     public static LangAssignment createAssignment(String operator, LangASTNode left, LangASTNode right, ParserRuleContext ctx) {
@@ -72,7 +60,19 @@ public class LangASTNodeFactory {
 
     public static LangInfixExpression createInfixExpression(LangASTNode left, LangASTNode right, String operator, ParserRuleContext ctx) {
         return new LangInfixExpression(left, operator, right, PositionUtils.getPositionInfo(ctx));
+    }
 
+    public static LangMethodInvocation createMethodInvocation(ParserRuleContext ctx) {
+        return new LangMethodInvocation(PositionUtils.getPositionInfo(ctx));
+    }
+
+    /** Statements */
+    public static LangBlock createBlock(ParserRuleContext ctx, List<LangASTNode> statements) {
+        LangBlock langBlock = new LangBlock(PositionUtils.getPositionInfo(ctx));
+        if (statements != null) {
+            statements.forEach(langBlock::addStatement);
+        }
+        return langBlock;
     }
 
     public static LangIfStatement createIfStatement(LangASTNode condition, LangBlock body, LangBlock elseBody, ParserRuleContext ctx) {
@@ -89,10 +89,24 @@ public class LangASTNodeFactory {
         return new LangWhileStatement(condition, body, elseBody, PositionUtils.getPositionInfo(ctx));
     }
 
-    public static LangMethodInvocation createMethodInvocation(ParserRuleContext ctx) {
-        return new LangMethodInvocation(PositionUtils.getPositionInfo(ctx));
+    public static LangReturnStatement createReturnStatement(LangASTNode expression, ParserRuleContext ctx) {
+        LangReturnStatement langReturnStatement = new LangReturnStatement(PositionUtils.getPositionInfo(ctx));
+        if (expression != null) {
+            langReturnStatement.setExpression(expression);
+        }
+        return langReturnStatement;
     }
 
+    public static LangExpressionStatement createExpressionStatement(LangASTNode expression, ParserRuleContext ctx) {
+        LangExpressionStatement statement = new LangExpressionStatement(PositionUtils.getPositionInfo(ctx));
+        if (expression != null) {
+            statement.setExpression(expression);
+        }
+
+        return statement;
+    }
+
+    /** Literals */
     public static LangIntegerLiteral createIntegerLiteral(ParserRuleContext ctx, String value) {
         try {
             int intValue = Integer.parseInt(value);
@@ -112,13 +126,8 @@ public class LangASTNodeFactory {
         return new LangBooleanLiteral(PositionUtils.getPositionInfo(ctx), value);
     }
 
-    public static LangExpressionStatement createExpressionStatement(LangASTNode expression, ParserRuleContext ctx) {
-        LangExpressionStatement statement = new LangExpressionStatement(PositionUtils.getPositionInfo(ctx));
-        if (expression != null) {
-            statement.setExpression(expression);
-        }
-
-        return statement;
+    public static LangListLiteral createListLiteral(ParserRuleContext ctx, List<LangASTNode> elements) {
+        return new LangListLiteral(PositionUtils.getPositionInfo(ctx), elements);
     }
 
 
