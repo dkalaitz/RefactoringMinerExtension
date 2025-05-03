@@ -7,8 +7,12 @@ import antlr.ast.node.LangASTNodeFactory;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.expression.LangSimpleName;
+import antlr.ast.node.literal.LangDictionaryLiteral;
 import antlr.ast.node.statement.LangExpressionStatement;
 import antlr.base.lang.python.Python3Parser;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static antlr.ast.node.LangASTNodeFactory.createExpressionStatement;
 
@@ -24,15 +28,49 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         if (ctx.NUMBER() != null) {
             return LangASTNodeFactory.createIntegerLiteral(ctx, ctx.NUMBER().getText());
         }
-        // TODO
-//        if (ctx.STRING() != null) {
-//            return LangASTNodeFactory.createStringLiteral(ctx, ctx.getText());
-//        }
+        if (ctx.getText() != null && PyASTBuilderUtil.isStringLiteral(ctx)) {
+            return LangASTNodeFactory.createStringLiteral(ctx, ctx.getText());
+        }
         if (ctx.TRUE() != null || ctx.FALSE() != null) {
             return LangASTNodeFactory.createBooleanLiteral(ctx, Boolean.parseBoolean(ctx.getText()));
         }
-        return LangASTNodeFactory.createSimpleName(ctx.getText(), ctx);
+        if (ctx.getText() != null && PyASTBuilderUtil.isListLiteral(ctx)){
+            List<LangASTNode> elements = new ArrayList<>();
+            // If there's a testlist_comp, it contains the elements
+            if (ctx.testlist_comp() != null) {
+                for (Python3Parser.TestContext testCtx : ctx.testlist_comp().test()) {
+                    elements.add(mainBuilder.visit(testCtx));
+                }
+            }
+            return LangASTNodeFactory.createListLiteral(ctx, elements);
+        }
+        // Handle tuple literals
+        if (ctx.OPEN_PAREN() != null && ctx.CLOSE_PAREN() != null && ctx.testlist_comp() != null) {
+            List<LangASTNode> elements = new ArrayList<>();
+            for (Python3Parser.TestContext testCtx : ctx.testlist_comp().test()) {
+                elements.add(mainBuilder.visit(testCtx));
+            }
+            return LangASTNodeFactory.createTupleLiteral(ctx, elements);
+        }
 
+        // Handle dictionary literals
+        if (ctx.OPEN_BRACE() != null && ctx.CLOSE_BRACE() != null && ctx.dictorsetmaker() != null) {
+            LangDictionaryLiteral dict = LangASTNodeFactory.createDictionaryLiteral(ctx);
+
+            // Process key-value pairs if they exist
+            Python3Parser.DictorsetmakerContext dictCtx = ctx.dictorsetmaker();
+            if (dictCtx != null && dictCtx.test().size() % 2 == 0) {
+                for (int i = 0; i < dictCtx.test().size(); i += 2) {
+                    LangASTNode key = mainBuilder.visit(dictCtx.test(i));
+                    LangASTNode value = mainBuilder.visit(dictCtx.test(i + 1));
+                    dict.addEntry(key, value);
+                }
+            }
+
+            return dict;
+        }
+
+        return LangASTNodeFactory.createSimpleName(ctx.getText(), ctx);
     }
 
     public LangASTNode visitAtom_expr(Python3Parser.Atom_exprContext ctx) {
@@ -49,35 +87,10 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         for (Python3Parser.TrailerContext trailerCtx : ctx.trailer()) {
             if (trailerCtx.OPEN_PAREN() != null) {
                 // This is a function call like print(i) or a method call like obj.method()
-
-                // Get the name - either from the base expression or from a previous dot access
-                String methodName;
-                LangASTNode expression = null;
-
-                if (baseExpr instanceof LangSimpleName) {
-                    // For simple function calls like print(i)
-                    methodName = ((LangSimpleName) baseExpr).getIdentifier();
-                    // The function name itself is the expression
-                    expression = baseExpr;
-                } else {
-                    // This will need to handle more complex cases
-                    methodName = ""; // Will be set appropriately for method calls
-                    expression = result; // The current result becomes the expression
-                }
-
-                // Create the method invocation with correct position
-//                int startLine = ctx.getStart().getLine();
-//                int startChar = ctx.getStart().getCharPositionInLine();
-//                int endLine = trailerCtx.getStop().getLine();
-//                int endChar = trailerCtx.getStop().getCharPositionInLine() + trailerCtx.getStop().getText().length();
-
-                LangMethodInvocation langMethodInvocation = LangASTNodeFactory.createMethodInvocation(
-                        ctx.getParent() // Use parent context for proper span
-                );
+                LangMethodInvocation methodInvocation = LangASTNodeFactory.createMethodInvocation(ctx.getParent());
 
                 // Set the expression - this is the object on which the method is called
-                // For function calls like print(), this will be the LangSimpleName "print"
-                langMethodInvocation.setExpression(expression);
+                methodInvocation.setExpression(result);
 
                 // Process arguments if they exist
                 if (trailerCtx.arglist() != null) {
@@ -85,28 +98,20 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
                         // Visit each argument and add it to the method invocation
                         LangASTNode argNode = mainBuilder.visit(argCtx);
                         if (argNode != null) {
-                            langMethodInvocation.addArgument(argNode);
+                            methodInvocation.addArgument(argNode);
                         }
                     }
                 }
 
-                result = langMethodInvocation;
+                result = methodInvocation;
             } else if (trailerCtx.DOT() != null && trailerCtx.name() != null) {
                 // This is attribute access: obj.attr
-                // Create a property access node
                 String attrName = trailerCtx.name().getText();
 
-                // If the next trailer is OPEN_PAREN, this is part of a method call
-                // You'll need to handle this based on your AST structure
-
-                // For now, create a LangSimpleName for the attribute
-                // You might want a more specific node type for attribute access
-
-                // Update result for further processing
-                result = LangASTNodeFactory.createSimpleName(attrName, trailerCtx); // This is simplified - you'll need property access nodes
+                // Create a field access node that combines the object and the field name
+                result = LangASTNodeFactory.createFieldAccess(result, attrName, trailerCtx);
             }
         }
-
         return result;
     }
 
@@ -126,6 +131,7 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         }
 
         // For a simple assignment like "x = 10"
+        // TODO: Handle more complex assignments
         LangASTNode left = mainBuilder.visit(ctx.testlist_star_expr(0));
         LangASTNode right = mainBuilder.visit(ctx.testlist_star_expr(1));
 
@@ -134,7 +140,6 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
 
         // Wrap in expression statement with correct source position
         return LangASTNodeFactory.createExpressionStatement(assignment, ctx);
-
     }
 
 
@@ -216,23 +221,25 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         return mainBuilder.visitChildren(ctx);
     }
 
-    public LangASTNode visitTrailer(Python3Parser.TrailerContext ctx) {
-        if (ctx.OPEN_PAREN() != null) {
-            LangMethodInvocation langMethodInvocation = LangASTNodeFactory.createMethodInvocation(ctx);
 
-            if (ctx.arglist() != null) {
-                for (Python3Parser.ArgumentContext argCtx : ctx.arglist().argument()) {
-                    // Visit each argument and add it to the method invocation
-                    LangASTNode argNode = mainBuilder.visit(argCtx);
-                    if (argNode != null) {
-                        langMethodInvocation.addArgument(argNode);
-                    }
-                }
-            }
-            return langMethodInvocation;
-        }
-        return null;
-    }
+    //TODO: Uncomment
+//    public LangASTNode visitTrailer(Python3Parser.TrailerContext ctx) {
+//        if (ctx.OPEN_PAREN() != null) {
+//            LangMethodInvocation langMethodInvocation = LangASTNodeFactory.createMethodInvocation(ctx);
+//
+//            if (ctx.arglist() != null) {
+//                for (Python3Parser.ArgumentContext argCtx : ctx.arglist().argument()) {
+//                    // Visit each argument and add it to the method invocation
+//                    LangASTNode argNode = mainBuilder.visit(argCtx);
+//                    if (argNode != null) {
+//                        langMethodInvocation.addArgument(argNode);
+//                    }
+//                }
+//            }
+//            return langMethodInvocation;
+//        }
+//        return null;
+//    }
 
 
     //

@@ -1,12 +1,10 @@
 package antlr.ast.builder.python;
 
-import antlr.ast.builder.python.component.PyCompilationUnitASTBuilder;
-import antlr.ast.builder.python.component.PyDeclarationASTBuilder;
-import antlr.ast.builder.python.component.PyExpressionASTBuilder;
-import antlr.ast.builder.python.component.PyStatementASTBuilder;
+import antlr.ast.builder.python.component.*;
 import antlr.ast.node.LangASTNode;
 import antlr.base.lang.python.Python3Parser;
 import antlr.base.lang.python.Python3ParserBaseVisitor;
+import org.antlr.v4.runtime.TokenStream;
 
 /**
  * Βuilder class to traverse the ANTLR parse tree
@@ -26,9 +24,7 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> {
         this.statementBuilder = new PyStatementASTBuilder(this);
     }
 
-    public LangASTNode build(Python3Parser.File_inputContext ctx) {
-        return visitFile_input(ctx);
-    }
+    public LangASTNode build(Python3Parser.File_inputContext ctx) { return visitFile_input(ctx); }
 
     /** LangCompilationUnit related methods **/
     @Override
@@ -57,8 +53,8 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> {
     @Override
     public LangASTNode visitComparison(Python3Parser.ComparisonContext ctx){ return expressionBuilder.visitComparison(ctx); }
 
-    @Override
-    public LangASTNode visitTrailer(Python3Parser.TrailerContext ctx){ return expressionBuilder.visitTrailer(ctx); }
+//    @Override
+//    public LangASTNode visitTrailer(Python3Parser.TrailerContext ctx){ return expressionBuilder.visitTrailer(ctx); }
 
     /** Statement-related methods **/
     @Override

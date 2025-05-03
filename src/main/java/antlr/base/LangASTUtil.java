@@ -1,27 +1,20 @@
-package antlr.jdtmapper;
+package antlr.base;
 
 import antlr.ast.builder.python.PyASTBuilder;
 import antlr.ast.node.LangASTNode;
-import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.base.lang.python.Python3Lexer;
 import antlr.base.lang.python.Python3Parser;
 import com.github.gumtreediff.tree.TreeContext;
 import org.antlr.v4.runtime.*;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import java.io.IOException;
 import java.io.Reader;
-
-import static antlr.base.factory.LangLexerFactory.getLexer;
-import static antlr.base.factory.LangParserFactory.getParser;
-import static antlr.jdtmapper.JdtASTMapperRegistry.getMapper;
 
 /**
  * Mapper Factory class to get the JDT AST mapper
  * based on the name of the programming language or file extension
  */
-public class LangJdtASTConverter {
+public class LangASTUtil {
 
     public static LangASTNode getCustomPythonAST(Reader r) throws IOException {
         // Create a new TreeContext to hold our tree
@@ -38,31 +31,9 @@ public class LangJdtASTConverter {
 
         // Build our custom AST
         PyASTBuilder astBuilder = new PyASTBuilder();
-//        ParserRuleContext parseTree = LangJdtASTConverter.getParseTree("python", r);
-        LangASTNode pythonAST = astBuilder.build(parseTree);
+//        ParserRuleContext parseTree = LangASTUtil.getParseTree("python", r);
 
-        return pythonAST;
-    }
-
-    public static CompilationUnit getJdtASTFromLangParseTree(String language, String code) {
-        // Normalize the language identifier
-        String lang = language.toLowerCase();
-
-        // Get the appropriate lexer for the language
-        CharStream input = CharStreams.fromString(code);
-        Lexer lexer = getLexer(lang, input);
-
-        // Create token stream
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-
-        // Get the appropriate parser for the language
-        Parser parser = getParser(lang, tokens);
-
-        ParserRuleContext parseTree = getParseTree(lang, parser);
-
-        LangASTNode langAST = getLangAST(lang, parseTree);
-
-        return getCompatibleJdtAST(lang, (LangCompilationUnit) langAST);
+        return astBuilder.build(parseTree);
     }
 
     public static ParserRuleContext getParseTree(String lang, Parser parser){
@@ -89,16 +60,6 @@ public class LangJdtASTConverter {
             throw new UnsupportedOperationException("AST builder not defined for language: " + lang);
         }
         return langAST;
-    }
-
-
-    public static CompilationUnit getCompatibleJdtAST(String language, LangCompilationUnit langCompilationUnit){
-        JdtASTMapper mapper = getMapper(language);
-
-        AST ast = AST.newAST(AST.getJLSLatest(), false);
-
-        return (CompilationUnit) mapper.map(langCompilationUnit, ast);
-
     }
 
 }

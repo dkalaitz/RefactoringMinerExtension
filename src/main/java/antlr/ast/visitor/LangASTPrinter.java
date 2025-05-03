@@ -1,17 +1,12 @@
 package antlr.ast.visitor;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.comment.LangComment;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
-import antlr.ast.node.expression.LangAssignment;
-import antlr.ast.node.expression.LangInfixExpression;
-import antlr.ast.node.expression.LangMethodInvocation;
-import antlr.ast.node.literal.LangBooleanLiteral;
-import antlr.ast.node.literal.LangIntegerLiteral;
-import antlr.ast.node.literal.LangListLiteral;
-import antlr.ast.node.literal.LangStringLiteral;
-import antlr.ast.node.expression.LangSimpleName;
+import antlr.ast.node.expression.*;
+import antlr.ast.node.literal.*;
 import antlr.ast.node.statement.*;
 import antlr.ast.node.unit.LangCompilationUnit;
 
@@ -48,11 +43,11 @@ public class LangASTPrinter implements LangASTVisitor {
                 .append(" [")
                 .append(node.getStartLine())
                 .append(":")
-                .append(node.getStartOffset())
+                .append(node.getStartChar())
                 .append("-")
                 .append(node.getEndLine())
                 .append(":")
-                .append(node.getEndOffset())
+                .append(node.getEndChar())
                 .append("]");
 
         if (additionalInfo != null && !additionalInfo.isEmpty()) {
@@ -220,5 +215,32 @@ public class LangASTPrinter implements LangASTVisitor {
             node.getElements().get(i).accept(this);
             indentLevel--;
         }
+    }
+
+
+
+    @Override
+    public void visit(LangFieldAccess node) {
+        appendNodeInfo(node, "field: " + node.getName());
+    }
+
+    @Override
+    public void visit(LangDictionaryLiteral langDictionaryLiteral) {
+
+    }
+
+    @Override
+    public void visit(LangTupleLiteral langTupleLiteral) {
+
+    }
+
+    @Override
+    public void visit(LangImportStatement langImportStatement) {
+
+    }
+
+    @Override
+    public void visit(LangComment langComment) {
+
     }
 }

@@ -1,16 +1,12 @@
 package antlr.ast.node;
 
+import antlr.ast.builder.python.PyASTBuilderUtil;
+import antlr.ast.node.comment.LangComment;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
-import antlr.ast.node.expression.LangAssignment;
-import antlr.ast.node.expression.LangInfixExpression;
-import antlr.ast.node.expression.LangMethodInvocation;
-import antlr.ast.node.literal.LangBooleanLiteral;
-import antlr.ast.node.literal.LangIntegerLiteral;
-import antlr.ast.node.literal.LangListLiteral;
-import antlr.ast.node.literal.LangStringLiteral;
-import antlr.ast.node.expression.LangSimpleName;
+import antlr.ast.node.expression.*;
+import antlr.ast.node.literal.*;
 import antlr.ast.node.statement.*;
 import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.base.lang.python.Python3Parser;
@@ -58,12 +54,18 @@ public class LangASTNodeFactory {
         return new LangAssignment(operator, left, right, PositionUtils.getPositionInfo(ctx));
     }
 
-    public static LangInfixExpression createInfixExpression(LangASTNode left, LangASTNode right, String operator, ParserRuleContext ctx) {
+    public static LangInfixExpression createInfixExpression(LangASTNode left, LangASTNode right, String operatorSymbol, ParserRuleContext ctx) {
+        OperatorEnum operator = OperatorEnum.fromSymbol(operatorSymbol);
         return new LangInfixExpression(left, operator, right, PositionUtils.getPositionInfo(ctx));
     }
 
     public static LangMethodInvocation createMethodInvocation(ParserRuleContext ctx) {
         return new LangMethodInvocation(PositionUtils.getPositionInfo(ctx));
+    }
+
+    public static LangFieldAccess createFieldAccess(LangASTNode expression, String fieldName, ParserRuleContext ctx) {
+        LangSimpleName name = createSimpleName(fieldName, ctx);
+        return new LangFieldAccess(expression, name, PositionUtils.getPositionInfo(ctx));
     }
 
     /** Statements */
@@ -117,9 +119,7 @@ public class LangASTNodeFactory {
     }
 
     public static LangStringLiteral createStringLiteral(ParserRuleContext ctx, String value) {
-        // Remove the surrounding quotes from the string value
-        String unquotedValue = value.length() >= 2 ? value.substring(1, value.length() - 1) : value;
-        return new LangStringLiteral(PositionUtils.getPositionInfo(ctx), unquotedValue);
+        return new LangStringLiteral(PositionUtils.getPositionInfo(ctx), PyASTBuilderUtil.removeQuotes(value));
     }
 
     public static LangBooleanLiteral createBooleanLiteral(ParserRuleContext ctx, boolean value) {
@@ -128,6 +128,19 @@ public class LangASTNodeFactory {
 
     public static LangListLiteral createListLiteral(ParserRuleContext ctx, List<LangASTNode> elements) {
         return new LangListLiteral(PositionUtils.getPositionInfo(ctx), elements);
+    }
+
+    public static LangTupleLiteral createTupleLiteral(ParserRuleContext ctx, List<LangASTNode> elements) {
+        return new LangTupleLiteral(PositionUtils.getPositionInfo(ctx), elements);
+    }
+
+    public static LangDictionaryLiteral createDictionaryLiteral(ParserRuleContext ctx) {
+        return new LangDictionaryLiteral(PositionUtils.getPositionInfo(ctx));
+    }
+
+    /** Comments */
+    public static LangComment createComment(ParserRuleContext ctx, String commentContent, boolean isBlockComment, boolean isDocComment) {
+        return new LangComment(commentContent, isBlockComment, isDocComment, PositionUtils.getPositionInfo(ctx));
     }
 
 

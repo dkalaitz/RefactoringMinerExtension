@@ -1,0 +1,72 @@
+package antlr.ast.node.literal;
+
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
+import antlr.ast.node.PositionInfo;
+import antlr.ast.visitor.LangASTVisitor;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class LangDictionaryLiteral extends LangASTNode {
+    private final List<Entry> entries = new ArrayList<>();
+
+    public LangDictionaryLiteral(PositionInfo positionInfo) {
+        super(NodeTypeEnum.DICTIONARY_LITERAL, positionInfo);
+    }
+
+    public void addEntry(LangASTNode key, LangASTNode value) {
+        if (key != null && value != null) {
+            entries.add(new Entry(key, value));
+            addChild(key);
+            addChild(value);
+        }
+    }
+
+    public List<Entry> getEntries() {
+        return Collections.unmodifiableList(entries);
+    }
+
+    @Override
+    public void accept(LangASTVisitor visitor) {
+        visitor.visit(this);
+        for (Entry entry : entries) {
+            entry.getKey().accept(visitor);
+            entry.getValue().accept(visitor);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "LangDictionaryLiteral{" +
+                "entries=" + entries +
+                '}';
+    }
+
+    public static class Entry {
+        private final LangASTNode key;
+        private final LangASTNode value;
+
+        public Entry(LangASTNode key, LangASTNode value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        public LangASTNode getKey() {
+            return key;
+        }
+
+        public LangASTNode getValue() {
+            return value;
+        }
+
+        @Override
+        public String toString() {
+            return "Entry{" +
+                    "key=" + key +
+                    ", value=" + value +
+                    '}';
+        }
+    }
+}

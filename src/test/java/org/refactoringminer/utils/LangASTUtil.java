@@ -6,12 +6,9 @@ import antlr.ast.node.LangASTNode;
 import antlr.ast.visitor.LangASTPrinter;
 import antlr.base.lang.python.Python3Lexer;
 import antlr.base.lang.python.Python3Parser;
-import antlr.jdtmapper.JdtASTMapper;
-import antlr.jdtmapper.LangJdtASTConverter;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 
 import java.io.IOException;
@@ -23,7 +20,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static antlr.jdtmapper.JdtASTMapperRegistry.getMapper;
 
 public class LangASTUtil {
 
@@ -72,20 +68,6 @@ public class LangASTUtil {
         LangASTPrinter printer = new LangASTPrinter();
         ast.accept(printer);
     }
-
-    public static ASTNode mapToJdt(String code) {
-
-//        JdtASTMapper mapper = getMapper("python");
-//        LangASTNode pyAST = parsePythonCodeToAST(code);
-//
-//        // Create AST
-//        AST jdtAst = AST.newAST(AST.JLS17);
-
-        // Map to JDT
-//        return mapper.map(pyAST, jdtAst);
-        return LangJdtASTConverter.getJdtASTFromLangParseTree("python", code);
-    }
-
 
     public static LangASTNode parsePythonCodeToAST(String code) {
         // Use the Python lexer and parser to parse the code

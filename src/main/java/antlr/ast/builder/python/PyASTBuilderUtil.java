@@ -1,5 +1,6 @@
 package antlr.ast.builder.python;
 
+import antlr.ast.node.OperatorEnum;
 import antlr.base.lang.python.Python3Parser;
 
 public class PyASTBuilderUtil {
@@ -40,29 +41,38 @@ public class PyASTBuilderUtil {
 
     // Helper method to identify operators
     private static boolean isOperator(String text) {
-        String[] operators = {
-                // Arithmetic
-                "+", "-", "*", "/", "//", "%", "**",
-                // Comparison
-                ">", "<", ">=", "<=", "==", "!=", "<>",
-                // Logical
-                "and", "or", "not",
-                // Bitwise
-                "&", "|", "^", "~", "<<", ">>",
-                // Membership
-                "in", "not in",
-                // Identity
-                "is", "is not"
-        };
-
-        for (String op : operators) {
-            if (text.equals(op)) {
-                return true;
-            }
-        }
-        return false;
-
+        return OperatorEnum.isOperator(text);
     }
 
+    public static boolean isListLiteral(Python3Parser.AtomContext ctx) {
+        return ctx.OPEN_BRACK() != null && ctx.CLOSE_BRACK() != null;
+    }
+
+    public static boolean isStringLiteral(Python3Parser.AtomContext ctx) {
+        String text = ctx.getText();
+        return text.startsWith("\"") && text.endsWith("\"")
+                || text.startsWith("'") && text.endsWith("'")
+                || text.startsWith("r\"") && text.endsWith("\"")
+                || text.startsWith("\"\"\"") && text.endsWith("\"\"\"");
+    }
+
+    public static String removeQuotes(String text) {
+        String unquotedValue = null;
+        if (text.startsWith("\"\"\"") && text.endsWith("\"\"\"")) {
+            // Triple quotes
+            unquotedValue = text.substring(3, text.length() - 3);
+        } else if (text.startsWith("'''") && text.endsWith("'''")) {
+            // Triple single quotes
+            unquotedValue = text.substring(3, text.length() - 3);
+        } else if (text.startsWith("r\"") && text.endsWith("\"")) {
+            // Raw string literal
+            unquotedValue = text.substring(2, text.length() - 1);
+        } else if ((text.startsWith("\"") && text.endsWith("\"")) ||
+                (text.startsWith("'") && text.endsWith("'"))) {
+            // Regular quotes or single quotes
+            unquotedValue = text.substring(1, text.length() - 1);
+        }
+        return unquotedValue;
+    }
 
 }

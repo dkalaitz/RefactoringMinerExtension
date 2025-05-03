@@ -3,6 +3,7 @@ package antlr.ast.node.declaration;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
+import antlr.ast.node.VisibilityEnum;
 import antlr.ast.node.statement.LangBlock;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -14,8 +15,9 @@ import java.util.List;
 public class LangMethodDeclaration extends LangASTNode {
     private String name;
     private List<LangSingleVariableDeclaration> parameters = new ArrayList<>();
-
     private LangBlock body;
+    private VisibilityEnum visibility = VisibilityEnum.PUBLIC;
+    private boolean isStatic = true; // Top Level Methods are static!
 
     public LangMethodDeclaration() {super(NodeTypeEnum.METHOD_DECLARATION);}
 
@@ -67,6 +69,22 @@ public class LangMethodDeclaration extends LangASTNode {
 
     public void setParameters(List<LangSingleVariableDeclaration> parameters) {
         this.parameters = parameters;
+    }
+
+    public boolean isStatic() {
+        return isStatic;
+    }
+
+    public void setStatic(boolean aStatic) {
+        isStatic = aStatic;
+    }
+
+    public VisibilityEnum getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(VisibilityEnum visibility) {
+        this.visibility = visibility;
     }
 
     public String toString() {
