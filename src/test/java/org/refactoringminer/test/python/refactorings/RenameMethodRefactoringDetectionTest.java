@@ -1,19 +1,16 @@
 package org.refactoringminer.test.python.refactorings;
 
-import antlr.umladapter.PythonUMLModelAdapter;
+import antlr.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.UMLParameter;
-import gr.uom.java.xmi.decomposition.CompositeStatementObject;
-import gr.uom.java.xmi.decomposition.OperationBody;
 import gr.uom.java.xmi.diff.RenameOperationRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.dumpOperation;
 
 class RenameMethodRefactoringDetectionTest {
 
@@ -68,9 +65,50 @@ class RenameMethodRefactoringDetectionTest {
         assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "speak", "communicate");
     }
 
+    @Test
+    void detectsMethodRename_DataProcessorCalculateSum_ToCalculateAdd() throws Exception {
+        // BEFORE code (DataProcessor)
+        String beforePythonCode = """
+                class DataProcessor:
+                    def process_list(self, items):
+                        result = 0
+                        for item in items:
+                            processed = item * 2
+                            result.append(processed)
+                        return result
+                
+                    def calculate_sum(self, numbers):
+                        total = 0
+                        for number in numbers:
+                            total = total + number
+                        return total
+                """;
+
+        // AFTER code (DataHandler)
+        String afterPythonCode = """
+                class DataProcessor:
+                    def process_list1(self, items):
+                        result = 0
+                        for item in items:
+                            processed = item * 2
+                        return result
+                
+                    def calculate_add(self, numbers):
+                        total = 0
+                        for number in numbers:
+                            total = total + number
+                        return total
+                """;
+        Map<String, String> beforeFiles = Map.of("tests/before/animal.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/after/animal.py", afterPythonCode);
+        assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "process_list", "process_list1");
+        assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "calculate_sum", "calculate_add");
+        // TODO: Assert total refactorings
+    }
+
     private void assertRenameOperationRefactoringDetected(Map<String, String> beforeFiles, Map<String, String> afterFiles, String beforeName, String afterName) throws Exception {
-        UMLModel beforeUML = new PythonUMLModelAdapter(beforeFiles).getUMLModel();
-        UMLModel afterUML = new PythonUMLModelAdapter(afterFiles).getUMLModel();
+        UMLModel beforeUML = new UMLModelAdapter(beforeFiles).getUMLModel();
+        UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
 
         System.out.println("=== BEFORE MODEL OPERATIONS ===");
         beforeUML.getClassList().forEach(umlClass -> {
@@ -112,42 +150,5 @@ class RenameMethodRefactoringDetectionTest {
         assertTrue(methodRenameDetected, "Expected a RenameMethodRefactoring from " + beforeName + " to " + afterName);
     }
 
-    private static String dumpOperation(UMLOperation op) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format(
-                "name=%s, params=%s, signature=%s, isConstructor=%b, static=%b, visibility=%s",
-                op.getName(),
-                op.getParameters().stream().map(UMLParameter::getName).toList(),
-                op.getActualSignature(),
-                op.isConstructor(),
-                op.isStatic(),
-                op.getVisibility()
-        ));
-
-        // Enhanced body logging
-        OperationBody body = op.getBody();
-        if (body != null) {
-            sb.append("\n    BODY: hashCode=").append(body.getBodyHashCode());
-
-            CompositeStatementObject composite = body.getCompositeStatement();
-            sb.append("\n    STATEMENTS: ").append(composite.getStatements().size())
-                    .append(", LEAVES: ").append(composite.getLeaves().size())
-                    .append(", INNER NODES: ").append(composite.getInnerNodes().size())
-                    .append(", EXPRESSIONS: ").append(composite.getExpressions().size());
-
-            sb.append("\n    VARIABLES: ").append(body.getAllVariables());
-            sb.append("\n    METHOD CALLS: ").append(body.getAllOperationInvocations().size());
-
-            sb.append("\n    STRING REPRESENTATION:");
-            List<String> stringRep = body.stringRepresentation();
-            for (String line : stringRep) {
-                sb.append("\n      ").append(line);
-            }
-        } else {
-            sb.append("\n    BODY: null");
-        }
-
-        return sb.toString();
-    }
 
 }

@@ -187,5 +187,17 @@ public class PyASTPrinterTest {
     }
 
 
+    @Test
+    public void testASTVisitor_PythonMinimalVarargs() {
+        String code =
+                "def _foo__(*args):\n" +
+                        "    pass\n";
+        LangASTUtil.printAST(code);
+    }
+
+
+
+
+
 
 }

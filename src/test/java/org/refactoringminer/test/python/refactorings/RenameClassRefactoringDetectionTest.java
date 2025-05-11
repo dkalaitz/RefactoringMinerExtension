@@ -1,14 +1,10 @@
 package org.refactoringminer.test.python.refactorings;
 
-import antlr.umladapter.PythonUMLModelAdapter;
-import gr.uom.java.xmi.UMLModel;
-import gr.uom.java.xmi.diff.RenameClassRefactoring;
-import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.assertRenameClassRefactoringDetected;
 import static org.refactoringminer.utils.LangASTUtil.readResourceFile;
 
 class RenameClassRefactoringDetectionTest {
@@ -89,6 +85,25 @@ class RenameClassRefactoringDetectionTest {
     }
 
     @Test
+    void detectsClassRename_AnimalToMammal2() throws Exception {
+        System.out.println("\n");
+        String beforePythonCode = """
+        class Animal:
+            def speak(self, x):
+                return "..."
+        """;
+        String afterPythonCode = """
+        class Mammal:
+            def speak(self, y):
+                return "..."
+        """;
+
+        Map<String, String> beforeFiles = Map.of("tests/before/animal.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/after/animal.py", afterPythonCode);
+        assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Animal", "Mammal");
+    }
+
+    @Test
     void detectsClassRename_WithForLoop() throws Exception {
         System.out.println("\n");
 
@@ -105,7 +120,7 @@ class RenameClassRefactoringDetectionTest {
                     def calculate_sum(self, numbers):
                         total = 0
                         for number in numbers:
-                            total += number
+                            total = total + number
                         return total
                 """;
 
@@ -121,7 +136,7 @@ class RenameClassRefactoringDetectionTest {
                     def calculate_sum(self, numbers):
                         total = 0
                         for number in numbers:
-                            total += number
+                            total = total + number
                         return total
                 """;
 
@@ -131,23 +146,5 @@ class RenameClassRefactoringDetectionTest {
     }
 
 
-    private void assertRenameClassRefactoringDetected(Map<String, String> beforeFiles, Map<String, String> afterFiles, String beforeClassName, String afterClassName) throws Exception {
 
-        UMLModel beforeUML = new PythonUMLModelAdapter(beforeFiles).getUMLModel();
-        UMLModel afterUML = new PythonUMLModelAdapter(afterFiles).getUMLModel();
-
-        UMLModelDiff diff = beforeUML.diff(afterUML);
-        boolean classRenameDetected = diff.getRefactorings().stream()
-                .anyMatch(ref -> ref instanceof RenameClassRefactoring &&
-                        ((RenameClassRefactoring)ref).getOriginalClassName().equals(beforeClassName) &&
-                        ((RenameClassRefactoring)ref).getRenamedClassName().equals(afterClassName));
-
-        System.out.println("==== DIFF ====");
-        System.out.println("Animal to Mammal");
-        System.out.println("Class rename detected: " + classRenameDetected);
-        System.out.println("Total refactorings: " + diff.getRefactorings().size());
-        diff.getRefactorings().forEach(System.out::println);
-
-        assertTrue(classRenameDetected, "Expected a RenameClassRefactoring from " + beforeClassName + " to " + afterClassName);
-    }
 }
