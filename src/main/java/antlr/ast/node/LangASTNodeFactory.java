@@ -22,6 +22,20 @@ public class LangASTNodeFactory {
         return new LangCompilationUnit(PositionUtils.getPositionInfo(ctx));
     }
 
+    /**
+     * Creates a basic import statement with position information only
+     */
+    public static LangImportStatement createImportStatement(ParserRuleContext ctx) {
+        return new LangImportStatement(PositionUtils.getPositionInfo(ctx));
+    }
+
+    /**
+     * Creates a standard import statement (import module [as alias])
+     */
+    public static LangImportStatement createImportStatement(String moduleName, String alias, PositionInfo positionInfo) {
+        return new LangImportStatement(moduleName, alias, positionInfo);
+    }
+
     /** Declarations */
     public static LangTypeDeclaration createTypeDeclaration(Python3Parser.ClassdefContext ctx) {
         LangTypeDeclaration type = new LangTypeDeclaration(PositionUtils.getPositionInfo(ctx));

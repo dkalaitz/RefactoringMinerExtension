@@ -6,6 +6,7 @@ import antlr.ast.node.PositionInfo;
 import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
+import antlr.ast.node.statement.LangBlock;
 import antlr.ast.node.statement.LangImportStatement;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -19,7 +20,6 @@ public class LangCompilationUnit extends LangASTNode {
     private List<LangASTNode> topLevelStatements = new ArrayList<>();
     private List<LangImportStatement> imports = new ArrayList<>();
     private List<LangComment> comments = new ArrayList<>();
-    private String moduleName;
 
     public LangCompilationUnit() {super(NodeTypeEnum.COMPILATION_UNIT);}
 
@@ -81,7 +81,6 @@ public class LangCompilationUnit extends LangASTNode {
 
     }
 
-
     public List<LangTypeDeclaration> getTypes() {
         return types;
     }
@@ -104,14 +103,6 @@ public class LangCompilationUnit extends LangASTNode {
 
     public void setTopLevelStatements(List<LangASTNode> topLevelStatements) {
         this.topLevelStatements = topLevelStatements;
-    }
-
-    public String getModuleName() {
-        return moduleName;
-    }
-
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
     }
 
     public List<LangImportStatement> getImports() {
@@ -138,7 +129,6 @@ public class LangCompilationUnit extends LangASTNode {
                 ", topLevelStatements=" + topLevelStatements +
                 ", imports=" + imports +
                 ", comments=" + comments +
-                ", moduleName='" + moduleName + '\'' +
                 '}';
     }
 }

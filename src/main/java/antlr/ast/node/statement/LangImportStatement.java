@@ -14,10 +14,26 @@ public class LangImportStatement extends LangASTNode {
     private List<ImportItem> imports = new ArrayList<>();  // The items being imported
     private boolean isFromImport = false;             // Whether this is a 'from' import
     private boolean isWildcardImport = false;         // Whether this is a 'from module import *'
+    private int relativeLevel = 0;
 
     public LangImportStatement() {
         super(NodeTypeEnum.IMPORT_STATEMENT);
     }
+
+    public LangImportStatement(String moduleName, String importedName, String alias, int relativeLevel, PositionInfo positionInfo) {
+        super(NodeTypeEnum.IMPORT_STATEMENT, positionInfo);
+        this.moduleName = moduleName;
+        this.isFromImport = true;
+        this.relativeLevel = relativeLevel;
+
+        if ("*".equals(importedName)) {
+            this.isWildcardImport = true;
+        } else {
+            ImportItem item = new ImportItem(importedName, alias);
+            this.imports.add(item);
+        }
+    }
+
 
     public LangImportStatement(PositionInfo positionInfo) {
         super(NodeTypeEnum.IMPORT_STATEMENT, positionInfo);
@@ -90,6 +106,14 @@ public class LangImportStatement extends LangASTNode {
 
     public void setWildcardImport(boolean wildcardImport) {
         isWildcardImport = wildcardImport;
+    }
+
+    public int getRelativeLevel() {
+        return relativeLevel;
+    }
+
+    public void setRelativeLevel(int relativeLevel) {
+        this.relativeLevel = relativeLevel;
     }
 
     @Override

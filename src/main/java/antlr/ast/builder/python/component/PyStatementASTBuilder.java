@@ -29,10 +29,17 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
         return langBlock;
     }
 
-    
+
     public LangASTNode visitStmt(Python3Parser.StmtContext ctx) {
         if (ctx.simple_stmts() != null && !ctx.simple_stmts().isEmpty()) {
-            // Use an ArrayList to gather multiple simple statements
+            // If there's only one simple statement and it's an import
+            if (ctx.simple_stmts().simple_stmt().size() == 1 &&
+                    ctx.simple_stmts().simple_stmt(0).import_stmt() != null) {
+                // Directly return the import statement without wrapping in a block
+                return mainBuilder.visit(ctx.simple_stmts().simple_stmt(0).import_stmt());
+            }
+
+            // For multiple statements or non-import statements, use a block as before
             LangBlock statementNodes = LangASTNodeFactory.createBlock(ctx, new ArrayList<>());
             for (Python3Parser.Simple_stmtContext simpleStmtContext : ctx.simple_stmts().simple_stmt()) {
                 LangASTNode stmtNode = mainBuilder.visit(simpleStmtContext);
@@ -40,7 +47,6 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
                     statementNodes.addStatement(stmtNode);
                 }
             }
-
             return statementNodes;
         }
         else if (ctx.compound_stmt() != null) {
@@ -48,6 +54,7 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
         }
         return super.mainBuilder.visitStmt(ctx);
     }
+
 
 
     public LangASTNode visitSimple_stmt(Python3Parser.Simple_stmtContext ctx) {
@@ -61,6 +68,7 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
         } else if (ctx.flow_stmt() != null) {
             return mainBuilder.visit(ctx.flow_stmt());
         } else if (ctx.import_stmt() != null) {
+            System.out.println("import_stmt");
             return mainBuilder.visit(ctx.import_stmt());
         } else if (ctx.global_stmt() != null) {
             return mainBuilder.visit(ctx.global_stmt());

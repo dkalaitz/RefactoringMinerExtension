@@ -11,6 +11,7 @@ import antlr.ast.node.expression.LangFieldAccess;
 import antlr.ast.node.expression.LangInfixExpression;
 import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.statement.LangBlock;
+import antlr.ast.node.statement.LangImportStatement;
 import antlr.ast.node.statement.LangReturnStatement;
 import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.base.LangASTUtil;
@@ -21,6 +22,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 
+import static antlr.umladapter.UMLAdapterUtil.extractUMLImports;
 import static antlr.umladapter.processor.UMLAdapterStatementProcessor.*;
 import static antlr.umladapter.processor.UMLAdapterVariableProcessor.processVariableDeclarations;
 
@@ -65,29 +67,30 @@ public class UMLModelAdapter {
 
     private void extractUMLEntities(LangASTNode ast, UMLModel model, String filename) {
         if (ast instanceof LangCompilationUnit compilationUnit) {
+            // Process imports
+            List<UMLImport> imports = extractUMLImports(compilationUnit, filename);
+            System.out.println("Imports: " + imports);
+
             for (LangTypeDeclaration typeDecl : compilationUnit.getTypes()) {
-                UMLClass umlClass = createUMLClass(typeDecl, filename);
+                UMLClass umlClass = createUMLClass(model, typeDecl, filename, imports);
                 model.addClass(umlClass);
             }
         }
     }
 
-    private UMLClass createUMLClass(LangTypeDeclaration typeDecl, String filename) {
+    private UMLClass createUMLClass(UMLModel model, LangTypeDeclaration typeDecl, String filename, List<UMLImport> imports) {
 
         String className = typeDecl.getName();
 
-        // TODO: Make extract package logic
-        String packageName = UMLAdapterUtil.extractPackageName(filename);
-        String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
-        String filepath = UMLAdapterUtil.extractFilePath(filename);
-        // TODO: Make extract source folder logic
+        String packageName = "";//UMLAdapterUtil.extractPackageName(filename);
+        String sourceFolder = "";//UMLAdapterUtil.extractSourceFolder(filename);
+        String filepath = "";//UMLAdapterUtil.extractFilePath(filename);
+
+
         LocationInfo locationInfo = new LocationInfo(sourceFolder,
                 filepath,
                 typeDecl,
                 LocationInfo.CodeElementType.TYPE_DECLARATION);
-
-        // TODO: Handle imports
-        List<UMLImport> imports = new ArrayList<>();
 
         UMLClass umlClass = new UMLClass(packageName, className, locationInfo, typeDecl.isTopLevel(), imports);
 
@@ -96,14 +99,18 @@ public class UMLModelAdapter {
             String primarySuperClass = typeDecl.getSuperClassNames().get(0);
             UMLType superClassType = UMLType.extractTypeObject(primarySuperClass);
             umlClass.setSuperclass(superClassType);
+            model.addGeneralization(new UMLGeneralization(umlClass, typeDecl.getSuperClassNames().get(0)));
 
             // Add remaining superclasses as interfaces
             for (int i = 1; i < typeDecl.getSuperClassNames().size(); i++) {
                 String additionalSuperClass = typeDecl.getSuperClassNames().get(i);
                 UMLType interfaceType = UMLType.extractTypeObject(additionalSuperClass);
                 umlClass.addImplementedInterface(interfaceType);
+                model.addRealization(new UMLRealization(umlClass, typeDecl.getSuperClassNames().get(i)));
             }
         }
+
+        // TODO: (Optional/Future) Consider mapping type parameters, nested types, fields/attributes, javadoc, annotations, and comments
 
         // Setters
         umlClass.setActualSignature(typeDecl.getActualSignature());
@@ -116,12 +123,6 @@ public class UMLModelAdapter {
         umlClass.setEnum(typeDecl.isEnum());
         umlClass.setRecord(typeDecl.isRecord());
 
-//        System.out.println("Class name: " + className);
-//        System.out.println("Class visibility: " + typeDecl.getVisibility());
-//        System.out.println("Class is abstract: " + typeDecl.isAbstract());
-//        System.out.println("Class is interface: " + typeDecl.isInterface());
-//        System.out.println("Class superclasses: " + typeDecl.getSuperClassNames().stream().map(s -> s + " ").reduce("", String::concat));
-
         for (LangMethodDeclaration methodDecl : typeDecl.getMethods()) {
             UMLOperation umlOperation = createUMLOperation(methodDecl, className, sourceFolder, filepath);
             umlClass.addOperation(umlOperation);
@@ -133,14 +134,6 @@ public class UMLModelAdapter {
 
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.METHOD_DECLARATION);
 
-//        System.out.println("Method signature: " + methodDecl.getActualSignature());
-//        System.out.println("Method visibility: " + methodDecl.getVisibility());
-//        System.out.println("Method is static: " + methodDecl.isStatic());
-//        System.out.println("Method is abstract: " + methodDecl.isAbstract());
-//        for (String param : methodDecl.getParameters().stream().map(LangSingleVariableDeclaration::toString).toList()) {
-//            System.out.println("Method parameter: " + param);
-//        }
-//        System.out.println("Method return type annotation: " + methodDecl.getReturnTypeAnnotation());
         String operationName = methodDecl.getCleanName();
         UMLOperation umlOperation = new UMLOperation(operationName, locationInfo);
         umlOperation.setClassName(className);

@@ -195,6 +195,19 @@ public class PyASTPrinterTest {
         LangASTUtil.printAST(code);
     }
 
+    @Test
+    public void testASTVisitor_OnlyImports() {
+        String code =
+                "import os\n" +
+                        "import sys, re\n" +
+                        "import numpy as np\n" +
+                        "from math import sqrt, pi\n" +
+                        "from collections import defaultdict as dd\n" +
+                        "from random import *\n" +
+                        "from . import sibling\n" +
+                        "from ..parent import utility\n";
+        LangASTUtil.printAST(code);
+    }
 
 
 
