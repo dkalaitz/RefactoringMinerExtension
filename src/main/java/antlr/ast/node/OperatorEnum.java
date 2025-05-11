@@ -14,6 +14,22 @@ public enum OperatorEnum {
     MODULUS("%", OperatorCategory.ARITHMETIC),
     POWER("**", OperatorCategory.ARITHMETIC),
 
+    // Augmented assignment operators
+    PLUS_ASSIGN("+=", OperatorCategory.ASSIGNMENT),
+    MINUS_ASSIGN("-=", OperatorCategory.ASSIGNMENT),
+    MULTIPLY_ASSIGN("*=", OperatorCategory.ASSIGNMENT),
+    DIVIDE_ASSIGN("/=", OperatorCategory.ASSIGNMENT),
+    FLOOR_DIVIDE_ASSIGN("//=", OperatorCategory.ASSIGNMENT),
+    MODULUS_ASSIGN("%=", OperatorCategory.ASSIGNMENT),
+    POWER_ASSIGN("**=", OperatorCategory.ASSIGNMENT),
+    BITWISE_AND_ASSIGN("&=", OperatorCategory.ASSIGNMENT),
+    BITWISE_OR_ASSIGN("|=", OperatorCategory.ASSIGNMENT),
+    BITWISE_XOR_ASSIGN("^=", OperatorCategory.ASSIGNMENT),
+    LEFT_SHIFT_ASSIGN("<<=", OperatorCategory.ASSIGNMENT),
+    RIGHT_SHIFT_ASSIGN(">>=", OperatorCategory.ASSIGNMENT),
+    INCREMENT("++", OperatorCategory.ASSIGNMENT),
+    DECREMENT("--", OperatorCategory.ASSIGNMENT),
+
     // Comparison operators
     GREATER_THAN(">", OperatorCategory.COMPARISON),
     LESS_THAN("<", OperatorCategory.COMPARISON),
@@ -93,6 +109,7 @@ public enum OperatorEnum {
         LOGICAL,
         BITWISE,
         MEMBERSHIP,
-        IDENTITY
+        IDENTITY,
+        ASSIGNMENT;
     }
 }

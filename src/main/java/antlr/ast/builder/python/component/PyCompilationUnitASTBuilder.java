@@ -3,15 +3,11 @@ package antlr.ast.builder.python.component;
 import antlr.ast.builder.python.PyASTBuilder;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.LangASTNodeFactory;
-import antlr.ast.node.comment.LangComment;
+import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.unit.LangCompilationUnit;
-import antlr.base.lang.python.Python3Lexer;
 import antlr.base.lang.python.Python3Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
 
 public class PyCompilationUnitASTBuilder extends PyBaseASTBuilder {
 

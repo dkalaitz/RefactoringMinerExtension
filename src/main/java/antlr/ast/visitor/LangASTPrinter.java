@@ -1,7 +1,8 @@
 package antlr.ast.visitor;
 
 import antlr.ast.node.LangASTNode;
-import antlr.ast.node.comment.LangComment;
+import antlr.ast.node.metadata.LangAnnotation;
+import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
@@ -240,7 +241,42 @@ public class LangASTPrinter implements LangASTVisitor {
     }
 
     @Override
+    public void visit(LangPrefixExpression langPrefixExpression) {
+
+    }
+
+    @Override
+    public void visit(LangPostfixExpression langPostFixExpression) {
+
+    }
+
+    @Override
+    public void visit(LangNullLiteral langNullLiteral) {
+
+    }
+
+    @Override
+    public void visit(LangTryStatement langTryStatement) {
+
+    }
+
+    @Override
+    public void visit(LangCatchClause langCatchClause) {
+
+    }
+
+    @Override
+    public void visit(LangAnnotation langAnnotation) {
+
+    }
+
+    @Override
     public void visit(LangComment langComment) {
 
     }
+
+
+
+
+
 }

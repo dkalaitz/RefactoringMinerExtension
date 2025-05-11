@@ -26,7 +26,7 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> {
 
     public LangASTNode build(Python3Parser.File_inputContext ctx) { return visitFile_input(ctx); }
 
-    /** LangCompilationUnit related methods **/
+    /** CompilationUnit related methods **/
     @Override
     public LangASTNode visitFile_input(Python3Parser.File_inputContext ctx) { return compilationUnitBuilder.visitFile_input(ctx); }
 
@@ -36,6 +36,9 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> {
 
     @Override
     public LangASTNode visitFuncdef(Python3Parser.FuncdefContext ctx) { return declarationBuilder.visitFuncdef(ctx); }
+
+    @Override
+    public LangASTNode visitDecorated(Python3Parser.DecoratedContext ctx) { return declarationBuilder.visitDecorated(ctx); }
 
     /** Expression-related methods **/
     @Override

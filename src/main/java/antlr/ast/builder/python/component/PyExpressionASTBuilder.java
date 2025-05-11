@@ -22,7 +22,6 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         super(mainBuilder);
     }
 
-    
     public LangASTNode visitAtom(Python3Parser.AtomContext ctx) {
         // Handle identifiers or literals
         if (ctx.NUMBER() != null) {
@@ -242,6 +241,7 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
 //    }
 
 
+    // TODO: Uncomment
     //
 //    public LangASTNode visitLambdef(Python3Parser.LambdefContext ctx) {
 //        LambdaExpression lambdaExpression = new LambdaExpression();

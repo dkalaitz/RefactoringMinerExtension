@@ -1,6 +1,7 @@
 package antlr.ast.visitor;
 
-import antlr.ast.node.comment.LangComment;
+import antlr.ast.node.metadata.LangAnnotation;
+import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
@@ -33,5 +34,11 @@ public interface LangASTVisitor {
     void visit(LangDictionaryLiteral langDictionaryLiteral);
     void visit(LangTupleLiteral langTupleLiteral);
     void visit(LangImportStatement langImportStatement);
+    void visit(LangPrefixExpression langPrefixExpression);
+    void visit(LangPostfixExpression langPostFixExpression);
+    void visit(LangNullLiteral langNullLiteral);
+    void visit(LangTryStatement langTryStatement);
+    void visit(LangCatchClause langCatchClause);
+    void visit(LangAnnotation langAnnotation);
     void visit(LangComment langComment);
 }

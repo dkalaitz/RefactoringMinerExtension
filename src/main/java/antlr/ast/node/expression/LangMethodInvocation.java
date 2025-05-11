@@ -23,6 +23,41 @@ public class LangMethodInvocation extends LangASTNode {
         this.arguments = new ArrayList<>();
     }
 
+    public String extractMethodName() {
+        // Get the expression node (what's being called)
+        LangASTNode expr = this.getExpression();
+
+        if (expr == null) {
+            return ""; // Handle case where expression is null
+        }
+
+        // Handle different expression types
+        if (expr instanceof LangSimpleName) {
+            // Simple function call like print()
+            return ((LangSimpleName) expr).getIdentifier();
+        }
+        else if (expr instanceof LangFieldAccess fieldAccess) {
+            // Method call like obj.method() or Class.method()
+            return fieldAccess.getName().getIdentifier();
+        }
+        else if (expr instanceof LangMethodInvocation) {
+            // Method chaining
+            return "chain";
+        }
+
+        // Default case - extract from string representation
+        String exprStr = expr.toString();
+        if (exprStr.contains(".")) {
+            // Return just the part after the last dot
+            return exprStr.substring(exprStr.lastIndexOf(".") + 1);
+        }
+
+        // If we can't determine a more specific name, return the whole expression
+        return exprStr;
+    }
+
+
+
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);

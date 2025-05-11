@@ -3,8 +3,8 @@ package antlr.ast.node.declaration;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
-import antlr.ast.node.VisibilityEnum;
 import antlr.ast.visitor.LangASTVisitor;
+import gr.uom.java.xmi.Visibility;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,8 +14,18 @@ import java.util.List;
 public class LangTypeDeclaration extends LangASTNode {
     private String name;
     private List<LangMethodDeclaration> methods = new ArrayList<>();
-    private VisibilityEnum visibility = VisibilityEnum.PUBLIC;
+    private List<String> superClassNames = new ArrayList<>();
+    private Visibility visibility;
     private boolean isAbstract = false;
+    private boolean isInterface = false;
+    private boolean isFinal = false;
+    private boolean isStatic = false;
+    private boolean isEnum = false;
+    private boolean isAnnotation = false;
+    private boolean isSealed = false;
+    private boolean isRecord = false;
+    private boolean isTopLevel = false;
+    private String actualSignature;
 
     public LangTypeDeclaration() {super(NodeTypeEnum.TYPE_DECLARATION);}
 
@@ -25,6 +35,23 @@ public class LangTypeDeclaration extends LangASTNode {
 
     public LangTypeDeclaration(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
         super(NodeTypeEnum.TYPE_DECLARATION, startLine, startChar, endLine, endChar, startColumn, endColumn);
+    }
+
+    public LangTypeDeclaration(NodeTypeEnum nodeType, PositionInfo positionInfo, String name, List<LangMethodDeclaration> methods, Visibility visibility, boolean isAbstract, boolean isInterface, boolean isFinal, boolean isStatic, boolean isEnum, boolean isAnnotation, boolean isSealed, boolean isRecord, boolean isTopLevel, String actualSignature) {
+        super(nodeType, positionInfo);
+        this.name = name;
+        this.methods = methods;
+        this.visibility = visibility;
+        this.isAbstract = isAbstract;
+        this.isInterface = isInterface;
+        this.isFinal = isFinal;
+        this.isStatic = isStatic;
+        this.isEnum = isEnum;
+        this.isAnnotation = isAnnotation;
+        this.isSealed = isSealed;
+        this.isRecord = isRecord;
+        this.isTopLevel = isTopLevel;
+        this.actualSignature = actualSignature;
     }
 
     public void addMethod(LangMethodDeclaration method) {
@@ -56,11 +83,11 @@ public class LangTypeDeclaration extends LangASTNode {
         this.methods = methods;
     }
 
-    public VisibilityEnum getVisibility() {
+    public Visibility getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(VisibilityEnum visibility) {
+    public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
     }
 
@@ -70,6 +97,86 @@ public class LangTypeDeclaration extends LangASTNode {
 
     public void setAbstract(boolean anAbstract) {
         isAbstract = anAbstract;
+    }
+
+    public boolean isInterface() {
+        return isInterface;
+    }
+
+    public void setInterface(boolean anInterface) {
+        isInterface = anInterface;
+    }
+
+    public boolean isFinal() {
+        return isFinal;
+    }
+
+    public void setFinal(boolean aFinal) {
+        isFinal = aFinal;
+    }
+
+    public boolean isStatic() {
+        return isStatic;
+    }
+
+    public void setStatic(boolean aStatic) {
+        isStatic = aStatic;
+    }
+
+    public boolean isEnum() {
+        return isEnum;
+    }
+
+    public void setEnum(boolean anEnum) {
+        isEnum = anEnum;
+    }
+
+    public boolean isAnnotation() {
+        return isAnnotation;
+    }
+
+    public void setAnnotation(boolean annotation) {
+        isAnnotation = annotation;
+    }
+
+    public boolean isSealed() {
+        return isSealed;
+    }
+
+    public void setSealed(boolean sealed) {
+        isSealed = sealed;
+    }
+
+    public boolean isRecord() {
+        return isRecord;
+    }
+
+    public void setRecord(boolean record) {
+        isRecord = record;
+    }
+
+    public boolean isTopLevel() {
+        return isTopLevel;
+    }
+
+    public void setTopLevel(boolean topLevel) {
+        isTopLevel = topLevel;
+    }
+
+    public String getActualSignature() {
+        return actualSignature;
+    }
+
+    public void setActualSignature(String actualSignature) {
+        this.actualSignature = actualSignature;
+    }
+
+    public List<String> getSuperClassNames() {
+        return superClassNames;
+    }
+
+    public void setSuperClassNames(List<String> superClassNames) {
+        this.superClassNames = superClassNames;
     }
 
     public String toString() {

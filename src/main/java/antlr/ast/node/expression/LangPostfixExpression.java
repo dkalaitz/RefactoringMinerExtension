@@ -1,0 +1,74 @@
+package antlr.ast.node.expression;
+
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
+import antlr.ast.node.OperatorEnum;
+import antlr.ast.node.PositionInfo;
+import antlr.ast.visitor.LangASTVisitor;
+
+public class LangPostfixExpression extends LangASTNode {
+    private LangASTNode operand;
+    private OperatorEnum operator;
+
+    public LangPostfixExpression() {
+        super(NodeTypeEnum.POSTFIX_EXPRESSION);
+    }
+
+    public LangPostfixExpression(PositionInfo positionInfo) {
+        super(NodeTypeEnum.POSTFIX_EXPRESSION, positionInfo);
+    }
+
+    public LangPostfixExpression(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {
+        super(NodeTypeEnum.POSTFIX_EXPRESSION, startLine, startChar, endLine, endChar, startColumn, endColumn);
+    }
+
+    public void setOperand(LangASTNode operand) {
+        this.operand = operand;
+        addChild(operand);
+    }
+
+    public void setOperator(OperatorEnum operator) {
+        this.operator = operator;
+    }
+
+    @Override
+    public void accept(LangASTVisitor visitor) {
+        visitor.visit(this);
+
+        if (operand != null) {
+            operand.accept(visitor);
+        }
+    }
+
+    public LangASTNode getOperand() {
+        return operand;
+    }
+
+    public OperatorEnum getOperator() {
+        return operator;
+    }
+
+    public boolean isPlusAssign(){
+        return OperatorEnum.PLUS_ASSIGN.equals(operator);
+    }
+
+    public boolean isMinusAssign(){
+        return OperatorEnum.MINUS_ASSIGN.equals(operator);
+    }
+
+    public boolean isIncrement() {
+        return OperatorEnum.INCREMENT.equals(operator);
+    }
+
+    public boolean isDecrement() {
+        return OperatorEnum.DECREMENT.equals(operator);
+    }
+
+    @Override
+    public String toString() {
+        return "LangPostfixExpression{" +
+                "operand=" + operand +
+                ", operator=" + operator +
+                '}';
+    }
+}

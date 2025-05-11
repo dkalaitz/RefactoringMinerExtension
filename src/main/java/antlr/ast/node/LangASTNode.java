@@ -1,6 +1,7 @@
 package antlr.ast.node;
 
 
+import antlr.ast.node.metadata.LangAnnotation;
 import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -17,6 +18,7 @@ public abstract class LangASTNode {
     private int startColumn;
     private int endColumn;
     private int length;
+    private PositionInfo positionInfo;
     private LangASTNode parent;
     private List<LangASTNode> children;
 
@@ -33,6 +35,7 @@ public abstract class LangASTNode {
         this.endChar = positionInfo.getEndChar() + 1;
         this.startColumn = positionInfo.getStartColumn();
         this.endColumn = positionInfo.getEndColumn();
+        this.positionInfo = positionInfo;
         this.length = this.endChar - this.startChar;
         if (this.endChar <= this.startChar) {
             System.err.println("Warning: Invalid source range for " + nodeType +
@@ -69,6 +72,16 @@ public abstract class LangASTNode {
             current = current.getParent();
         }
         return (LangCompilationUnit) current;
+    }
+
+    public List<LangAnnotation> getAnnotations() {
+        List<LangAnnotation> annotations = new ArrayList<>();
+        for (LangASTNode child : getChildren()) {
+            if (child instanceof LangAnnotation) {
+                annotations.add((LangAnnotation) child);
+            }
+        }
+        return annotations;
     }
 
     // Accept method for a visitor pattern
@@ -152,6 +165,14 @@ public abstract class LangASTNode {
 
     public void setChildren(List<LangASTNode> children) {
         this.children = children;
+    }
+
+    public PositionInfo getPositionInfo() {
+        return positionInfo;
+    }
+
+    public void setPositionInfo(PositionInfo positionInfo) {
+        this.positionInfo = positionInfo;
     }
 
     @Override

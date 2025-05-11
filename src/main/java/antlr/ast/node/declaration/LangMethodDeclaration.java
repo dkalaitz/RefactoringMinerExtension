@@ -3,9 +3,9 @@ package antlr.ast.node.declaration;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
-import antlr.ast.node.VisibilityEnum;
 import antlr.ast.node.statement.LangBlock;
 import antlr.ast.visitor.LangASTVisitor;
+import gr.uom.java.xmi.Visibility;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,10 +14,19 @@ import java.util.List;
 // Class representing a method within a type
 public class LangMethodDeclaration extends LangASTNode {
     private String name;
+    private String cleanName;
     private List<LangSingleVariableDeclaration> parameters = new ArrayList<>();
     private LangBlock body;
-    private VisibilityEnum visibility = VisibilityEnum.PUBLIC;
-    private boolean isStatic = true; // Top Level Methods are static!
+    private Visibility visibility;
+    private boolean isStatic = false; // TODO: Top Level Methods are static!
+    private boolean isConstructor = false;
+    private boolean isAbstract = false;
+    private boolean isFinal = false;
+    private boolean isNative = false;
+    private boolean isSynchronized = false;
+    private String actualSignature;
+    private String returnTypeAnnotation; // Add this field for Python type hints
+
 
     public LangMethodDeclaration() {super(NodeTypeEnum.METHOD_DECLARATION);}
 
@@ -79,12 +88,76 @@ public class LangMethodDeclaration extends LangASTNode {
         isStatic = aStatic;
     }
 
-    public VisibilityEnum getVisibility() {
+    public Visibility getVisibility() {
         return visibility;
     }
 
-    public void setVisibility(VisibilityEnum visibility) {
+    public void setVisibility(Visibility visibility) {
         this.visibility = visibility;
+    }
+
+    public boolean isConstructor() {
+        return isConstructor;
+    }
+
+    public void setConstructor(boolean constructor) {
+        isConstructor = constructor;
+    }
+
+    public boolean isAbstract() {
+        return isAbstract;
+    }
+
+    public void setAbstract(boolean anAbstract) {
+        isAbstract = anAbstract;
+    }
+
+    public boolean isFinal() {
+        return isFinal;
+    }
+
+    public void setFinal(boolean aFinal) {
+        isFinal = aFinal;
+    }
+
+    public boolean isNative() {
+        return isNative;
+    }
+
+    public void setNative(boolean aNative) {
+        isNative = aNative;
+    }
+
+    public boolean isSynchronized() {
+        return isSynchronized;
+    }
+
+    public void setSynchronized(boolean aSynchronized) {
+        isSynchronized = aSynchronized;
+    }
+
+    public String getActualSignature() {
+        return actualSignature;
+    }
+
+    public void setActualSignature(String actualSignature) {
+        this.actualSignature = actualSignature;
+    }
+
+    public String getReturnTypeAnnotation() {
+        return returnTypeAnnotation;
+    }
+
+    public void setReturnTypeAnnotation(String returnTypeAnnotation) {
+        this.returnTypeAnnotation = returnTypeAnnotation;
+    }
+
+    public String getCleanName() {
+        return cleanName;
+    }
+
+    public void setCleanName(String cleanName) {
+        this.cleanName = cleanName;
     }
 
     public String toString() {
@@ -92,6 +165,8 @@ public class LangMethodDeclaration extends LangASTNode {
                 "name='" + name + '\'' +
                 ", parameters=" + parameters +
                 ", body=" + body +
+                ", visibility=" + visibility +
+                ", cleanName=" + cleanName +
                 '}';
     }
 }

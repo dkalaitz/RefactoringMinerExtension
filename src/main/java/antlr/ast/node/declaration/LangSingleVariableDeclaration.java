@@ -3,6 +3,7 @@ package antlr.ast.node.declaration;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
+import antlr.ast.node.TypeObjectEnum;
 import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.visitor.LangASTVisitor;
 
@@ -11,6 +12,11 @@ import antlr.ast.visitor.LangASTVisitor;
  */
 public class LangSingleVariableDeclaration extends LangASTNode {
     private LangSimpleName langSimpleName;
+    private TypeObjectEnum typeAnnotation; // Add this field for Python type hints
+    private boolean hasTypeAnnotation = false; // Add this to track if type hint exists
+    private boolean isVarArgs = false; // TODO: Handle var args
+    private boolean isAttribute = false;
+    private boolean isParameter = false;
 
     public LangSingleVariableDeclaration() {super(NodeTypeEnum.SINGLE_VARIABLE_DECLARATION);}
 
@@ -37,9 +43,51 @@ public class LangSingleVariableDeclaration extends LangASTNode {
         this.langSimpleName = langSimpleName;
     }
 
+    public TypeObjectEnum getTypeAnnotation() {
+        return typeAnnotation;
+    }
+
+    public void setTypeAnnotation(TypeObjectEnum typeAnnotation) {
+        this.typeAnnotation = typeAnnotation;
+    }
+
+    public boolean isHasTypeAnnotation() {
+        return hasTypeAnnotation;
+    }
+
+    public void setHasTypeAnnotation(boolean hasTypeAnnotation) {
+        this.hasTypeAnnotation = hasTypeAnnotation;
+    }
+
+    public boolean isVarArgs() {
+        return isVarArgs;
+    }
+
+    public void setVarArgs(boolean varArgs) {
+        isVarArgs = varArgs;
+    }
+
+    public boolean isAttribute() {
+        return isAttribute;
+    }
+
+    public void setAttribute(boolean attribute) {
+        isAttribute = attribute;
+    }
+
+    public boolean isParameter() {
+        return isParameter;
+    }
+
+    public void setParameter(boolean parameter) {
+        isParameter = parameter;
+    }
+
     public String toString() {
         return "LangSingleVariableDeclaration{" +
                 "langSimpleName='" + langSimpleName + '\'' +
+                "isParameter='" + isParameter + '\'' +
+                "isVarArgs='" + isVarArgs + '\'' +
                 '}';
     }
 }

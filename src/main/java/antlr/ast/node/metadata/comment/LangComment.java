@@ -1,4 +1,4 @@
-package antlr.ast.node.comment;
+package antlr.ast.node.metadata.comment;
 
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
