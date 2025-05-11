@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -18,6 +20,13 @@ public class LeafExpression extends AbstractCodeFragment {
 	private String string;
 	protected LocationInfo locationInfo;
 	protected VariableDeclarationContainer container;
+
+	// TODO
+	public LeafExpression(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType);
+		this.string = stringify(expression);
+		this.container = container;
+	}
 
 	public LeafExpression(CompilationUnit cu, String sourceFolder, String filePath, ASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
     	this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType);

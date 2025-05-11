@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import antlr.ast.node.LangASTNode;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -915,4 +916,10 @@ public class Visitor extends ASTVisitor {
         node.accept(printer);
         return printer.getResult();
 	}
+
+	// TODO
+	public static String stringify(LangASTNode node) {
+		return node.toString();
+	}
+
 }

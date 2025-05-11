@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import antlr.ast.node.statement.LangBlock;
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.AssertStatement;
 import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.BreakStatement;
@@ -55,6 +57,19 @@ public class OperationBody {
 	private VariableDeclarationContainer container;
 	private int bodyHashCode;
 	private List<UMLComment> comments;
+
+	// TODO
+	public OperationBody(LangCompilationUnit cu, String sourceFolder, String filePath, LangBlock methodBody, VariableDeclarationContainer container, List<UMLAttribute> attributes) {
+		this.compositeStatement = new CompositeStatementObject(cu, sourceFolder, filePath, methodBody, 0, CodeElementType.BLOCK);
+		this.compositeStatement.setOwner(container);
+		this.comments = container.getComments();
+		this.container = container;
+		this.bodyHashCode = stringify(methodBody).hashCode();
+		this.activeVariableDeclarations = new HashSet<>();
+		for(UMLAttribute attribute : attributes) {
+			activeVariableDeclarations.add(attribute.getVariableDeclaration());
+		}
+	}
 
 	public OperationBody(CompilationUnit cu, String sourceFolder, String filePath, Block methodBody, VariableDeclarationContainer container, List<UMLAttribute> attributes, String javaFileContent) {
 		this.compositeStatement = new CompositeStatementObject(cu, sourceFolder, filePath, methodBody, 0, CodeElementType.BLOCK, javaFileContent);

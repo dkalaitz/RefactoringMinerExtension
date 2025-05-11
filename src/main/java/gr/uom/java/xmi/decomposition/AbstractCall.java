@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -27,6 +29,7 @@ import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodIn
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
 import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
+import org.eclipse.jdt.core.dom.MethodInvocation;
 
 public abstract class AbstractCall extends LeafExpression {
 	protected int numberOfArguments;
@@ -36,6 +39,11 @@ public abstract class AbstractCall extends LeafExpression {
 	private static final List<String> logNames = List.of("trace", "debug", "info", "warn", "error", "fatal", "log");
 	private static final List<String> logGuardNames = List.of("isDebugEnabled", "isEnabled", "isErrorEnabled", "isFatalEnabled", "isInfoEnabled", "isTraceEnabled", "isWarnEnabled");
 
+	// TODO
+	public AbstractCall(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
+		super(cu, sourceFolder, filePath, expression, codeElementType, container);
+	}
+
 	public AbstractCall(CompilationUnit cu, String sourceFolder, String filePath, ASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
 		super(cu, sourceFolder, filePath, expression, codeElementType, container);
 	}
@@ -44,7 +52,7 @@ public abstract class AbstractCall extends LeafExpression {
 		
 	}
 
-	public LeafExpression asLeafExpression() {
+    public LeafExpression asLeafExpression() {
 		return new LeafExpression(getString(), getLocationInfo());
 	}
 

@@ -3,6 +3,7 @@ package gr.uom.java.xmi;
 import java.util.List;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -20,7 +21,33 @@ public class LocationInfo {
 	private int endLine;
 	private int endColumn;
 	private CodeElementType codeElementType;
-	
+
+	// TODO
+	public LocationInfo(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode node, CodeElementType codeElementType) {
+		this.sourceFolder = sourceFolder;
+		this.filePath = filePath;
+		this.codeElementType = codeElementType;
+		this.startOffset = node.getStartChar();
+		this.length = node.getLength();
+		this.endOffset = startOffset + length;
+
+		//lines are 1-based
+		this.startLine = cu.getStartLine();
+		this.endLine = cu.getEndLine();
+		//columns are 0-based
+		this.startColumn = cu.getStartColumn();
+		//convert to 1-based
+		if(this.startColumn > 0) {
+			this.startColumn += 1;
+		}
+		this.endColumn = cu.getEndColumn();
+		//convert to 1-based
+		if(this.endColumn > 0) {
+			this.endColumn += 1;
+		}
+	}
+
+
 	public LocationInfo(CompilationUnit cu, String sourceFolder, String filePath, ASTNode node, CodeElementType codeElementType) {
 		this.sourceFolder = sourceFolder;
 		this.filePath = filePath;
@@ -55,9 +82,9 @@ public class LocationInfo {
 		this.sourceFolder = sourceFolder;
 		this.filePath = filePath;
 		this.codeElementType = codeElementType;
-		this.startOffset = node.getStartOffset();           // Character offset (start)
+		this.startOffset = node.getStartChar();           // Character offset (start)
 		this.length = node.getLength();
-		this.endOffset = node.getEndOffset();               // Character offset (end)
+		this.endOffset = node.getEndChar();               // Character offset (end)
 		this.startLine = node.getStartLine();             // 1-based (according to your LangASTNode)
 		this.endLine = node.getEndLine();                 // 1-based
 		this.startColumn = 1;                             // You may compute this from file contents if desired

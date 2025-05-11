@@ -3,6 +3,8 @@ package gr.uom.java.xmi.decomposition;
 import java.util.ArrayList;
 import java.util.List;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -49,6 +51,52 @@ public class StatementObject extends AbstractStatement {
 	private List<LeafExpression> castExpressions;
 	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
 	private List<LambdaExpressionObject> lambdas;
+
+	// TODO
+	public StatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
+						   LangASTNode statement, int depth, CodeElementType codeElementType,
+						   VariableDeclarationContainer container, String javaFileContent) {
+		super();
+		// Set location info
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
+
+		// Initialize collections
+		this.variables = new ArrayList<>();
+		this.types = new ArrayList<>();
+		this.variableDeclarations = new ArrayList<>();
+		this.methodInvocations = new ArrayList<>();
+		this.anonymousClassDeclarations = new ArrayList<>();
+		this.textBlocks = new ArrayList<>();
+		this.stringLiterals = new ArrayList<>();
+		this.charLiterals = new ArrayList<>();
+		this.numberLiterals = new ArrayList<>();
+		this.nullLiterals = new ArrayList<>();
+		this.booleanLiterals = new ArrayList<>();
+		this.typeLiterals = new ArrayList<>();
+		this.creations = new ArrayList<>();
+		this.infixExpressions = new ArrayList<>();
+		this.assignments = new ArrayList<>();
+		this.infixOperators = new ArrayList<>();
+		this.arrayAccesses = new ArrayList<>();
+		this.prefixExpressions = new ArrayList<>();
+		this.postfixExpressions = new ArrayList<>();
+		this.thisExpressions = new ArrayList<>();
+		this.arguments = new ArrayList<>();
+		this.parenthesizedExpressions = new ArrayList<>();
+		this.castExpressions = new ArrayList<>();
+		this.ternaryOperatorExpressions = new ArrayList<>();
+		this.lambdas = new ArrayList<>();
+
+		// Set the actual code representation - this is critical for comparison
+		this.statement = statement.toString();
+
+		// Set the operation signature - needed for body hash calculation
+		this.actualSignature = statement.toString();
+
+		// Set depth
+		setDepth(depth);
+	}
+
 	
 	public StatementObject(CompilationUnit cu, String sourceFolder, String filePath, Statement statement, int depth, CodeElementType codeElementType, VariableDeclarationContainer container, String javaFileContent) {
 		super();

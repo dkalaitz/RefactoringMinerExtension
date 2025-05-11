@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -28,6 +30,19 @@ public class CompositeStatementObject extends AbstractStatement {
 	private LocationInfo locationInfo;
 	//for composites which are roots, owner is the VariableDeclarationContainer
 	private Optional<VariableDeclarationContainer> owner = Optional.empty();
+
+	// TODO
+	public CompositeStatementObject(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode statement, int depth, CodeElementType codeElementType) {
+		super();
+		this.setDepth(depth);
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
+		this.statementList = new ArrayList<>();
+		this.expressionList = new ArrayList<>();
+		this.variableDeclarations = new ArrayList<>();
+		this.tryContainer = Optional.empty();
+
+        this.actualSignature = "<no source>";
+	}
 
 	public CompositeStatementObject(CompilationUnit cu, String sourceFolder, String filePath, ASTNode statement, int depth, CodeElementType codeElementType, String javaFileContent) {
 		super();

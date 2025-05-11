@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -46,6 +47,29 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	private List<UMLAnnotation> annotations;
 	private List<UMLModifier> modifiers;
 	private String actualSignature;
+
+	// TODO
+	public VariableDeclaration(
+			LangCompilationUnit cu,
+			String variableName,
+			UMLType type,
+			boolean varargsParameter,
+			LocationInfo locationInfo,
+			List<UMLAnnotation> annotations,
+			List<UMLModifier> modifiers
+	) {
+		this.variableName = variableName;
+		this.type = type;
+		this.varargsParameter = varargsParameter;
+		this.locationInfo = locationInfo;
+		this.annotations = annotations != null ? annotations : java.util.Collections.emptyList();
+		this.modifiers = modifiers != null ? modifiers : java.util.Collections.emptyList();
+		this.initializer = null;
+		this.isAttribute = false;
+		this.scope = new VariableScope(cu, locationInfo.getFilePath());
+		this.isFinal = false;
+		this.actualSignature = null;
+	}
 
 	public VariableDeclaration(CompilationUnit cu, String sourceFolder, String filePath, VariableDeclarationFragment fragment, VariableDeclarationContainer container, String javaFileContent) {
 		this.annotations = new ArrayList<UMLAnnotation>();
