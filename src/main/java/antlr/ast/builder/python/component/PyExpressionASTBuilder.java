@@ -228,5 +228,19 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         return mainBuilder.visitChildren(ctx);
     }
 
+    public LangASTNode visitPattern(Python3Parser.PatternContext ctx) {
+        // If we have an as_pattern, visit it
+        if (ctx.as_pattern() != null) {
+            return mainBuilder.visit(ctx.as_pattern());
+        }
+
+        //TODO
+//        if (ctx.or_pattern() != null) {
+//            return mainBuilder.visit(ctx.or_pattern());
+//        }
+
+        // Should not occur, but as fallback
+        return super.mainBuilder.visitPattern(ctx);
+    }
 
 }

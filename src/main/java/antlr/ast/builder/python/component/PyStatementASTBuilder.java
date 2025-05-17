@@ -45,15 +45,33 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
                 return mainBuilder.visit(ctx.simple_stmts().simple_stmt(0).import_stmt());
             }
 
-            // For multiple statements or non-import statements, use a block as before
-            LangBlock statementNodes = LangASTNodeFactory.createBlock(ctx, new ArrayList<>());
+//            // For multiple statements or non-import statements, use a block as before
+//            LangBlock statementNodes = LangASTNodeFactory.createBlock(ctx, new ArrayList<>());
+//            for (Python3Parser.Simple_stmtContext simpleStmtContext : ctx.simple_stmts().simple_stmt()) {
+//                LangASTNode stmtNode = mainBuilder.visit(simpleStmtContext);
+//                if (stmtNode != null) {
+//                    statementNodes.addStatement(stmtNode);
+//                }
+//            }
+//            return statementNodes;
+            List<LangASTNode> statements = new ArrayList<>();
             for (Python3Parser.Simple_stmtContext simpleStmtContext : ctx.simple_stmts().simple_stmt()) {
                 LangASTNode stmtNode = mainBuilder.visit(simpleStmtContext);
                 if (stmtNode != null) {
-                    statementNodes.addStatement(stmtNode);
+                    if (stmtNode instanceof LangBlock) {
+                        // Flatten nested blocks
+                        statements.addAll(((LangBlock) stmtNode).getStatements());
+                    } else {
+                        statements.add(stmtNode);
+                    }
                 }
             }
-            return statementNodes;
+            if (statements.size() == 1) {
+                // Return the statement directly (unless you always want a block)
+                return statements.get(0);
+            } else {
+                return LangASTNodeFactory.createBlock(ctx, statements);
+            }
         }
         else if (ctx.compound_stmt() != null) {
             return mainBuilder.visit(ctx.compound_stmt());
@@ -371,54 +389,29 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
         return singleVariableDeclaration;
     }
 
-//    public LangASTNode visitMatch_stmt(Python3Parser.Match_stmtContext ctx) {
-//        // 1. Get the subject expression (the value being matched)
-//        LangASTNode subject = mainBuilder.visit(ctx.subject_expr()); // Adapt this call to your grammar
-//
-//        // 2. Prepare a list to collect cases and body statements in order
-//        List<LangASTNode> statementList = new ArrayList<>();
-//
-//        // 3. For each case in order:
-//        for (Python3Parser.Case_blockContext caseCtx : ctx.case_block()) {
-//            // ----- Create the label (case pattern) -----
-//            List<Python3Parser.PatternContext> patternContexts = new ArrayList<>();
-//            if (caseCtx.patterns() != null) {
-//                patternContexts.add(caseCtx.pattern()); // Add single pattern context (adjust if 'patterns' plural is needed)
-//            }
-//            LangASTNode pattern;
-//            if (patternContexts.size() == 1) {
-//                pattern = mainBuilder.visit(patternContexts.get(0));
-//            } else if (patternContexts.size() > 1) {
-//                List<LangASTNode> patterns = new ArrayList<>();
-//                for (Python3Parser.PatternContext pc : patternContexts) {
-//                    patterns.add(mainBuilder.visit(pc));
-//                }
-//                pattern = LangASTNodeFactory.createOrPatternNode(patterns); // Or your own method
-//            } else {
-//                pattern = null; // or wildcard pattern
-//            }
-//            boolean isDefault = pattern == null; // You may refine this for 'case _:'
-//
-//            // Create the case label node (no body attached)
-//            LangASTNode caseNode = new LangCaseStatement(
-//                    extractPosition(caseCtx),
-//                    pattern,
-//                    isDefault
-//            );
-//            statementList.add(caseNode);
-//
-//            // ----- Add body statements (as plain nodes) -----
-//            for (Python3Parser.StmtContext stmtCtx : caseCtx.block().stmt()) {
-//                LangASTNode bodyStmt = mainBuilder.visit(stmtCtx);
-//                statementList.add(bodyStmt);
-//            }
-//        }
-//
-//        // 4. Create the switch/match big node
-//        return new LangSwitchStatement(
-//                extractPosition(ctx),
-//                subject,
-//                statementList
-//        );
-//    }
+    public LangASTNode visitMatch_stmt(Python3Parser.Match_stmtContext ctx) {
+        // 1. Get the subject expression (the value being matched)
+        LangASTNode subject = mainBuilder.visit(ctx.subject_expr());
+
+        // 2. Prepare a list to collect all case statements
+        List<LangCaseStatement> caseStatements = new ArrayList<>();
+
+        // 3. For each case block in the match statement
+        for (Python3Parser.Case_blockContext caseCtx : ctx.case_block()) {
+            // No pattern handling for now, set pattern to null
+            LangASTNode pattern = null;
+
+            // Collect all statements in the body (as a LangBlock, good!)
+            LangBlock body = (LangBlock) mainBuilder.visit(caseCtx.block());
+
+            // Create the case statement node without pattern
+            LangCaseStatement caseStatement = LangASTNodeFactory.createCaseStatement(ctx, pattern, body);
+
+            // IMPORTANT: Add the caseStatement to the list!
+             caseStatements.add(caseStatement);
+        }
+
+        // 4. Create the match/switch node with all case statements
+        return LangASTNodeFactory.createSwitchStatement(ctx, subject, caseStatements);
+    }
 }

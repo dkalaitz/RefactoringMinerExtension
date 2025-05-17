@@ -8,8 +8,11 @@ import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.LangSimpleName;
+import antlr.ast.node.literal.LangStringLiteral;
 import antlr.ast.node.metadata.LangAnnotation;
+import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.statement.LangBlock;
+import antlr.ast.node.statement.LangExpressionStatement;
 import antlr.base.lang.python.Python3Parser;
 import gr.uom.java.xmi.Visibility;
 
@@ -33,11 +36,11 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         langTypeDeclaration.setTopLevel(true);
         setSuperClasses(ctx, langTypeDeclaration);
 
-        if (ctx.block() != null) {
+        if (ctx.block() != null && !ctx.block().stmt().isEmpty()) {
+            // TODO: Handle here class comments
             // If there is a block context
             for (Python3Parser.StmtContext stmtContext : ctx.block().stmt()) {
                 LangASTNode statement = mainBuilder.visit(stmtContext);
-
                 if (statement instanceof LangMethodDeclaration) {
                     langTypeDeclaration.addMethod((LangMethodDeclaration) statement);
                 }
@@ -156,6 +159,16 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         // Visit the function body
         LangBlock body = (LangBlock) mainBuilder.visit(ctx.block());
 
+        String docstring = null;
+        if (!body.getStatements().isEmpty() &&
+                body.getStatements().get(0) instanceof LangExpressionStatement stmt &&
+                stmt.getExpression() instanceof LangStringLiteral) {
+            LangStringLiteral str = (LangStringLiteral) stmt.getExpression();
+            docstring = str.getValue();
+            body.getStatements().remove(0);
+        }
+
+
         // Create the MethodDeclaration node using the factory
         LangMethodDeclaration methodDeclaration = LangASTNodeFactory.createMethodDeclaration(ctx.name().getText(), ctx, langSingleVariableDeclarations, body);
 
@@ -170,6 +183,11 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
             methodDeclaration.setReturnTypeAnnotation(returnType);
         } else {
             methodDeclaration.setReturnTypeAnnotation(TypeObjectEnum.OBJECT.name());
+        }
+
+        if (docstring != null) {
+            LangComment comment = LangASTNodeFactory.createComment(ctx, docstring, false, true);
+            methodDeclaration.addComment(comment);
         }
 
         return methodDeclaration;

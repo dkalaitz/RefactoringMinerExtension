@@ -40,19 +40,17 @@ public class PyCompilationUnitASTBuilder extends PyBaseASTBuilder {
             } else if (stmt instanceof LangComment){
                 compilationUnit.addComment((LangComment) stmt);
             } else if (stmt instanceof LangImportStatement){
-                System.out.println("Found import statement: " + stmt.getClass().getSimpleName());
                 compilationUnit.addImport((LangImportStatement) stmt);
             } else {
-                System.out.println("Unknown statement type: " + stmt.getClass().getSimpleName());
                 compilationUnit.addStatement(stmt);
             }
+
         }
 
         return compilationUnit;
     }
 
 
-    // TODO: Handle imports
     public LangASTNode visitImport_stmt(Python3Parser.Import_stmtContext ctx) {
         // Create position info once for the entire import statement
         PositionInfo positionInfo = PositionUtils.getPositionInfo(ctx);

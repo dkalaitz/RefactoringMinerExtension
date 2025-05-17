@@ -98,10 +98,13 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> implemen
     @Override public LangASTNode visitAsync_stmt(Python3Parser.Async_stmtContext ctx) { return statementBuilder.visitAsync_stmt(ctx); }
 
     // TODO
-   // @Override public LangASTNode visitMatch_stmt(Python3Parser.Match_stmtContext ctx) { return statementBuilder.visitMatch_stmt(ctx); }
+    @Override public LangASTNode visitMatch_stmt(Python3Parser.Match_stmtContext ctx) { return statementBuilder.visitMatch_stmt(ctx); }
 
 //    @Override public LangASTNode visitCase_block(Python3Parser.Case_blockContext ctx){ return expressionBuilder.visitCase_block(ctx); }
-//
+
+    @Override public LangASTNode visitPattern(Python3Parser.PatternContext ctx){ return expressionBuilder.visitPattern(ctx); }
+
+  //  @Override public LangASTNode visitPattern_expr(Python3Parser.As_patternContext ctx){ return expressionBuilder.visitPattern_expr(ctx); }
 //    @Override public LangASTNode visitMapping_pattern(Python3Parser.Mapping_patternContext ctx){ return expressionBuilder.visitMapping_pattern(ctx); }
 //
 //    @Override public LangASTNode visitItems_pattern(Python3Parser.Items_patternContext ctx){ return expressionBuilder.visitItems_pattern(ctx); }

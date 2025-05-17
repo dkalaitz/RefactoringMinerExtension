@@ -290,6 +290,22 @@ public class PyASTPrinterTest {
     }
 
     @Test
+    public void testASTVisitor_MatchCase() {
+        String code =
+                "def http_status(status):\n" +
+                        "    match status:\n" +
+                        "        case 400:\n" +
+                        "            return 'Bad request'\n" +
+                        "        case 404:\n" +
+                        "            return 'Not found'\n" +
+                        "        case 418:\n" +
+                        "            return \"I'm a teapot\"\n" +
+                        "        case _:\n" +
+                        "            return 'Something else'\n";
+        LangASTUtil.printAST(code);
+    }
+
+    @Test
     public void testASTVisitor_MethodReturnType() {
         String code =
                 "def add(x: int, y: int) -> int:\n" +
@@ -337,5 +353,11 @@ public class PyASTPrinterTest {
         LangASTUtil.printAST(code);
     }
 
+    @Test
+    public void testASTVisitor_flask() throws IOException {
+        String code = readResourceFile("/python-samples/before/flask.py");
+
+        LangASTUtil.printAST(code);
+    }
 
 }
