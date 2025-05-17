@@ -3,7 +3,6 @@ package org.refactoringminer.utils;
 
 import antlr.ast.builder.python.PyASTBuilder;
 import antlr.ast.node.LangASTNode;
-import antlr.ast.visitor.LangASTPrinter;
 import antlr.base.lang.python.Python3Lexer;
 import antlr.base.lang.python.Python3Parser;
 import org.antlr.v4.runtime.CharStream;
@@ -39,11 +38,11 @@ public class LangASTUtil {
         System.out.println("Parse Tree:");
         System.out.println(parseTree.toStringTree(parser));
 
-        // Print the AST using the ASTPrinter
+//        // Print the AST using the ASTPrinter
         System.out.println("\nAST Structure:");
         System.out.println(ast.toString());
-        LangASTPrinter printer = new LangASTPrinter();
-        ast.accept(printer);
+//        LangASTPrinter printer = new LangASTPrinter();
+//        ast.accept(printer);
     }
 
     public static void printAST(Path pythonFilePath) throws IOException {
@@ -64,9 +63,9 @@ public class LangASTUtil {
         System.out.println(parseTree.toStringTree(parser));
 
         // Print the AST using the ASTPrinter
-        System.out.println("\nAST Structure:");
-        LangASTPrinter printer = new LangASTPrinter();
-        ast.accept(printer);
+//        System.out.println("\nAST Structure:");
+//        LangASTPrinter printer = new LangASTPrinter();
+//        ast.accept(printer);
     }
 
     public static LangASTNode parsePythonCodeToAST(String code) {

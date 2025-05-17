@@ -17,6 +17,8 @@ public enum NodeTypeEnum {
     FIELD_ACCESS("LangFieldAccess"),
     PREFIX_EXPRESSION("LangPrefixExpression"),
     POSTFIX_EXPRESSION("LangPostfixExpression"),
+    AWAIT_EXPRESSION("LangAwaitExpression"),
+    LAMBDA_EXPRESSION("LangLambdaExpression"),
 
     /** STATEMENTS */
     BLOCK("LangBlock"),
@@ -29,11 +31,20 @@ public enum NodeTypeEnum {
     IMPORT_STATEMENT("LangImportStatement"),
     TRY_STATEMENT("LangTryStatement"),
     CATCH_CLAUSE("LangCatchClause"),
-    THROW_STATEMENT("LangThrowStatement"), // raise for python
+    THROW_STATEMENT("LangThrowStatement"), // raise for python //TODO
     BREAK_STATEMENT("LangBreakStatement"),
     CONTINUE_STATEMENT("LangContinueStatement"),
     SWITCH_STATEMENT("LangSwitchStatement"), // match for python
     CASE_STATEMENT("LangCaseStatement"),
+    GLOBAL_STATEMENT("LangGlobalStatement"),
+    PASS_STATEMENT("LangPassStatement"),
+    DEL_STATEMENT("LangDelStatement"),
+    YIELD_STATEMENT("LangYieldStatement"),
+    ASSERT_STATEMENT("LangAssertStatement"),
+    WITH_STATEMENT("LangWithStatement"),
+    WITH_CONTEXT_ITEM("LangWithContextItem"),
+    NON_LOCAL_STATEMENT("LangNonLocalStatement"),
+    ASYNC_STATEMENT("LangAsyncStatement"),
 
     /** LITERALS */
     LIST_LITERAL("LangListLiteral"),

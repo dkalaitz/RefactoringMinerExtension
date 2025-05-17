@@ -3,6 +3,7 @@ package antlr.ast.node.declaration;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
+import antlr.ast.node.metadata.LangAnnotation;
 import antlr.ast.node.statement.LangBlock;
 import antlr.ast.visitor.LangASTVisitor;
 import gr.uom.java.xmi.Visibility;
@@ -26,6 +27,7 @@ public class LangMethodDeclaration extends LangASTNode {
     private boolean isSynchronized = false;
     private String actualSignature;
     private String returnTypeAnnotation; // Add this field for Python type hints
+    private List<LangAnnotation> langAnnotations = new ArrayList<>();
 
 
     public LangMethodDeclaration() {super(NodeTypeEnum.METHOD_DECLARATION);}
@@ -61,7 +63,6 @@ public class LangMethodDeclaration extends LangASTNode {
     public void setName(String name) {
         this.name = name;
     }
-
 
     public LangBlock getBody() {
         return body;
@@ -160,6 +161,14 @@ public class LangMethodDeclaration extends LangASTNode {
         this.cleanName = cleanName;
     }
 
+    public List<LangAnnotation> getLangAnnotations() {
+        return langAnnotations;
+    }
+
+    public void setLangAnnotations(List<LangAnnotation> langAnnotations) {
+        this.langAnnotations = langAnnotations;
+    }
+
     public String toString() {
         return "LangMethodDeclaration{" +
                 "name='" + name + '\'' +
@@ -167,6 +176,7 @@ public class LangMethodDeclaration extends LangASTNode {
                 ", body=" + body +
                 ", visibility=" + visibility +
                 ", cleanName=" + cleanName +
+                ", returnType=" + returnTypeAnnotation +
                 '}';
     }
 }

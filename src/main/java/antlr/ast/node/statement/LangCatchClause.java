@@ -58,6 +58,10 @@ public class LangCatchClause extends LangASTNode {
         return body;
     }
 
+    public void setExceptionTypes(List<LangASTNode> exceptionTypes) {
+        this.exceptionTypes = exceptionTypes;
+    }
+
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
@@ -78,8 +82,9 @@ public class LangCatchClause extends LangASTNode {
     @Override
     public String toString() {
         return "LangCatchClause{" +
-                "exceptionTypes=" + exceptionTypes.size() +
-                ", exceptionVariable=" + (exceptionVariable != null ? exceptionVariable.getIdentifier() : "null") +
+                "exceptionTypes=" + exceptionTypes +
+                ", exceptionVariable=" + exceptionVariable +
+                ", body=" + body +
                 '}';
     }
 }

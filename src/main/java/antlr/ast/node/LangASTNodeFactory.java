@@ -13,6 +13,7 @@ import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.base.lang.python.Python3Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LangASTNodeFactory {
@@ -139,9 +140,21 @@ public class LangASTNodeFactory {
         return statement;
     }
 
+    public static LangAwaitExpression createAwaitExpression(ParserRuleContext ctx, LangASTNode expression) {
+        LangAwaitExpression awaitExpression = new LangAwaitExpression(PositionUtils.getPositionInfo(ctx));
+        if (expression != null) {
+            awaitExpression.setExpression(expression);
+        }
+        return awaitExpression;
+    }
+
+    public static LangLambdaExpression createLambdaExpression(ParserRuleContext ctx, LangASTNode body, List<LangASTNode> parameters) {
+        return new LangLambdaExpression(PositionUtils.getPositionInfo(ctx), parameters, body);
+    }
+
     /** Try-Catch-Finally */
-    public static LangTryStatement createTryStatement(ParserRuleContext ctx) {
-        return new LangTryStatement(PositionUtils.getPositionInfo(ctx));
+    public static LangASTNode createTryStatement(PositionInfo positionInfo, LangBlock tryBlock, List<LangCatchClause> catchClauses, LangBlock elseBlock, LangBlock finallyBlock) {
+        return new LangTryStatement(positionInfo, tryBlock, catchClauses, elseBlock, finallyBlock);
     }
 
     public static LangTryStatement createTryStatement(LangASTNode body, List<LangCatchClause> catchClauses,
@@ -169,10 +182,10 @@ public class LangASTNodeFactory {
         return new LangCatchClause(PositionUtils.getPositionInfo(ctx));
     }
 
-    public static LangCatchClause createCatchClause(List<LangASTNode> exceptionTypes,
+    public static LangCatchClause createCatchClause(ParserRuleContext ctx,
+                                                    List<LangASTNode> exceptionTypes,
                                                     LangSimpleName exceptionVariable,
-                                                    LangASTNode body,
-                                                    ParserRuleContext ctx) {
+                                                    LangASTNode body) {
         LangCatchClause catchClause = new LangCatchClause(PositionUtils.getPositionInfo(ctx));
 
         if (exceptionTypes != null) {
@@ -192,6 +205,70 @@ public class LangASTNodeFactory {
         return catchClause;
     }
 
+    public static LangBreakStatement createBreakStatement(ParserRuleContext ctx) {
+        return new LangBreakStatement(PositionUtils.getPositionInfo(ctx));
+    }
+
+    public static LangContinueStatement createContinueStatement(ParserRuleContext ctx) {
+        return new LangContinueStatement(PositionUtils.getPositionInfo(ctx));
+    }
+
+    public static LangGlobalStatement createGlobalStatement(ParserRuleContext ctx, List<String> globalNames) {
+        List<LangSimpleName> globalNameList = new ArrayList<>();
+        for (String globalName : globalNames) {
+            LangSimpleName name = createSimpleName(globalName, ctx);
+            globalNameList.add(name);
+        }
+        return new LangGlobalStatement(PositionUtils.getPositionInfo(ctx), globalNameList);
+    }
+
+    public static LangPassStatement createPassStatement(ParserRuleContext ctx) {
+        return new LangPassStatement(PositionUtils.getPositionInfo(ctx));
+    }
+
+    public static LangDelStatement createDelStatement(ParserRuleContext ctx, List<LangASTNode> targets) {
+        return new LangDelStatement(PositionUtils.getPositionInfo(ctx), targets);
+    }
+
+    public static LangYieldStatement createYieldStatement(ParserRuleContext ctx, LangASTNode expression) {
+        return new LangYieldStatement(PositionUtils.getPositionInfo(ctx), expression);
+    }
+
+    public static LangAssertStatement createAssertStatement(ParserRuleContext ctx, LangASTNode expression, LangASTNode message) {
+        return new LangAssertStatement(PositionUtils.getPositionInfo(ctx), expression, message);
+    }
+
+    public static LangThrowStatement createThrowStatement(ParserRuleContext ctx, LangASTNode exception, LangASTNode fromExpr) {
+        return new LangThrowStatement(PositionUtils.getPositionInfo(ctx), exception, fromExpr);
+    }
+
+    public static LangASTNode createWithStatement(Python3Parser.With_stmtContext ctx, List<LangASTNode> contextItems, LangBlock body) {
+        return new LangWithStatement(PositionUtils.getPositionInfo(ctx), contextItems, body);
+    }
+
+    public static LangWithContextItem createWithContextItem(Python3Parser.With_itemContext ctx, LangASTNode expr, LangSimpleName alias) {
+        return new LangWithContextItem(PositionUtils.getPositionInfo(ctx), expr, alias);
+    }
+
+    public static LangNonLocalStatement createNonlocalStatement(ParserRuleContext ctx, List<String> nonlocalNames) {
+        List<LangSimpleName> nonlocalNameList = new ArrayList<>();
+        for (String nonlocalName : nonlocalNames) {
+            nonlocalNameList.add(createSimpleName(nonlocalName, ctx));
+        }
+        return new LangNonLocalStatement(PositionUtils.getPositionInfo(ctx), nonlocalNameList);
+    }
+
+    public static LangAsyncStatement createAsyncStatement(ParserRuleContext ctx, LangASTNode body) {
+        return new LangAsyncStatement(PositionUtils.getPositionInfo(ctx), body);
+    }
+
+//    public static LangSwitchStatement createSwitchStatement(ParserRuleContext ctx, LangASTNode expression, LangBlock body) {
+//        return new LangSwitchStatement(PositionUtils.getPositionInfo(ctx), expression, body);
+//    }
+
+//    public static LangCaseStatement createCaseStatement(ParserRuleContext ctx, LangASTNode expression, LangBlock body) {
+//        return new LangCaseStatement(PositionUtils.getPositionInfo(ctx), expression, body);
+//    }
 
     /** Literals */
     public static LangIntegerLiteral createIntegerLiteral(ParserRuleContext ctx, String value) {
@@ -228,7 +305,6 @@ public class LangASTNodeFactory {
     }
 
     /** Metadata */
-
     public static LangAnnotation createAnnotation(ParserRuleContext ctx, LangSimpleName name) {
         return new LangAnnotation(name, PositionUtils.getPositionInfo(ctx));
     }
@@ -240,7 +316,6 @@ public class LangASTNodeFactory {
         }
         return annotation;
     }
-
 
     public static LangComment createComment(ParserRuleContext ctx, String commentContent, boolean isBlockComment, boolean isDocComment) {
         return new LangComment(commentContent, isBlockComment, isDocComment, PositionUtils.getPositionInfo(ctx));

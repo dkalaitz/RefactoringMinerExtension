@@ -167,13 +167,9 @@ public abstract class LangASTNode {
         this.children = children;
     }
 
-    public PositionInfo getPositionInfo() {
-        return positionInfo;
-    }
+    public PositionInfo getPositionInfo() { return positionInfo; }
 
-    public void setPositionInfo(PositionInfo positionInfo) {
-        this.positionInfo = positionInfo;
-    }
+    public void setPositionInfo(PositionInfo positionInfo) { this.positionInfo = positionInfo; }
 
     @Override
     public abstract String toString();

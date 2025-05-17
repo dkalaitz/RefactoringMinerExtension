@@ -39,6 +39,22 @@ public interface LangASTVisitor {
     void visit(LangNullLiteral langNullLiteral);
     void visit(LangTryStatement langTryStatement);
     void visit(LangCatchClause langCatchClause);
+    void visit(LangBreakStatement langBreakStatement);
+    void visit(LangContinueStatement langContinueStatement);
+    void visit(LangDelStatement langDelStatement);
+    void visit(LangGlobalStatement langGlobalStatement);
+    void visit(LangPassStatement langPassStatement);
+    void visit(LangYieldStatement langYieldStatement);
     void visit(LangAnnotation langAnnotation);
+    void visit(LangAssertStatement langAssertStatement);
+    void visit(LangThrowStatement langThrowStatement);
+    void visit(LangWithContextItem langWithContextItem);
+    void visit(LangWithStatement langWithStatement);
+    void visit(LangNonLocalStatement langNonLocalStatement);
+    void visit(LangAsyncStatement langAsyncStatement);
+    void visit(LangAwaitExpression langAwaitExpression);
+    void visit(LangLambdaExpression langLambdaExpression);
+    void visit(LangSwitchStatement langSwitchStatement);
+    void visit(LangCaseStatement langCaseStatement);
     void visit(LangComment langComment);
 }

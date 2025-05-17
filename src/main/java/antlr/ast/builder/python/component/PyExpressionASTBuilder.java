@@ -27,6 +27,9 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         if (ctx.NUMBER() != null) {
             return LangASTNodeFactory.createIntegerLiteral(ctx, ctx.NUMBER().getText());
         }
+        if (ctx.name() != null && ctx.name().getText().equals("None")) {
+            return LangASTNodeFactory.createNullLiteral(ctx);
+        }
         if (ctx.getText() != null && PyASTBuilderUtil.isStringLiteral(ctx)) {
             return LangASTNodeFactory.createStringLiteral(ctx, ctx.getText());
         }
@@ -79,6 +82,11 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         // If there are no trailers, just return the atom
         if (ctx.trailer().isEmpty()) {
             return baseExpr;
+        }
+
+        if (ctx.AWAIT() != null) {
+            LangASTNode innerExpr = mainBuilder.visit(ctx.atom());
+            return LangASTNodeFactory.createAwaitExpression(ctx, innerExpr);
         }
 
         // Process trailers (method calls, attribute access, etc.)
@@ -220,43 +228,5 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         return mainBuilder.visitChildren(ctx);
     }
 
-
-    //TODO: Uncomment
-//    public LangASTNode visitTrailer(Python3Parser.TrailerContext ctx) {
-//        if (ctx.OPEN_PAREN() != null) {
-//            LangMethodInvocation langMethodInvocation = LangASTNodeFactory.createMethodInvocation(ctx);
-//
-//            if (ctx.arglist() != null) {
-//                for (Python3Parser.ArgumentContext argCtx : ctx.arglist().argument()) {
-//                    // Visit each argument and add it to the method invocation
-//                    LangASTNode argNode = mainBuilder.visit(argCtx);
-//                    if (argNode != null) {
-//                        langMethodInvocation.addArgument(argNode);
-//                    }
-//                }
-//            }
-//            return langMethodInvocation;
-//        }
-//        return null;
-//    }
-
-
-    // TODO: Uncomment
-    //
-//    public LangASTNode visitLambdef(Python3Parser.LambdefContext ctx) {
-//        LambdaExpression lambdaExpression = new LambdaExpression();
-//
-//        if (ctx.varargslist() != null) {
-//            for (Python3Parser.VarargsContext paramCtx : ctx.varargslist().vfpdef()) {
-//                LangSingleVariableDeclaration param = new LangSingleVariableDeclaration(paramCtx.getText());
-//                lambdaExpression.addParameter(param);
-//            }
-//        }
-//
-//        LangASTNode body = visit(ctx.test());
-//        lambdaExpression.setBody(body);
-//
-//        return lambdaExpression;
-//    }
 
 }

@@ -28,6 +28,13 @@ public class LangTryStatement extends LangASTNode {
                 startColumn, endColumn);
     }
 
+    public LangTryStatement(PositionInfo positionInfo, LangBlock tryBlock, List<LangCatchClause> catchClauses, LangBlock elseBlock, LangBlock finallyBlock) {
+        super(NodeTypeEnum.TRY_STATEMENT, positionInfo);
+        this.body = tryBlock;
+        this.catchClauses = catchClauses;
+        this.finallyBlock = finallyBlock;
+    }
+
     public void setBody(LangASTNode body) {
         this.body = body;
         addChild(body);
@@ -79,8 +86,9 @@ public class LangTryStatement extends LangASTNode {
     @Override
     public String toString() {
         return "LangTryStatement{" +
-                "catchClauses=" + catchClauses.size() +
-                ", hasFinally=" + (finallyBlock != null) +
+                "body=" + body +
+                ", catchClauses=" + catchClauses +
+                ", finallyBlock=" + finallyBlock +
                 '}';
     }
 }

@@ -144,8 +144,7 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                 // Handle *args - the parameter after STAR token
                 Python3Parser.TfpdefContext varargCtx = ctx.parameters().typedargslist().tfpdef(ctx.parameters().typedargslist().tfpdef().size() - 1);
                 String varargName = varargCtx.name().getText();
-                LangSingleVariableDeclaration varargDecl =
-                        LangASTNodeFactory.createSingleVariableDeclaration(varargName, varargCtx);
+                LangSingleVariableDeclaration varargDecl = LangASTNodeFactory.createSingleVariableDeclaration(varargName, varargCtx);
                 varargDecl.setTypeAnnotation(TypeObjectEnum.OBJECT);
                 varargDecl.setParameter(true);
                 varargDecl.setAttribute(false);
@@ -165,7 +164,13 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         // Following python naming conventions for visibility
         methodDeclaration.setVisibility(getMethodVisibility(methodDeclaration));
         methodDeclaration.setCleanName(extractCleanName(methodDeclaration.getName()));
-        methodDeclaration.setReturnTypeAnnotation(TypeObjectEnum.OBJECT.getFormatTypeWithAngleBrackets());
+
+        if (ctx.test() != null) {
+            String returnType = ctx.test().getText();
+            methodDeclaration.setReturnTypeAnnotation(returnType);
+        } else {
+            methodDeclaration.setReturnTypeAnnotation(TypeObjectEnum.OBJECT.name());
+        }
 
         return methodDeclaration;
     }
@@ -255,7 +260,7 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
 
             // Process arguments if any
             List<LangASTNode> arguments = new ArrayList<>();
-            // TODO
+//            // TODO
 //            if (decoratorCtx.arglist() != null) {
 //                // Handle arguments
 //                for (Python3Parser.ArgumentContext argCtx : decoratorCtx.arglist().argument()) {
@@ -276,6 +281,9 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         if (ctx.funcdef() != null) {
             decoratedNode = mainBuilder.visitFuncdef(ctx.funcdef());
             if (decoratedNode instanceof LangMethodDeclaration method) {
+
+                method.setLangAnnotations(annotations);
+
                 // Apply decorators to the method
                 for (LangAnnotation annotation : annotations) {
                     String decoratorName = annotation.getName().getIdentifier();
@@ -285,8 +293,6 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                         method.setAbstract(true);
                     } else if (decoratorName.equals("staticmethod")) {
                         method.setStatic(true);
-                    } else if (decoratorName.equals("classmethod")) {
-                        // Handle classmethod (skip self parameter)
                     }
 
                     // Add annotation to the node
