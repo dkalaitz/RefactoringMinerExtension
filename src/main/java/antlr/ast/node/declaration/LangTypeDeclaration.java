@@ -3,6 +3,7 @@ package antlr.ast.node.declaration;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
+import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.visitor.LangASTVisitor;
 import gr.uom.java.xmi.Visibility;
 
@@ -26,6 +27,7 @@ public class LangTypeDeclaration extends LangASTNode {
     private boolean isRecord = false;
     private boolean isTopLevel = false;
     private String actualSignature;
+    List<LangComment> comments = new ArrayList<>();
 
     public LangTypeDeclaration() {super(NodeTypeEnum.TYPE_DECLARATION);}
 
@@ -57,6 +59,11 @@ public class LangTypeDeclaration extends LangASTNode {
     public void addMethod(LangMethodDeclaration method) {
         methods.add(method);
         addChild(method);
+    }
+
+    public void addComment(LangComment comment) {
+        comments.add(comment);
+        addChild(comment);
     }
 
     @Override

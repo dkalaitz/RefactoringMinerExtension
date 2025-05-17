@@ -8,6 +8,9 @@ import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.*;
 import antlr.ast.node.literal.*;
+import antlr.ast.node.pattern.LangLiteralPattern;
+import antlr.ast.node.pattern.LangPattern;
+import antlr.ast.node.pattern.LangVariablePattern;
 import antlr.ast.node.statement.*;
 import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.base.lang.python.Python3Parser;
@@ -262,13 +265,13 @@ public class LangASTNodeFactory {
         return new LangAsyncStatement(PositionUtils.getPositionInfo(ctx), body);
     }
 
-//    public static LangSwitchStatement createSwitchStatement(ParserRuleContext ctx, LangASTNode expression, LangBlock body) {
-//        return new LangSwitchStatement(PositionUtils.getPositionInfo(ctx), expression, body);
-//    }
+    public static LangSwitchStatement createSwitchStatement(ParserRuleContext ctx, LangASTNode expression, List<LangCaseStatement> body) {
+        return new LangSwitchStatement(PositionUtils.getPositionInfo(ctx), expression, body);
+    }
 
-//    public static LangCaseStatement createCaseStatement(ParserRuleContext ctx, LangASTNode expression, LangBlock body) {
-//        return new LangCaseStatement(PositionUtils.getPositionInfo(ctx), expression, body);
-//    }
+    public static LangCaseStatement createCaseStatement(ParserRuleContext ctx, LangASTNode expression, LangBlock body) {
+        return new LangCaseStatement(PositionUtils.getPositionInfo(ctx), expression, body);
+    }
 
     /** Literals */
     public static LangIntegerLiteral createIntegerLiteral(ParserRuleContext ctx, String value) {
@@ -319,6 +322,15 @@ public class LangASTNodeFactory {
 
     public static LangComment createComment(ParserRuleContext ctx, String commentContent, boolean isBlockComment, boolean isDocComment) {
         return new LangComment(commentContent, isBlockComment, isDocComment, PositionUtils.getPositionInfo(ctx));
+    }
+
+    /** PATTERN */
+    public static LangLiteralPattern createLiteralPattern(ParserRuleContext ctx, Object value) {
+        return new LangLiteralPattern(PositionUtils.getPositionInfo(ctx), value);
+    }
+
+    public static LangVariablePattern createVariablePattern(ParserRuleContext ctx, String name) {
+        return new LangVariablePattern(PositionUtils.getPositionInfo(ctx), name);
     }
 
 

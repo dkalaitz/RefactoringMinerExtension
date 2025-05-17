@@ -4,6 +4,7 @@ import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.node.metadata.LangAnnotation;
+import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.statement.LangBlock;
 import antlr.ast.visitor.LangASTVisitor;
 import gr.uom.java.xmi.Visibility;
@@ -28,6 +29,7 @@ public class LangMethodDeclaration extends LangASTNode {
     private String actualSignature;
     private String returnTypeAnnotation; // Add this field for Python type hints
     private List<LangAnnotation> langAnnotations = new ArrayList<>();
+    private List<LangComment> comments = new ArrayList<>();
 
 
     public LangMethodDeclaration() {super(NodeTypeEnum.METHOD_DECLARATION);}
@@ -43,6 +45,11 @@ public class LangMethodDeclaration extends LangASTNode {
     public void addParameter(LangSingleVariableDeclaration langSingleVariableDeclaration) {
         parameters.add(langSingleVariableDeclaration);
         addChild(langSingleVariableDeclaration);
+    }
+
+    public void addComment(LangComment comment) {
+        comments.add(comment);
+        addChild(comment);
     }
 
     @Override
@@ -167,6 +174,14 @@ public class LangMethodDeclaration extends LangASTNode {
 
     public void setLangAnnotations(List<LangAnnotation> langAnnotations) {
         this.langAnnotations = langAnnotations;
+    }
+
+    public List<LangComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<LangComment> comments) {
+        this.comments = comments;
     }
 
     public String toString() {

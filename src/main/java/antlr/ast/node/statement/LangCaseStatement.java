@@ -3,6 +3,7 @@ package antlr.ast.node.statement;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
+import antlr.ast.node.pattern.LangPattern;
 
 import java.util.List;
 
@@ -19,9 +20,9 @@ public class LangCaseStatement extends LangASTNode {
     /**
      * The statements to execute if the pattern matches.
      */
-    private List<LangASTNode> body;
+    private LangBlock body;
 
-    public LangCaseStatement(PositionInfo positionInfo, LangASTNode pattern, List<LangASTNode> body) {
+    public LangCaseStatement(PositionInfo positionInfo, LangASTNode pattern, LangBlock body) {
         super(NodeTypeEnum.CASE_STATEMENT, positionInfo);
         this.pattern = pattern;
         this.body = body;
@@ -31,7 +32,7 @@ public class LangCaseStatement extends LangASTNode {
         return pattern;
     }
 
-    public List<LangASTNode> getBody() {
+    public LangBlock getBody() {
         return body;
     }
 
@@ -39,7 +40,7 @@ public class LangCaseStatement extends LangASTNode {
         this.pattern = pattern;
     }
 
-    public void setBody(List<LangASTNode> body) {
+    public void setBody(LangBlock body) {
         this.body = body;
     }
 
