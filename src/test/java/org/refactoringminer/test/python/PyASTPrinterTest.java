@@ -5,7 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.refactoringminer.utils.LangASTUtil;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.refactoringminer.utils.LangASTUtil.readResourceFile;
 
 @Isolated
 public class PyASTPrinterTest {
@@ -209,8 +212,130 @@ public class PyASTPrinterTest {
         LangASTUtil.printAST(code);
     }
 
+    @Test
+    public void testASTVisitor_BreakAndContinue() {
+        String code =
+                "for i in range(10):\n" +
+                        "    if i == 3:\n" +
+                        "        continue\n" +
+                        "    if i == 7:\n" +
+                        "        break\n" +
+                        "    print(i)\n";
+        LangASTUtil.printAST(code);
+    }
+
+    @Test
+    public void testASTVisitor_GlobalPassDelYieldAssert() {
+        String code =
+                "global x, y\n" +       // global statement
+                        "pass\n" +              // pass statement
+                        "del x\n" +             // del statement
+                        "def gen():\n" +        // yield statement inside a function
+                        "    yield 42\n" +
+                        "assert x > 0, 'x must be positive'\n"; // assert statement
+        LangASTUtil.printAST(code);
+    }
+
+    @Test
+    public void testASTVisitor_TryExceptRaiseWith() {
+        String code =
+                "def operations():\n" +
+                        "    with open('file.txt') as f:\n" +
+                        "        data = f.read()\n" +
+                        "    try:\n" +
+                        "        risky_operation()\n" +
+                        "    except ValueError as ex:\n" +
+                        "        raise RuntimeError('Wrapping error') from ex\n" +
+                        "    finally:\n" +
+                        "        cleanup()\n";
+        LangASTUtil.printAST(code);
+    }
+
+    @Test
+    public void testASTVisitor_TryExceptRaiseWith_CustomContext() {
+        String code =
+                "def operations():\n" +
+                        "    with DatabaseConnection() as conn:\n" +
+                        "        conn.query()\n" +
+                        "    try:\n" +
+                        "        risky_operation()\n" +
+                        "    except ValueError as ex:\n" +
+                        "        raise RuntimeError('Wrapping error') from ex\n" +
+                        "    finally:\n" +
+                        "        cleanup()\n";
+        LangASTUtil.printAST(code);
+    }
+
+    @Test
+    public void testASTVisitor_NonlocalAndAsync() {
+        String code =
+                "def outer():\n" +
+                        "    var = 10\n" +
+                        "    def inner():\n" +
+                        "        nonlocal var\n" +
+                        "        var = var + 1\n" +
+                        "    async def do_async():\n" +
+                        "        await something()\n";
+        LangASTUtil.printAST(code);
+    }
+
+    @Test
+    public void testASTVisitor_LambdaFunction() {
+        String code =
+                "def apply(f, x):\n" +
+                        "    return f(x)\n" +
+                        "double = lambda y: y * 2\n" +
+                        "result = apply(double, 4)\n";
+        LangASTUtil.printAST(code);
+    }
+
+    @Test
+    public void testASTVisitor_MethodReturnType() {
+        String code =
+                "def add(x: int, y: int) -> int:\n" +
+                        "    return x + y\n" +
+                        "\n" +
+                        "def greet(name: str) -> str:\n" +
+                        "    return 'Hello, ' + name\n";
+
+        LangASTUtil.printAST(code);
+    }
 
 
+    @Test
+    public void testASTVisitor_ComplexPython() {
+        String code =
+                "import math\n" +
+                        "\n" +
+                        "def safe_divide(a, b):\n" +
+                        "    try:\n" +
+                        "        return a / b\n" +
+                        "    except ZeroDivisionError:\n" +
+                        "        return None\n" +
+                        "\n" +
+                        "def map_and_filter(func, lst):\n" +
+                        "    return [func(x) for x in lst if func(x) is not None]\n" +
+                        "\n" +
+                        "numbers = [10, 0, 5, 2]\n" +
+                        "div_func = lambda y: safe_divide(100, y)\n" +
+                        "\n" +
+                        "results = map_and_filter(div_func, numbers)\n" +
+                        "total = 0\n" +
+                        "\n" +
+                        "for val in results:\n" +
+                        "    if val is None:\n" +
+                        "        total = total + val\n" +
+                        "    else:\n" +
+                        "        pass\n" +
+                        "\n" +
+                        "settings = {'threshold': 1, 'verbose': True}\n" +
+                        "\n" +
+                        "with open('log.txt', 'w') as log:\n" +
+                        "    log.write(str(results))\n" +
+                        "\n" +
+                        "print('Sum:', total)\n";
+        LangASTUtil.printAST(code);
+    }
 
 
 }

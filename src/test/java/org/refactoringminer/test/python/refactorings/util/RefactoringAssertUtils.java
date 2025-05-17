@@ -10,6 +10,7 @@ import gr.uom.java.xmi.decomposition.CompositeStatementObject;
 import gr.uom.java.xmi.decomposition.OperationBody;
 import gr.uom.java.xmi.diff.*;
 import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
 
 import java.util.List;
 import java.util.Map;
@@ -153,6 +154,88 @@ public class RefactoringAssertUtils {
         diff.getRefactorings().forEach(System.out::println);
 
         assertTrue(extractDetected, "Expected ExtractOperationRefactoring for extracted method: " + extractedMethodName);
+    }
+
+    public static void assertRenamePackageRefactoringDetected(
+            Map<String, String> beforeFiles,
+            Map<String, String> afterFiles,
+            String sourcePackage,
+            String targetPackage
+    ) throws Exception {
+
+        UMLModel beforeUML = new UMLModelAdapter(beforeFiles).getUMLModel();
+        UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
+
+        UMLModelDiff diff = beforeUML.diff(afterUML);
+
+        boolean renamePackageDetected = diff.getRefactorings().stream()
+                .anyMatch(ref -> ref instanceof RenamePackageRefactoring
+                        && ((RenamePackageRefactoring) ref).getPattern().getBefore().equals(sourcePackage)
+                        && ((RenamePackageRefactoring) ref).getPattern().getAfter().equals(targetPackage));
+
+        System.out.println("==== DIFF ====");
+        System.out.println("Source package: " + sourcePackage + " to " + targetPackage);
+        System.out.println("Total refactorings: " + diff.getRefactorings().size());
+        diff.getRefactorings().forEach(System.out::println);
+
+        assertTrue(renamePackageDetected,
+                "Expected a RenamePackageRefactoring from " + sourcePackage + " to " + targetPackage);
+    }
+
+    public static void assertMovePackageRefactoringDetected(
+            Map<String, String> beforeFiles,
+            Map<String, String> afterFiles,
+            String sourcePackage,
+            String targetPackage
+    ) throws Exception {
+
+        UMLModel beforeUML = new UMLModelAdapter(beforeFiles).getUMLModel();
+        UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
+
+        UMLModelDiff diff = beforeUML.diff(afterUML);
+
+        boolean movePackageDetected = diff.getRefactorings().stream()
+                .filter(ref -> ref instanceof RenamePackageRefactoring)
+                .map(ref -> (RenamePackageRefactoring) ref)
+                .anyMatch(ref ->
+                        ref.getPattern().getBefore().equals(sourcePackage)
+                                && ref.getPattern().getAfter().equals(targetPackage)
+                                && ref.getRefactoringType() == RefactoringType.MOVE_PACKAGE
+                );
+
+        System.out.println("==== DIFF ====");
+        System.out.println("Source package: " + sourcePackage + " to " + targetPackage);
+        System.out.println("Total refactorings: " + diff.getRefactorings().size());
+        diff.getRefactorings().forEach(System.out::println);
+
+        assertTrue(movePackageDetected,
+                "Expected a MovePackageRefactoring from " + sourcePackage + " to " + targetPackage);
+    }
+
+    public static void assertMoveSourceFolderRefactoringDetected(
+            Map<String, String> beforeFiles,
+            Map<String, String> afterFiles,
+            String sourceFolderBefore,
+            String sourceFolderAfter
+    ) throws Exception {
+
+        UMLModel beforeUML = new UMLModelAdapter(beforeFiles).getUMLModel();
+        UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
+
+        UMLModelDiff diff = beforeUML.diff(afterUML);
+
+        boolean moveSourceFolderDetected = diff.getRefactorings().stream()
+                .anyMatch(ref -> ref.getRefactoringType().getDisplayName().equals("Move Source Folder")
+                        && ref.toString().contains(sourceFolderBefore)
+                        && ref.toString().contains(sourceFolderAfter));
+
+        System.out.println("==== DIFF ====");
+        System.out.println("Source folder: " + sourceFolderBefore + " to " + sourceFolderAfter);
+        System.out.println("Total refactorings: " + diff.getRefactorings().size());
+        diff.getRefactorings().forEach(System.out::println);
+
+        assertTrue(moveSourceFolderDetected,
+                "Expected a Move Source Folder refactoring from " + sourceFolderBefore + " to " + sourceFolderAfter);
     }
 
 

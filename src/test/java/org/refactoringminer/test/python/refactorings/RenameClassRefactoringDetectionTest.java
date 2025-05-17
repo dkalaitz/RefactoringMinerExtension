@@ -46,6 +46,39 @@ class RenameClassRefactoringDetectionTest {
     }
 
     @Test
+    void detectsClassRenameWithImports() throws Exception {
+        System.out.println("\n");
+
+        // BEFORE code (Calculator with imports)
+        String beforePythonCode = """
+        import math
+        from statistics import mean, median
+        import numpy as np
+        
+        class Calculator:
+            def sum(self, x, y):
+                x = x + y
+                return x
+        """;
+
+        // AFTER code (AdvancedCalculator with the same imports)
+        String afterPythonCode = """
+        import math
+        from statistics import mean, median
+        import numpy as np
+        
+        class AdvancedCalculator:
+            def sum(self, x, y):
+                x = x + y
+                return x
+        """;
+
+        Map<String, String> beforeFiles = Map.of("tests/before/calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/before/calculator.py", afterPythonCode);
+        assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Calculator", "AdvancedCalculator");
+    }
+
+    @Test
     void detectsClassRename_GreeterToFriendlyGreeter() throws Exception {
         System.out.println("\n");
 
