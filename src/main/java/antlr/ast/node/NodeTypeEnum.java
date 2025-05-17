@@ -56,7 +56,12 @@ public enum NodeTypeEnum {
 
     /** METADATA */
     ANNOTATION("LangAnnotation"),
-    COMMENT("LangComment");
+    COMMENT("LangComment"),
+
+    /** PATTERN */
+    PATTERN("LangPattern"),
+    LITERAL_PATTERN("LangLiteralPattern"),
+    VARIABLE_PATTERN("LangVariablePattern");
 
     private final String name;
 
