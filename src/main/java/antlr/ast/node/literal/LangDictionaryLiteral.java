@@ -31,10 +31,6 @@ public class LangDictionaryLiteral extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        for (Entry entry : entries) {
-            entry.getKey().accept(visitor);
-            entry.getValue().accept(visitor);
-        }
     }
 
     @Override

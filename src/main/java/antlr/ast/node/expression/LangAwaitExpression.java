@@ -31,7 +31,7 @@ public class LangAwaitExpression extends LangASTNode {
 
     @Override
     public void accept(LangASTVisitor visitor) {
-
+        visitor.visit(this);
     }
 
     @Override

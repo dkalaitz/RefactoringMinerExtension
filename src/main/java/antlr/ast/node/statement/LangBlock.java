@@ -31,9 +31,6 @@ public class LangBlock extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        for (LangASTNode statement : statements) {
-            statement.accept(visitor);
-        }
     }
 
     public List<LangASTNode> getStatements() {

@@ -65,18 +65,6 @@ public class LangCatchClause extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-
-        for (LangASTNode exceptionType : exceptionTypes) {
-            exceptionType.accept(visitor);
-        }
-
-        if (exceptionVariable != null) {
-            exceptionVariable.accept(visitor);
-        }
-
-        if (body != null) {
-            body.accept(visitor);
-        }
     }
 
     @Override

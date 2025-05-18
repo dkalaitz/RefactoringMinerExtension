@@ -29,7 +29,7 @@ public class LangWithContextItem extends LangASTNode {
 
     @Override
     public void accept(LangASTVisitor visitor) {
-
+        visitor.visit(this);
     }
 
     public LangASTNode getExpression() {

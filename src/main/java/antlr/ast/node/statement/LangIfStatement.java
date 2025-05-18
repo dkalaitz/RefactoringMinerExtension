@@ -35,9 +35,6 @@ public class LangIfStatement extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        if (condition != null) condition.accept(visitor);
-        if (body != null) body.accept(visitor);
-        if (elseBody != null) elseBody.accept(visitor);
     }
 
     public LangASTNode getCondition() {

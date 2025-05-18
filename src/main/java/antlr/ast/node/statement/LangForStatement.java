@@ -54,15 +54,6 @@ public class LangForStatement extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        if (initializers != null) {
-            for (LangASTNode initializer : initializers) initializer.accept(visitor);
-        }
-        if (condition != null) condition.accept(visitor);
-        if (updates != null) {
-            for (LangASTNode update : updates) update.accept(visitor);
-        }
-        if (body != null) body.accept(visitor);
-        if (elseBody != null) elseBody.accept(visitor);
     }
 
     public List<LangSingleVariableDeclaration> getInitializers() {

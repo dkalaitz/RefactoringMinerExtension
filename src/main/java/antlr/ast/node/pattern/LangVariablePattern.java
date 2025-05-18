@@ -21,7 +21,7 @@ public class LangVariablePattern extends LangPattern {
 
     @Override
     public void accept(LangASTVisitor visitor) {
-
+        visitor.visit(this);
     }
 
     @Override

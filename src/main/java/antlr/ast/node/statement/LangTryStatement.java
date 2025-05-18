@@ -69,18 +69,6 @@ public class LangTryStatement extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-
-        if (body != null) {
-            body.accept(visitor);
-        }
-
-        for (LangCatchClause catchClause : catchClauses) {
-            catchClause.accept(visitor);
-        }
-
-        if (finallyBlock != null) {
-            finallyBlock.accept(visitor);
-        }
     }
 
     @Override

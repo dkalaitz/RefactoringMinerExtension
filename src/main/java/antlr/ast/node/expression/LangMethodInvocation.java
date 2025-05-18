@@ -61,15 +61,6 @@ public class LangMethodInvocation extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-
-        // Visit the expression and all arguments
-        if (expression != null) {
-            expression.accept(visitor);
-        }
-
-        for (LangASTNode arg : arguments) {
-            arg.accept(visitor);
-        }
     }
 
 

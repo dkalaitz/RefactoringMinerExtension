@@ -26,11 +26,6 @@ public class LangListLiteral extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-
-        // Visit all child elements
-        for (LangASTNode element : elements) {
-            element.accept(visitor);
-        }
     }
 
     public void addElement(LangASTNode element) {

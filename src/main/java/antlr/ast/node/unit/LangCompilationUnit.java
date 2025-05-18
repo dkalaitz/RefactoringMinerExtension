@@ -59,26 +59,6 @@ public class LangCompilationUnit extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-
-        // Visit types
-        for (LangTypeDeclaration type : types) {
-            type.accept(visitor);
-        }
-
-        // Visit top-level methods
-        for (LangMethodDeclaration method : topLevelMethods) {
-            method.accept(visitor);
-        }
-
-        // Visit top-level statements
-        for (LangASTNode statement : topLevelStatements) {
-            statement.accept(visitor);
-        }
-
-        for (LangComment comment : comments) {
-            comment.accept(visitor);
-        }
-
     }
 
     public List<LangTypeDeclaration> getTypes() {

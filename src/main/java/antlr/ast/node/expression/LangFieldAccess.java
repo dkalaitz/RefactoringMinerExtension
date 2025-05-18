@@ -33,12 +33,6 @@ public class LangFieldAccess extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        if (expression != null) {
-            expression.accept(visitor);
-        }
-        if (name != null) {
-            name.accept(visitor);
-        }
     }
 
     public LangASTNode getExpression() {

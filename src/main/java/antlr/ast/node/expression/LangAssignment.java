@@ -34,8 +34,6 @@ public class LangAssignment extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        leftSide.accept(visitor);
-        rightSide.accept(visitor);
     }
 
     public String getOperator() {

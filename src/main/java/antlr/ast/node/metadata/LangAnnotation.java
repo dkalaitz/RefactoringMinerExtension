@@ -189,22 +189,6 @@ public class LangAnnotation extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-
-        if (name != null) {
-            name.accept(visitor);
-        }
-
-        if (value != null) {
-            value.accept(visitor);
-        }
-
-        for (LangASTNode arg : arguments) {
-            arg.accept(visitor);
-        }
-
-        for (LangASTNode mvp : memberValuePairs.values()) {
-            mvp.accept(visitor);
-        }
     }
 
     @Override

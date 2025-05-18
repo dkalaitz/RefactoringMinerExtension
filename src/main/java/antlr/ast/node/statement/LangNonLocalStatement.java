@@ -49,9 +49,6 @@ public class LangNonLocalStatement extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        for (LangSimpleName name : names) {
-            name.accept(visitor);
-        }
     }
 
     @Override

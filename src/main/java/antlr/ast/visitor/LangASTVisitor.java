@@ -7,6 +7,8 @@ import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.*;
 import antlr.ast.node.literal.*;
+import antlr.ast.node.pattern.LangLiteralPattern;
+import antlr.ast.node.pattern.LangVariablePattern;
 import antlr.ast.node.statement.*;
 import antlr.ast.node.unit.LangCompilationUnit;
 
@@ -56,5 +58,7 @@ public interface LangASTVisitor {
     void visit(LangLambdaExpression langLambdaExpression);
     void visit(LangSwitchStatement langSwitchStatement);
     void visit(LangCaseStatement langCaseStatement);
+    void visit(LangVariablePattern langVariablePattern);
+    void visit(LangLiteralPattern langLiteralPattern);
     void visit(LangComment langComment);
 }

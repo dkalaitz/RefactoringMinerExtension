@@ -27,11 +27,6 @@ public class LangExpressionStatement extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-
-        // Visit child expression if present
-        if (expression != null) {
-            expression.accept(visitor);
-        }
     }
 
     public LangASTNode getExpression() {

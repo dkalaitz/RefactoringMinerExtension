@@ -69,9 +69,6 @@ public class LangTypeDeclaration extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        for (LangMethodDeclaration method : methods) {
-            method.accept(visitor);
-        }
     }
 
     public String getName() {

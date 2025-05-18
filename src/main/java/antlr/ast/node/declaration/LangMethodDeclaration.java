@@ -55,12 +55,6 @@ public class LangMethodDeclaration extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        for (LangSingleVariableDeclaration langSingleVariableDeclaration : parameters) {
-            langSingleVariableDeclaration.accept(visitor);
-        }
-        if (body != null) {
-            body.accept(visitor);
-        }
     }
 
     public String getName() {

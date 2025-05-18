@@ -34,10 +34,6 @@ public class LangPrefixExpression extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-
-        if (operand != null) {
-            operand.accept(visitor);
-        }
     }
 
     public LangASTNode getOperand() {

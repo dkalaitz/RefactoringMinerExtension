@@ -39,9 +39,6 @@ public class LangTupleLiteral extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        for (LangASTNode element : elements) {
-            element.accept(visitor);
-        }
     }
 
     @Override

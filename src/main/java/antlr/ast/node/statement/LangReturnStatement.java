@@ -29,9 +29,6 @@ public class LangReturnStatement extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        if (expression != null) {
-            expression.accept(visitor);
-        }
     }
 
     public String toString() {

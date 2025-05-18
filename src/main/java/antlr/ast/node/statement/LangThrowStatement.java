@@ -81,16 +81,6 @@ public class LangThrowStatement extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-
-        for (LangASTNode expression : expressions) {
-            if (expression != null) {
-                expression.accept(visitor);
-            }
-        }
-
-        if (fromExpression != null) {
-            fromExpression.accept(visitor);
-        }
     }
 
     @Override

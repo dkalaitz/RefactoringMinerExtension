@@ -34,8 +34,6 @@ public class LangInfixExpression extends LangASTNode {
     @Override
     public void accept(LangASTVisitor visitor) {
         visitor.visit(this);
-        if (left != null) left.accept(visitor);
-        if (right != null) right.accept(visitor);
     }
 
     public LangASTNode getLeft() {
