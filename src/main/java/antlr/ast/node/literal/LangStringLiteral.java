@@ -5,7 +5,7 @@ import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
-public class LangStringLiteral extends LangASTNode {
+public class LangStringLiteral extends LangLiteral {
     private String value;
 
     public LangStringLiteral() {super(NodeTypeEnum.STRING_LITERAL);}

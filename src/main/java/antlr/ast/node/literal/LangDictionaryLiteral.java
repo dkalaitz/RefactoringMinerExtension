@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LangDictionaryLiteral extends LangASTNode {
+public class LangDictionaryLiteral extends LangLiteral {
     private final List<Entry> entries = new ArrayList<>();
 
     public LangDictionaryLiteral(PositionInfo positionInfo) {

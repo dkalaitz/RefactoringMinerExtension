@@ -8,7 +8,7 @@ import antlr.ast.visitor.LangASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LangWithStatement extends LangASTNode {
+public class LangWithStatement extends LangStatement {
 
     private List<LangASTNode> contextItems = new ArrayList<>();
     private LangBlock body;

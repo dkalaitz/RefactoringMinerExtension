@@ -5,7 +5,7 @@ import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
-public class LangWhileStatement extends LangASTNode {
+public class LangWhileStatement extends LangStatement {
     private LangASTNode condition;
     private LangASTNode body;
     private LangASTNode elseBody;

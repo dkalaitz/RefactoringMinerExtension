@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LangTryStatement extends LangASTNode {
+public class LangTryStatement extends LangStatement {
     private LangASTNode body;
     private List<LangCatchClause> catchClauses = new ArrayList<>();
     private LangASTNode finallyBlock;

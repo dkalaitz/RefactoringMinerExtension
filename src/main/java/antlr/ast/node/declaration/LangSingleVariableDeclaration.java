@@ -10,7 +10,7 @@ import antlr.ast.visitor.LangASTVisitor;
 /**
  * Represents a method/function parameter declaration in a JDT-like style
  */
-public class LangSingleVariableDeclaration extends LangASTNode {
+public class LangSingleVariableDeclaration extends LangDeclaration {
     private LangSimpleName langSimpleName;
     private TypeObjectEnum typeAnnotation; // Add this field for Python type hints
     private boolean hasTypeAnnotation = false; // Add this to track if type hint exists

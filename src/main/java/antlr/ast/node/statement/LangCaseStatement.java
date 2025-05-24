@@ -11,7 +11,7 @@ import java.util.List;
  * Represents a case within a switch/match statement in the AST.
  * For Python, this corresponds to a 'case' block or the 'case _' (default).
  */
-public class LangCaseStatement extends LangASTNode {
+public class LangCaseStatement extends LangStatement {
     /**
      * The pattern for this case (can be null or a special value for 'default'/underscore).
      */

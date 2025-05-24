@@ -3,7 +3,6 @@ package antlr.ast.node.expression;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
-import antlr.ast.node.PositionUtils;
 import antlr.ast.visitor.LangASTVisitor;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 /**
  * Represents a Python lambda expression: lambda parameters: expression
  */
-public class LangLambdaExpression extends LangASTNode {
+public class LangLambdaExpression extends LangExpression {
     private final List<LangASTNode> parameters;
     private LangASTNode body; // The expression after the ':'
 

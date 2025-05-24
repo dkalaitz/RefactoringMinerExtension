@@ -9,7 +9,7 @@ import antlr.ast.visitor.LangASTVisitor;
  * Represents an 'async' statement or section.
  * Typically wraps another statement (like function, with, or for).
  */
-public class LangAsyncStatement extends LangASTNode {
+public class LangAsyncStatement extends LangStatement {
 
     private LangASTNode body;
 

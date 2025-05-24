@@ -5,7 +5,7 @@ import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
-public class LangReturnStatement extends LangASTNode {
+public class LangReturnStatement extends LangStatement {
     private LangASTNode expression;
 
     public LangReturnStatement() {super(NodeTypeEnum.RETURN_STATEMENT);}

@@ -6,7 +6,7 @@ import antlr.ast.node.OperatorEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
-public class LangPrefixExpression extends LangASTNode {
+public class LangPrefixExpression extends LangExpression {
     private LangASTNode operand;
     private OperatorEnum operator;
 

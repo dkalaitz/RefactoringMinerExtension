@@ -8,7 +8,7 @@ import antlr.ast.visitor.LangASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LangListLiteral extends LangASTNode {
+public class LangListLiteral extends LangLiteral {
     private List<LangASTNode> elements;
 
     public LangListLiteral() {super(NodeTypeEnum.LIST_LITERAL);}

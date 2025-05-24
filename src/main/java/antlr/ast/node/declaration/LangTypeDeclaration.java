@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 // Class representing a type (e.g., class or interface)
-public class LangTypeDeclaration extends LangASTNode {
+public class LangTypeDeclaration extends LangDeclaration {
     private String name;
     private List<LangMethodDeclaration> methods = new ArrayList<>();
     private List<String> superClassNames = new ArrayList<>();

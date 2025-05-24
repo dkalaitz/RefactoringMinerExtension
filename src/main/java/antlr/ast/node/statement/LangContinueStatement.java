@@ -5,7 +5,7 @@ import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
-public class LangContinueStatement extends LangASTNode {
+public class LangContinueStatement extends LangStatement {
 
     public LangContinueStatement() {
         super(NodeTypeEnum.CONTINUE_STATEMENT);

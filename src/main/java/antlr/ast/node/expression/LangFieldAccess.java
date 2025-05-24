@@ -5,7 +5,7 @@ import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
-public class LangFieldAccess extends LangASTNode {
+public class LangFieldAccess extends LangExpression {
     private LangASTNode expression;
     private LangSimpleName name;
 

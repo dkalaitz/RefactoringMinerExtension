@@ -1,11 +1,10 @@
 package antlr.ast.node.expression;
 
-import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
-public class LangSimpleName extends LangASTNode {
+public class LangSimpleName extends LangExpression {
     private String identifier;
 
     public LangSimpleName() {super(NodeTypeEnum.SIMPLE_NAME);}

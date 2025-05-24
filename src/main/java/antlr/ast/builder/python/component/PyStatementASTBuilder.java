@@ -7,10 +7,7 @@ import antlr.ast.node.PositionUtils;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.node.literal.LangTupleLiteral;
-import antlr.ast.node.statement.LangBlock;
-import antlr.ast.node.statement.LangCaseStatement;
-import antlr.ast.node.statement.LangCatchClause;
-import antlr.ast.node.statement.LangWithContextItem;
+import antlr.ast.node.statement.*;
 import antlr.base.lang.python.Python3Parser;
 
 import java.util.ArrayList;
@@ -104,21 +101,36 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
     }
 
 
-    
+
     public LangASTNode visitIf_stmt(Python3Parser.If_stmtContext ctx) {
-        // Process "if" condition
+        // Process the primary "if" condition
         LangASTNode condition = mainBuilder.visit(ctx.test(0));
 
-        // Process "if" body
+        // Process the "if" body
         LangBlock body = (LangBlock) mainBuilder.visit(ctx.block(0));
 
-        // Process "else" body (if available)
-        LangBlock elseBody = null;
-        if (ctx.ELSE() != null && ctx.block(1) != null) {
-            elseBody = (LangBlock) mainBuilder.visit(ctx.block(1));
+        // Handle the case of `elif` and `else` blocks
+        LangASTNode elseBody = null;
+
+        // Check for an `else` clause
+        if (ctx.ELSE() != null) {
+            int elseBlockIndex = ctx.block().size() - 1;
+            elseBody = mainBuilder.visit(ctx.block(elseBlockIndex));
         }
 
-        // Create an LangIfStatement using the factory
+        // Process `elif` clauses (if any), working backwards
+        if (ctx.ELIF() != null && !ctx.ELIF().isEmpty()) {
+            // Start from the last `elif` condition and chain them backward
+            for (int i = ctx.ELIF().size() - 1; i >= 0; i--) {
+                LangASTNode elifCondition = mainBuilder.visit(ctx.test(i + 1));
+                LangBlock elifBody = (LangBlock) mainBuilder.visit(ctx.block(i + 1));
+
+                // Nest the current `elseBody` into the newly created `IfStatement`
+                elseBody = LangASTNodeFactory.createIfStatement(elifCondition, elifBody, elseBody, ctx);
+            }
+        }
+
+        // Create the top-level `if` statement
         return LangASTNodeFactory.createIfStatement(condition, body, elseBody, ctx);
     }
 
@@ -294,21 +306,11 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
 
     // TODO
     public LangASTNode visitRaise_stmt(Python3Parser.Raise_stmtContext ctx) {
-        System.out.println("Raise statement: " + ctx.getText());
-        System.out.println("raise: " + ctx.RAISE().getText());
-        // If present
-        if (ctx.FROM() != null) {
-            System.out.println("from: " + ctx.FROM().getText());
-        }
-        for (Python3Parser.TestContext t : ctx.test()) {
-            System.out.println("test: " + t.getText());
-        }
-
         List<Python3Parser.TestContext> testContexts = ctx.test();
         LangASTNode exception = null;
         LangASTNode from = null;
 
-        if (testContexts != null && testContexts.size() > 0) {
+        if (testContexts != null && !testContexts.isEmpty()) {
             exception = mainBuilder.visit(testContexts.get(0));
         }
 
@@ -317,9 +319,7 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
         }
 
 
-        LangASTNode node = LangASTNodeFactory.createThrowStatement(ctx, exception, from);
-        System.out.println("Created throw node: " + node);
-        return node;
+        return LangASTNodeFactory.createThrowStatement(ctx, exception, from);
     }
 
 

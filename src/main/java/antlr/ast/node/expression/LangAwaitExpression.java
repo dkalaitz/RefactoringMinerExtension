@@ -5,7 +5,7 @@ import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
-public class LangAwaitExpression extends LangASTNode {
+public class LangAwaitExpression extends LangExpression {
     private LangASTNode expression;
 
     public LangAwaitExpression() {

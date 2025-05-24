@@ -8,6 +8,8 @@ import java.util.regex.Pattern;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.stringifier.LangASTFlattener;
+import antlr.ast.stringifier.PyASTFlattener;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -919,7 +921,9 @@ public class Visitor extends ASTVisitor {
 
 	// TODO
 	public static String stringify(LangASTNode node) {
-		return node.toString();
+		LangASTFlattener printer = new PyASTFlattener(node);
+		node.accept(printer);
+		return printer.getResult();
 	}
 
 }

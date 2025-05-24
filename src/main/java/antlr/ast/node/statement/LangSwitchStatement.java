@@ -10,7 +10,7 @@ import java.util.List;
  * Represents a switch (match) statement in the AST, similar to JDT's SwitchStatement.
  * For Python, this corresponds to the 'match' statement.
  */
-public class LangSwitchStatement extends LangASTNode {
+public class LangSwitchStatement extends LangStatement {
     /**
      * The expression being matched (e.g., the value after 'match' in Python).
      */

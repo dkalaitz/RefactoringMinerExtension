@@ -8,7 +8,7 @@ import antlr.ast.visitor.LangASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LangMethodInvocation extends LangASTNode {
+public class LangMethodInvocation extends LangExpression {
     private LangASTNode expression;
     private List<LangASTNode> arguments;
 

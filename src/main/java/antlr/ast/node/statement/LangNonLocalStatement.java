@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class LangNonLocalStatement extends LangASTNode {
+public class LangNonLocalStatement extends LangStatement {
 
     private List<LangSimpleName> names = new ArrayList<>();
 

@@ -8,7 +8,7 @@ import antlr.ast.visitor.LangASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LangThrowStatement extends LangASTNode {
+public class LangThrowStatement extends LangStatement {
 
     private List<LangASTNode> expressions = new ArrayList<>();
     private LangASTNode fromExpression; // For Python's "raise ... from ..." syntax

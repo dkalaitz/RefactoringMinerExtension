@@ -9,7 +9,7 @@ import antlr.ast.visitor.LangASTVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LangGlobalStatement extends LangASTNode {
+public class LangGlobalStatement extends LangStatement {
 
     List<LangSimpleName> variableNames = new ArrayList<>();
 

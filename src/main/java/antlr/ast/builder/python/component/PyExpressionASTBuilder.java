@@ -25,6 +25,7 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
     public LangASTNode visitAtom(Python3Parser.AtomContext ctx) {
         // Handle identifiers or literals
         if (ctx.NUMBER() != null) {
+            // TODO: handle doubles
             return LangASTNodeFactory.createIntegerLiteral(ctx, ctx.NUMBER().getText());
         }
         if (ctx.name() != null && ctx.name().getText().equals("None")) {

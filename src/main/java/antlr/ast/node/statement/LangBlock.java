@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LangBlock extends LangASTNode {
+public class LangBlock extends LangStatement {
     private List<LangASTNode> statements = new ArrayList<>();
 
     public LangBlock() {super(NodeTypeEnum.BLOCK);}

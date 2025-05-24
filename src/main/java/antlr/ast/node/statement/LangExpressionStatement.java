@@ -10,7 +10,7 @@ import antlr.ast.visitor.LangASTVisitor;
  * An expression statement wraps an expression that is executed for its side effects.
  * Example: a function call like "print(x)" or an assignment "x = 5".
  */
-public class LangExpressionStatement extends LangASTNode {
+public class LangExpressionStatement extends LangStatement {
 
     private LangASTNode expression;
 

@@ -14,7 +14,7 @@ import java.util.Collections;
 import java.util.List;
 
 // Class representing a method within a type
-public class LangMethodDeclaration extends LangASTNode {
+public class LangMethodDeclaration extends LangDeclaration {
     private String name;
     private String cleanName;
     private List<LangSingleVariableDeclaration> parameters = new ArrayList<>();

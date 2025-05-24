@@ -5,7 +5,7 @@ import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
-public class LangBreakStatement extends LangASTNode {
+public class LangBreakStatement extends LangStatement {
 
     public LangBreakStatement() {
         super(NodeTypeEnum.BREAK_STATEMENT);

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LangTupleLiteral extends LangASTNode {
+public class LangTupleLiteral extends LangLiteral {
     private final List<LangASTNode> elements = new ArrayList<>();
 
     public LangTupleLiteral(PositionInfo positionInfo) {

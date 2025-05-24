@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class LangImportStatement extends LangASTNode {
+public class LangImportStatement extends LangStatement {
     private String moduleName;                        // The module being imported from
     private List<ImportItem> imports = new ArrayList<>();  // The items being imported
     private boolean isFromImport = false;             // Whether this is a 'from' import

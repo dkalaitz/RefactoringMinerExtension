@@ -6,7 +6,7 @@ import antlr.ast.node.PositionInfo;
 import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.visitor.LangASTVisitor;
 
-public class LangWithContextItem extends LangASTNode {
+public class LangWithContextItem extends LangStatement {
 
     private LangASTNode expression;
     private LangSimpleName alias; // may be null

@@ -30,6 +30,24 @@ public class PyASTPrinterTest {
     }
 
     @Test
+    public void testASTVisitor_IfElifElse() {
+        // Example Python code with if-elif-else chain
+        String code =
+                "def categorize_number(x):\n" +
+                        "    if x < 0:\n" +
+                        "        return 'Negative'\n" +
+                        "    elif x == 0:\n" +
+                        "        return 'Zero'\n" +
+                        "    elif x > 0 and x <= 10:\n" +
+                        "        return 'Small Positive'\n" +
+                        "    else:\n" +
+                        "        return 'Large Positive'\n";
+
+        // Print the AST
+        LangASTUtil.printAST(code);
+    }
+
+    @Test
     public void testASTVisitor_WithComments() {
         // Example Python code
         String code = "class Calculator:\n" +

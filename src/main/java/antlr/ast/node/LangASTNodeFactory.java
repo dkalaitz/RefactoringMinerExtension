@@ -70,7 +70,10 @@ public class LangASTNodeFactory {
     }
 
     public static LangAssignment createAssignment(String operator, LangASTNode left, LangASTNode right, ParserRuleContext ctx) {
-        return new LangAssignment(operator, left, right, PositionUtils.getPositionInfo(ctx));
+        LangAssignment langAssignment = new LangAssignment(operator, left, right, PositionUtils.getPositionInfo(ctx));
+        langAssignment.addChild(left);
+        langAssignment.addChild(right);
+        return langAssignment;
     }
 
     public static LangInfixExpression createInfixExpression(LangASTNode left, LangASTNode right, String operatorSymbol, ParserRuleContext ctx) {
@@ -112,7 +115,7 @@ public class LangASTNodeFactory {
         return langBlock;
     }
 
-    public static LangIfStatement createIfStatement(LangASTNode condition, LangBlock body, LangBlock elseBody, ParserRuleContext ctx) {
+    public static LangIfStatement createIfStatement(LangASTNode condition, LangBlock body, LangASTNode elseBody, ParserRuleContext ctx) {
         return new LangIfStatement(condition, body, elseBody, PositionUtils.getPositionInfo(ctx));
     }
 
@@ -138,6 +141,7 @@ public class LangASTNodeFactory {
         LangExpressionStatement statement = new LangExpressionStatement(PositionUtils.getPositionInfo(ctx));
         if (expression != null) {
             statement.setExpression(expression);
+            statement.addChild(expression);
         }
 
         return statement;

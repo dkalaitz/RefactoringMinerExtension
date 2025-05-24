@@ -6,7 +6,7 @@ import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
 
-public class LangNullLiteral extends LangASTNode {
+public class LangNullLiteral extends LangLiteral {
 
     public LangNullLiteral() {
         super(NodeTypeEnum.NULL_LITERAL);

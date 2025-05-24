@@ -8,7 +8,7 @@ import antlr.ast.visitor.LangASTVisitor;
 
 import java.util.List;
 
-public class LangForStatement extends LangASTNode {
+public class LangForStatement extends LangStatement {
 
     private List<LangSingleVariableDeclaration> initializers;
     private LangASTNode condition;

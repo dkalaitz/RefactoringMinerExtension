@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Represents a catch clause in a try statement.
  */
-public class LangCatchClause extends LangASTNode {
+public class LangCatchClause extends LangStatement {
     private List<LangASTNode> exceptionTypes = new ArrayList<>();
     private LangSimpleName exceptionVariable;
     private LangASTNode body;
