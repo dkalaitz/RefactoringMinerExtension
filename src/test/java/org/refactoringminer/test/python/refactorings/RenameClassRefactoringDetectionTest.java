@@ -15,8 +15,8 @@ class RenameClassRefactoringDetectionTest {
         String beforePythonCode = readResourceFile("python-samples/before/calculator.py");
         String afterPythonCode = readResourceFile("python-samples/after/calculator.py");
 
-        Map<String, String> beforeFiles = Map.of("tests/before/calculator.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/calculator.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/calculator.py", afterPythonCode);
         assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Calculator", "AdvancedCalculator");
     }
 
@@ -40,8 +40,8 @@ class RenameClassRefactoringDetectionTest {
                     return x
             """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/calculator.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/calculator.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/calculator.py", afterPythonCode);
         assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Calculator", "AdvancedCalculator");
     }
 
@@ -73,8 +73,8 @@ class RenameClassRefactoringDetectionTest {
                 return x
         """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/calculator.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/before/calculator.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/calculator.py", afterPythonCode);
         assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Calculator", "AdvancedCalculator");
     }
 
@@ -93,8 +93,8 @@ class RenameClassRefactoringDetectionTest {
                 return "Hello, " + name
         """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/greeter.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/greeter.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/greeter.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/greeter.py", afterPythonCode);
         assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Greeter", "FriendlyGreeter");
     }
 
@@ -112,8 +112,8 @@ class RenameClassRefactoringDetectionTest {
                 return "..."
         """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/animal.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/animal.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/animal.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/animal.py", afterPythonCode);
         assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Animal", "Mammal");
     }
 
@@ -131,8 +131,8 @@ class RenameClassRefactoringDetectionTest {
                 return "..."
         """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/animal.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/animal.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/animal.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/animal.py", afterPythonCode);
         assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Animal", "Mammal");
     }
 
@@ -173,8 +173,8 @@ class RenameClassRefactoringDetectionTest {
                         return total
                 """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/data_processor.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/data_handler.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/data_processor.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/data_handler.py", afterPythonCode);
         assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "DataProcessor", "DataHandler");
     }
 

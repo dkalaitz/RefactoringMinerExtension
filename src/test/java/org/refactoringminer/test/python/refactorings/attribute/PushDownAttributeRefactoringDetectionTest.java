@@ -36,8 +36,8 @@ class Cat(Animal):
         pass
 """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/animal.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/animal.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/animal.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/animal.py", afterPythonCode);
 
         assertPushDownAttributeRefactoringDetected(beforeFiles, afterFiles, "Animal", "Dog", "tail");
     }

@@ -24,8 +24,8 @@ public class AddParameterRefactoringDetectionTest {
                     return x * y
             """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/calculator.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/calculator.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/calculator.py", afterPythonCode);
 
         UMLModel beforeUML = new UMLModelAdapter(beforeFiles).getUMLModel();
         UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();

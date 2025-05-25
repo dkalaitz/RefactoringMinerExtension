@@ -6,6 +6,7 @@ import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.diff.RenameOperationRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
+import org.refactoringminer.api.Refactoring;
 
 import java.util.Map;
 
@@ -26,8 +27,8 @@ class RenameMethodRefactoringDetectionTest {
                 def add(self, x, y):
                     return x + y
             """;
-        Map<String, String> beforeFiles = Map.of("tests/before/calculator.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/calculator.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/calculator.py", afterPythonCode);
         assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "sum", "add");
     }
 
@@ -43,8 +44,8 @@ class RenameMethodRefactoringDetectionTest {
                 def say_hello(self, name):
                     return "Hello, " + name
             """;
-        Map<String, String> beforeFiles = Map.of("tests/before/greeter.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/greeter.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/greeter.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/greeter.py", afterPythonCode);
         assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "greet", "say_hello");
     }
 
@@ -60,8 +61,8 @@ class RenameMethodRefactoringDetectionTest {
                 def communicate(self):
                     return "noise"
             """;
-        Map<String, String> beforeFiles = Map.of("tests/before/animal.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/animal.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/animal.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/animal.py", afterPythonCode);
         assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "speak", "communicate");
     }
 
@@ -99,8 +100,8 @@ class RenameMethodRefactoringDetectionTest {
                             total = total + number
                         return total
                 """;
-        Map<String, String> beforeFiles = Map.of("tests/before/animal.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/animal.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/dataprocessor.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/dataprocessor.py", afterPythonCode);
         assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "process_list", "process_list1");
         assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "calculate_sum", "calculate_add");
         // TODO: Assert total refactorings
@@ -110,42 +111,22 @@ class RenameMethodRefactoringDetectionTest {
         UMLModel beforeUML = new UMLModelAdapter(beforeFiles).getUMLModel();
         UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
 
-        System.out.println("=== BEFORE MODEL OPERATIONS ===");
-        beforeUML.getClassList().forEach(umlClass -> {
-            System.out.println("Class: " + umlClass.getName());
-            for (UMLOperation op : umlClass.getOperations()) {
-                System.out.println("  " + dumpOperation(op));
-            }
-        });
-
-        System.out.println("=== AFTER MODEL OPERATIONS ===");
-        afterUML.getClassList().forEach(umlClass -> {
-            System.out.println("Class: " + umlClass.getName());
-            for (UMLOperation op : umlClass.getOperations()) {
-                System.out.println("  " + dumpOperation(op));
-            }
-        });
-
 
         UMLModelDiff diff = beforeUML.diff(afterUML);
+        diff.getRefactorings().forEach(refactoring -> System.out.println(refactoring.getName()));
         boolean methodRenameDetected = diff.getRefactorings().stream()
                 .anyMatch(ref -> {
                     if (ref instanceof RenameOperationRefactoring renameRef) {
                         UMLOperation originalOperation = renameRef.getOriginalOperation();
+                        System.out.println("Original operation: " + originalOperation.getName());
                         UMLOperation renamedOperation = renameRef.getRenamedOperation();
+                        System.out.println("Renamed operation: " + renamedOperation.getName());
 
                         return originalOperation.getName().equals(beforeName) &&
                                 renamedOperation.getName().equals(afterName);
                     }
                     return false;
                 });
-
-        System.out.println("==== DIFF ====");
-        System.out.println("Method rename detected: " + methodRenameDetected);
-        System.out.println("Total refactorings: " + diff.getRefactorings().size());
-
-        diff.getRefactorings().forEach(System.out::println);
-        System.out.println("\n");
 
         assertTrue(methodRenameDetected, "Expected a RenameMethodRefactoring from " + beforeName + " to " + afterName);
     }

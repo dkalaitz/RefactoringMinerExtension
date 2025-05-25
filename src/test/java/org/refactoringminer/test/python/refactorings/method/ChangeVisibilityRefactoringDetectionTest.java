@@ -31,8 +31,8 @@ public class ChangeVisibilityRefactoringDetectionTest {
                     return "I'm now private"
             """;
 
-        Map<String, String> beforeFiles = Map.of("tests/visibility/example.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/visibility/example.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/example.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/example.py", afterPythonCode);
 
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
                 "public_method", Visibility.PUBLIC,
@@ -53,8 +53,8 @@ public class ChangeVisibilityRefactoringDetectionTest {
                     return "I'm now public"
             """;
 
-        Map<String, String> beforeFiles = Map.of("tests/visibility/example.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/visibility/example.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/example.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/example.py", afterPythonCode);
 
         assertVisibilityChangeDetected(beforeFiles, afterFiles,
                 "protected_method", Visibility.PROTECTED,

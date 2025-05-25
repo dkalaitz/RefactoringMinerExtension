@@ -23,8 +23,8 @@ public class ReorderParameterRefactoringDetectionTest {
                     return x + y
             """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/mathops.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/mathops.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/mathops.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/mathops.py", afterPythonCode);
 
         assertReorderParameterRefactoringDetected(
                 beforeFiles,

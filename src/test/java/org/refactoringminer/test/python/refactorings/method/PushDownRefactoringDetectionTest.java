@@ -29,8 +29,8 @@ public class PushDownRefactoringDetectionTest {
                     return "bar"
             """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/parent.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/parent.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/parent.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/parent.py", afterPythonCode);
 
         assertPushDownMethodRefactoringDetected(beforeFiles, afterFiles, "Parent", "Child", "foo");
     }
@@ -60,8 +60,8 @@ public class PushDownRefactoringDetectionTest {
                 pass
             """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/vehicle.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/vehicle.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/vehicle.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/vehicle.py", afterPythonCode);
 
         assertPushDownMethodRefactoringDetected(beforeFiles, afterFiles, "Vehicle", "Car", "horn");
     }
@@ -127,8 +127,8 @@ public class PushDownRefactoringDetectionTest {
                 print("SMS log:", entry)
         """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/notification.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/notification.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/notification.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/notification.py", afterPythonCode);
 
         assertPushDownMethodRefactoringDetected(beforeFiles, afterFiles, "NotificationSender", "EmailSender", "send_email");
         assertPushDownMethodRefactoringDetected(beforeFiles, afterFiles, "NotificationSender", "SMSSender", "send_sms");

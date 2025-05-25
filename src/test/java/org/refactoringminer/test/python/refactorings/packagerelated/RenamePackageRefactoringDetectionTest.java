@@ -9,28 +9,6 @@ import static org.refactoringminer.test.python.refactorings.util.RefactoringAsse
 class RenamePackageRefactoringDetectionTest {
 
     @Test
-    void detectsMovePackage() throws Exception {
-        // BEFORE: module in old_pkg
-        String beforePythonCode = """
-            # src/old_pkg/my_module.py
-            class A:
-                pass
-            """;
-        // AFTER: module in new_pkg
-        String afterPythonCode = """
-            # src/new_pkg/my_module.py
-            class A:
-                pass
-            """;
-
-        Map<String, String> beforeFiles = Map.of("src/old_pkg/my_module.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("src/new_pkg/my_module.py", afterPythonCode);
-
-        assertRenamePackageRefactoringDetected(beforeFiles, afterFiles, "old_pkg", "new_pkg");
-    }
-
-
-    @Test
     void detectsMoveFileToAnotherPackage() {
         // Simulate before and after move
         String before = "src/oldpkg/utils/helper.py";

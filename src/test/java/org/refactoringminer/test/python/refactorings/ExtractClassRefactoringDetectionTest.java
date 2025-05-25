@@ -38,8 +38,8 @@ public class ExtractClassRefactoringDetectionTest {
                     return f"{self.address.street}, {self.address.city}"
             """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/person.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/person.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/person.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/person.py", afterPythonCode);
 
         assertExtractClassRefactoringDetected(beforeFiles, afterFiles, "Person", "Address");
     }
@@ -82,8 +82,8 @@ public class ExtractClassRefactoringDetectionTest {
                 print(f"Address: {self.address.get_address()}")
         """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/employee.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/employee.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/employee.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/employee.py", afterPythonCode);
 
         assertExtractClassRefactoringDetected(
                 beforeFiles,

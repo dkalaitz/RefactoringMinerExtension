@@ -27,8 +27,8 @@ public class InlineMethodRefactoringDetectionTest {
                         "        result = a + b\n" +
                         "        return result\n";
 
-        Map<String, String> beforeFiles = Map.of("tests/before/calculator.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/calculator.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/calculator.py", afterPythonCode);
 
         assertInlineMethodRefactoringDetected(beforeFiles, afterFiles, "add", "sum_impl");
     }

@@ -35,8 +35,8 @@ public class PullUpMethodRefactoringDetectionTest {
                 pass
             """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/pullup_multi.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/pullup_multi.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/pullup_multi.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/pullup_multi.py", afterPythonCode);
 
         assertPullUpMethodRefactoringDetected(beforeFiles, afterFiles, "Dog", "Animal", "speak");
     }

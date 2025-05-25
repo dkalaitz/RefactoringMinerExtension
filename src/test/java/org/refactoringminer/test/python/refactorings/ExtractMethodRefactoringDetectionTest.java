@@ -38,8 +38,8 @@ public class ExtractMethodRefactoringDetectionTest {
     """;
 
 
-        Map<String, String> beforeFiles = Map.of("tests/before/example.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/example.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/example.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/example.py", afterPythonCode);
 
         UMLModel beforeUML = new UMLModelAdapter(beforeFiles).getUMLModel();
         UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
@@ -77,8 +77,8 @@ public class ExtractMethodRefactoringDetectionTest {
                 print("Sum:", sum)
         """;
 
-        Map<String, String> beforeFiles = Map.of("tests/before/calculator.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/after/calculator.py", afterPythonCode);
+        Map<String, String> beforeFiles = Map.of("tests/calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/calculator.py", afterPythonCode);
 
         UMLModel beforeUML = new UMLModelAdapter(beforeFiles).getUMLModel();
         UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
