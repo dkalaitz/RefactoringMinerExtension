@@ -10,6 +10,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.stringifier.LangASTFlattener;
 import antlr.ast.stringifier.PyASTFlattener;
+import antlr.ast.visitor.LangASTVisitor;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -917,13 +918,6 @@ public class Visitor extends ASTVisitor {
 		ASTFlattener printer = new ASTFlattener();
         node.accept(printer);
         return printer.getResult();
-	}
-
-	// TODO
-	public static String stringify(LangASTNode node) {
-		LangASTFlattener printer = new PyASTFlattener(node);
-		node.accept(printer);
-		return printer.getResult();
 	}
 
 }

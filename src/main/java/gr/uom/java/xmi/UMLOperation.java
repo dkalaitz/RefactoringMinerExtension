@@ -275,6 +275,10 @@ public class UMLOperation implements Comparable<UMLOperation>, Serializable, Var
 		return comments;
 	}
 
+	public void setComments(List<UMLComment> comments) {
+		this.comments = comments;
+	}
+
 	public List<AbstractCall> getAllOperationInvocations() {
 		if(operationBody != null)
 			return operationBody.getAllOperationInvocations();

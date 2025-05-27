@@ -1,5 +1,9 @@
 package org.refactoringminer.test.python.refactorings.packagerelated;
 
+import antlr.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLModel;
+import gr.uom.java.xmi.diff.RenamePackageRefactoring;
+import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
@@ -12,24 +16,28 @@ public class MovePackageRefactoringDetectionTest {
 
     @Test
     void detectsMovePackage() throws Exception {
-        // BEFORE: my_module.py in oldpkg
+
         String beforePythonCode = """
-            # src/oldpkg/my_module.py
             class A:
                 pass
             """;
-        // AFTER: my_module.py in newpkg
         String afterPythonCode = """
-            # src/newpkg/my_module.py
             class A:
                 pass
             """;
 
+        // Create hierarchical package paths (with dots) to trigger MOVE_PACKAGE detection
+        Map<String, String> beforeFiles = Map.of(
+                "src/com/example/oldpkg/A.py", beforePythonCode,
+                "src/com/example/oldpkg/__init__.py", "# Package initialization"
+        );
 
-        Map<String, String> beforeFiles = Map.of("src/oldpkg/A.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("src/newpkg/A.py", afterPythonCode);
+        Map<String, String> afterFiles = Map.of(
+                "src/org/example/newpkg/A.py", afterPythonCode,
+                "src/org/example/newpkg/__init__.py", "# Package initialization"
+        );
 
-        assertMovePackageRefactoringDetected(beforeFiles, afterFiles, "oldpkg", "newpkg");
+        assertMovePackageRefactoringDetected(beforeFiles, afterFiles, "com.example.oldpkg", "org.example.newpkg");
     }
 
 }

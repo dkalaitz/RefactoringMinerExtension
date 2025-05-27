@@ -6,13 +6,8 @@ import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 
-import antlr.ast.node.expression.LangAssignment;
-import antlr.ast.node.expression.LangFieldAccess;
-import antlr.ast.node.expression.LangInfixExpression;
-import antlr.ast.node.expression.LangMethodInvocation;
+import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.statement.LangBlock;
-import antlr.ast.node.statement.LangImportStatement;
-import antlr.ast.node.statement.LangReturnStatement;
 import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.base.LangASTUtil;
 import gr.uom.java.xmi.*;
@@ -21,7 +16,9 @@ import gr.uom.java.xmi.decomposition.*;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
+import java.util.logging.Logger;
 
+import static antlr.ast.visitor.LangVisitor.stringify;
 import static antlr.umladapter.UMLAdapterUtil.extractUMLImports;
 import static antlr.umladapter.processor.UMLAdapterStatementProcessor.*;
 import static antlr.umladapter.processor.UMLAdapterVariableProcessor.processVariableDeclarations;
@@ -29,6 +26,8 @@ import static antlr.umladapter.processor.UMLAdapterVariableProcessor.processVari
 public class UMLModelAdapter {
 
     private UMLModel umlModel;
+    private static final Logger LOGGER = Logger.getLogger(UMLModelAdapter.class.getName());
+
 
     public UMLModelAdapter(Map<String, String> pythonFiles) throws IOException {
         // Parse Python files to custom AST
@@ -43,7 +42,7 @@ public class UMLModelAdapter {
         for (Map.Entry<String, String> entry : pythonFiles.entrySet()) {
             LangASTNode ast = LangASTUtil.getCustomPythonAST(
                     new StringReader(entry.getValue()));
-            System.out.println("AST: " + ast.toString());
+            System.out.print("AST Structure: " + ast.toString());
             result.put(entry.getKey(), ast);
         }
 
@@ -69,7 +68,6 @@ public class UMLModelAdapter {
         if (ast instanceof LangCompilationUnit compilationUnit) {
             // Process imports
             List<UMLImport> imports = extractUMLImports(compilationUnit, filename);
-            System.out.println("Imports: " + imports);
 
             for (LangTypeDeclaration typeDecl : compilationUnit.getTypes()) {
                 UMLClass umlClass = createUMLClass(model, typeDecl, filename, imports);
@@ -82,9 +80,9 @@ public class UMLModelAdapter {
 
         String className = typeDecl.getName();
 
-        String packageName = "";//UMLAdapterUtil.extractPackageName(filename);
-        String sourceFolder = "";//UMLAdapterUtil.extractSourceFolder(filename);
-        String filepath = "";//UMLAdapterUtil.extractFilePath(filename);
+        String packageName = UMLAdapterUtil.extractPackageName(filename);
+        String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
+        String filepath = UMLAdapterUtil.extractFilePath(filename);
 
 
         LocationInfo locationInfo = new LocationInfo(sourceFolder,
@@ -127,6 +125,7 @@ public class UMLModelAdapter {
             UMLOperation umlOperation = createUMLOperation(methodDecl, className, sourceFolder, filepath);
             umlClass.addOperation(umlOperation);
         }
+        logUMLClass(umlClass);
         return umlClass;
     }
 
@@ -164,6 +163,8 @@ public class UMLModelAdapter {
         umlOperation.setSynchronized(methodDecl.isSynchronized());
         umlOperation.setActualSignature(methodDecl.getActualSignature());
 
+        processComments(methodDecl, sourceFolder, filePath, umlOperation);
+
         UMLType returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation());
         UMLParameter returnParam = new UMLParameter("", returnType, "return", false);
         umlOperation.addParameter(returnParam);
@@ -175,6 +176,7 @@ public class UMLModelAdapter {
                 filePath,
                 methodDecl.getBody(),
                 umlOperation,
+                // TODO
                 new ArrayList<>()
         );
 
@@ -182,6 +184,8 @@ public class UMLModelAdapter {
         processMethodBody(methodDecl.getBody(), opBody.getCompositeStatement(), sourceFolder, filePath, umlOperation);
 
         umlOperation.setBody(opBody);
+
+        logUMLOperation(umlOperation, methodDecl);
 
         return umlOperation;
     }
@@ -193,37 +197,91 @@ public class UMLModelAdapter {
             return;
         }
 
-        // First implementation: capture return statements
         for (LangASTNode statement : methodBody.getStatements()) {
-            if (statement instanceof LangReturnStatement returnStmt) {
-                // Create a StatementObject for each return statement
-                processReturnStatement(returnStmt, composite, sourceFolder, filePath, container);
-            } else if (statement instanceof LangAssignment langAssignment){
-                processAssignment(langAssignment, composite, sourceFolder, filePath, container);
-            } else if (statement instanceof LangInfixExpression langInfixExpression){
-                processInfixExpression(langInfixExpression, composite, sourceFolder, filePath, container);
-            } else if (statement instanceof LangMethodInvocation methodInvocation) {
-              //  processMethodInvocation(methodInvocation, composite, sourceFolder, filePath, container);
-            } else if (statement instanceof LangFieldAccess fieldAccess) {
-                processFieldAccess(fieldAccess, composite, sourceFolder, filePath, container);
-            } else {
-                // For all other statement types, create a basic statement representation
-                // This ensures we have at least some content in the body for comparison
-                StatementObject genericStatement = new StatementObject(
-                        statement.getRootCompilationUnit(),
-                        sourceFolder,
-                        filePath,
-                        statement,
-                        composite.getDepth() + 1,
-                        LocationInfo.CodeElementType.EXPRESSION_STATEMENT,
-                        container,
-                        null
-                );
-                composite.addStatement(genericStatement);
-            }
+            processStatement(statement, composite, sourceFolder, filePath, container);
         }
+
+//        System.out.println("Composite statement: " + composite.toString());
+//        for (AbstractStatement statement : composite.getStatements()) {
+//            System.out.println("Statement: " + statement.toString());
+//        }
     }
 
+    private void processComments(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation){
+        List<UMLComment> comments = new ArrayList<>();
+        for (LangComment langComment: methodDecl.getComments()) {
+            if (langComment.isBlockComment() || langComment.isDocComment()){
+                comments.add(new UMLComment(langComment.getContent(), new LocationInfo(
+                        methodDecl.getRootCompilationUnit(),
+                        sourceFolder,
+                        filePath,
+                        langComment,
+                        LocationInfo.CodeElementType.BLOCK_COMMENT
+                )));
+            } else if (langComment.isLineComment()){
+                comments.add(new UMLComment(langComment.getContent(), new LocationInfo(
+                        methodDecl.getRootCompilationUnit(),
+                        sourceFolder,
+                        filePath,
+                        langComment,
+                        LocationInfo.CodeElementType.LINE_COMMENT
+                )));
+            }
+        }
+        umlOperation.setComments(comments);
+    }
+
+    private void logUMLClass(UMLClass umlClass) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("UMLClass created: ").append(umlClass)
+                .append("\nName: ").append(umlClass.getName())
+                .append("\nPackage: ").append(umlClass.getPackageName())
+                .append("\nSource Folder: ").append(umlClass.getLocationInfo().getSourceFolder())
+                .append("\nFile Path: ").append(umlClass.getLocationInfo().getFilePath())
+                .append("\nActual Signature: ").append(umlClass.getActualSignature())
+                .append("\nVisibility: ").append(umlClass.getVisibility())
+                .append("\nIs Interface: ").append(umlClass.isInterface())
+                .append("\nIs Abstract: ").append(umlClass.isAbstract())
+                .append("\nSuperclass: ").append(umlClass.getSuperclass())
+                .append("\nImplemented Interfaces: ").append(umlClass.getImplementedInterfaces())
+                .append("\nAttributes: ").append(umlClass.getAttributes())
+                .append("\nOperations (methods): \n");
+
+        for (UMLOperation op : umlClass.getOperations()) {
+            sb.append("  - ").append(op.getActualSignature())
+                    .append(" [Visibility: ").append(op.getVisibility())
+                    .append(", Parameters: ").append(op.getParameters())
+                    .append("]\n");
+        }
+
+        sb.append("\n");
+
+        LOGGER.info(sb.toString());
+    }
+
+    private void logUMLOperation(UMLOperation umlOperation, LangMethodDeclaration methodDecl){
+        String bodyString = stringify(methodDecl.getBody());
+        LOGGER.info(
+                "UMLOperation created: " + umlOperation +
+                        "\nSignature: " + umlOperation.getActualSignature() +
+                        "\nQualified Name: " + umlOperation.getClassName() + "." + umlOperation.getName() +
+                        "\nName: " + umlOperation.getName() +
+                        "\nClass: " + umlOperation.getClassName() +
+                        "\nVisibility: " + umlOperation.getVisibility() +
+                        "\nParameters: " + umlOperation.getParameters() +
+                        "\nIs Constructor: " + umlOperation.isConstructor() +
+                        "\nIs Final: " + umlOperation.isFinal() +
+                        "\nIs Static: " + umlOperation.isStatic() +
+                        "\nIs Abstract: " + umlOperation.isAbstract() +
+                        "\nIs Native: " + umlOperation.isNative() +
+                        "\nReturn Type: " + umlOperation.getReturnParameter() +
+                        "\nBody Hash Code: " + umlOperation.getBody().getBodyHashCode() +
+                        "\nMethod body stringify result for " + methodDecl.getName() + ": " + bodyString +
+                        "\nString hash: " + bodyString.hashCode() +
+                        "\n\n"
+        );
+
+    }
 
     public UMLModel getUMLModel() {
         return umlModel;

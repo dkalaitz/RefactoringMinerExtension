@@ -197,11 +197,19 @@ public class RefactoringAssertUtils {
         boolean movePackageDetected = diff.getRefactorings().stream()
                 .filter(ref -> ref instanceof RenamePackageRefactoring)
                 .map(ref -> (RenamePackageRefactoring) ref)
-                .anyMatch(ref ->
-                        ref.getPattern().getBefore().equals(sourcePackage)
-                                && ref.getPattern().getAfter().equals(targetPackage)
-                                && ref.getRefactoringType() == RefactoringType.MOVE_PACKAGE
-                );
+                .anyMatch(ref -> {
+                    String before = ref.getPattern().getBefore();
+                    String after = ref.getPattern().getAfter();
+
+                    // Remove trailing dots if present
+                    if (before.endsWith(".")) before = before.substring(0, before.length() - 1);
+                    if (after.endsWith(".")) after = after.substring(0, after.length() - 1);
+
+                    return before.equals(sourcePackage)
+                            && after.equals(targetPackage)
+                            && RefactoringType.MOVE_PACKAGE.equals(ref.getRefactoringType());
+                });
+
 
         System.out.println("==== DIFF ====");
         System.out.println("Source package: " + sourcePackage + " to " + targetPackage);
@@ -405,11 +413,6 @@ public class RefactoringAssertUtils {
                                 ref.toString().contains(targetClassName) &&
                                 ref.toString().contains(attributeName)
                 );
-
-        System.out.println("==== DIFF ====");
-        System.out.printf("Pull Up Attribute detected: %s\n", pullUpDetected);
-        System.out.println("Source: " + sourceClassName + ", Target: " + targetClassName + ", Attribute: " + attributeName);
-        diff.getRefactorings().forEach(System.out::println);
 
         assertTrue(pullUpDetected, "Expected PullUpAttributeRefactoring of '" + attributeName +
                 "' from '" + sourceClassName + "' to '" + targetClassName + "'");

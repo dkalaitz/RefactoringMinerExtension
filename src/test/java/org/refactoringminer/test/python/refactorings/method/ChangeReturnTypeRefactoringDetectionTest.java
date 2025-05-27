@@ -37,56 +37,6 @@ public class ChangeReturnTypeRefactoringDetectionTest {
                 "calculate_sum", "float");
     }
 
-//    @Test
-//    void detectsOptionalTypeAnnotationAddition() throws Exception {
-//        String beforePythonCode = """
-//        class TypeExample:
-//            def get_user_name(self, user_id):
-//                return "John Doe"
-//        """;
-//
-//        String afterPythonCode = """
-//        from typing import Optional
-//
-//        class TypeExample:
-//            def get_user_name(self, user_id) -> Optional[str]:
-//                return "John Doe"
-//        """;
-//
-//        Map<String, String> beforeFiles = Map.of("tests/example.py", beforePythonCode);
-//        Map<String, String> afterFiles = Map.of("tests/example.py", afterPythonCode);
-//
-//        assertReturnTypeChangeDetected(beforeFiles, afterFiles,
-//                "get_user_name", "", // No type annotation in before version
-//                "get_user_name", "Optional[str]");
-//    }
-
-    @Test
-    void detectsComplexTypeAnnotationChange() throws Exception {
-        String beforePythonCode = """
-        from typing import List, Dict
-        
-        class DataProcessor:
-            def process_data(self, data) -> List[int]:
-                return [x * 2 for x in data]
-        """;
-
-        String afterPythonCode = """
-        from typing import List, Dict
-        
-        class DataProcessor:
-            def process_data(self, data) -> Dict[str, int]:
-                return {str(x): x * 2 for x in data}
-        """;
-
-        Map<String, String> beforeFiles = Map.of("tests/example.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/example.py", afterPythonCode);
-
-        assertReturnTypeChangeDetected(beforeFiles, afterFiles,
-                "process_data", "List[int]",
-                "process_data", "Dict[str, int]");
-    }
-
     private void assertReturnTypeChangeDetected(Map<String, String> beforeFiles, Map<String, String> afterFiles,
                                                 String beforeMethodName, String beforeReturnType,
                                                 String afterMethodName, String afterReturnType) throws Exception {

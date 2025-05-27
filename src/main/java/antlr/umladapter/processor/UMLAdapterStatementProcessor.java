@@ -1,25 +1,57 @@
 package antlr.umladapter.processor;
 
 import antlr.ast.node.LangASTNode;
-import antlr.ast.node.expression.LangAssignment;
-import antlr.ast.node.expression.LangFieldAccess;
-import antlr.ast.node.expression.LangInfixExpression;
-import antlr.ast.node.expression.LangMethodInvocation;
+import antlr.ast.node.expression.*;
+import antlr.ast.node.statement.LangBlock;
+import antlr.ast.node.statement.LangExpressionStatement;
 import antlr.ast.node.statement.LangReturnStatement;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.decomposition.CompositeStatementObject;
-import gr.uom.java.xmi.decomposition.OperationInvocation;
-import gr.uom.java.xmi.decomposition.StatementObject;
+import gr.uom.java.xmi.decomposition.*;
 
-import java.util.ArrayList;
 import java.util.List;
+
 
 public class UMLAdapterStatementProcessor {
 
+    public static void processStatement(LangASTNode statement, CompositeStatementObject composite,
+                                        String sourceFolder, String filePath, UMLOperation container) {
+        // Process the statement itself first, not just its children
+        if (statement instanceof LangReturnStatement returnStmt) {
+            processReturnStatement(returnStmt, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangAssignment langAssignment) {
+            processAssignment(langAssignment, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangFieldAccess fieldAccess) {
+            processFieldAccess(fieldAccess, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangBlock block) {
+            processBlock(block, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangExpressionStatement expressionStatement) {
+            processExpressionStatement(expressionStatement, composite, sourceFolder, filePath, container);
+        }
+        // Add handlers for other Python statement types:
+        // - Try/except blocks
+        // - With statements
+        // - Break/continue
+        // - etc.
+
+        // If no specific handler, create a generic statement object
+        else {
+            StatementObject statementObject = new StatementObject(
+                    statement.getRootCompilationUnit(),
+                    sourceFolder,
+                    filePath,
+                    statement,
+                    composite.getDepth() + 1,
+                    LocationInfo.CodeElementType.EXPRESSION_STATEMENT,
+                    container
+            );
+            composite.addStatement(statementObject);
+        }
+    }
+
+
     public static void processAssignment(LangAssignment assignment, CompositeStatementObject composite,
                                          String sourceFolder, String filePath, UMLOperation container) {
-        System.out.println("Assignment: " + assignment.toString());
         // Create the assignment statement object
         StatementObject assignmentStatement = new StatementObject(
                 assignment.getRootCompilationUnit(),
@@ -28,123 +60,13 @@ public class UMLAdapterStatementProcessor {
                 assignment,
                 composite.getDepth() + 1,
                 LocationInfo.CodeElementType.ASSIGNMENT,
-                container,
-                null
+                container
         );
 
-        // You should ideally create an ExpressionObject subtree for the right side,
-        // but do NOT also add it as a statement in the composite.
-
-        // Optionally, if your StatementObject supports it:
-        // assignmentStatement.setRightHandSideExpression(...process recursively...);
-
-        // Only add the assignment statement ONCE.
         composite.addStatement(assignmentStatement);
     }
 
-    public static void processInfixExpression(LangInfixExpression infixExpr, CompositeStatementObject composite,
-                                              String sourceFolder, String filePath, UMLOperation container) {
-        StatementObject infixStatement = new StatementObject(
-                infixExpr.getRootCompilationUnit(),
-                sourceFolder,
-                filePath,
-                infixExpr,
-                composite.getDepth() + 1,
-                LocationInfo.CodeElementType.EXPRESSION_STATEMENT,
-                container,
-                null
-        );
 
-        composite.addStatement(infixStatement);
-    }
-
-//    public static void processMethodInvocation(LangMethodInvocation invocation, CompositeStatementObject composite,
-//                                               String sourceFolder, String filePath, UMLOperation container) {
-//        // Existing code...
-//        String methodName = invocation.extractMethodName();
-//
-//        // Build OperationInvocation for the call
-//        OperationInvocation operationInvocation = new OperationInvocation(
-//                invocation.getRootCompilationUnit(),
-//                sourceFolder,
-//                filePath,
-//                invocation,
-//                LocationInfo.CodeElementType.METHOD_INVOCATION,
-//                container
-//        );
-//        container.addInvocation(operationInvocation); // <-- ADD THIS LINE
-//
-//        // Existing statement creation...
-//        StatementObject invocationStatement = new StatementObject(
-//                invocation.getRootCompilationUnit(),
-//                sourceFolder,
-//                filePath,
-//                invocation,
-//                composite.getDepth() + 1,
-//                LocationInfo.CodeElementType.EXPRESSION_STATEMENT,
-//                container,
-//                null
-//        );
-//        composite.addStatement(invocationStatement);
-//    }
-
-
-//    public static void processMethodInvocation(LangMethodInvocation invocation, CompositeStatementObject composite,
-//                                         String sourceFolder, String filePath, UMLOperation container) {
-//        // Extract method name from expression
-//        String methodName = invocation.extractMethodName();
-//        System.out.println("Method name: " + methodName);
-//
-//        // Get argument expressions
-//        List<String> arguments = new ArrayList<>();
-//        for (LangASTNode arg : invocation.getArguments()) {
-//            System.out.println("Argument: " + arg.toString());
-//            arguments.add(arg.toString());
-//        }
-//
-//        // Determine if this is an instance method or a static/function call
-//        boolean isInstanceMethod = isInstanceMethodCall(invocation);
-//
-//        // Create a representation of the method call
-//        // This helps with detecting Extract/Inline Method refactorings
-//        StatementObject invocationStatement = new StatementObject(
-//                invocation.getRootCompilationUnit(),
-//                sourceFolder,
-//                filePath,
-//                invocation,
-//                composite.getDepth() + 1,
-//                LocationInfo.CodeElementType.EXPRESSION_STATEMENT,
-//                container,
-//                null
-//        );
-//
-//        // Add to the composite statement
-//        composite.addStatement(invocationStatement);
-//
-//        // Track method invocation for later analysis (refactoring detection, etc.)
-////        OperationInvocation abstractCall = new OperationInvocation(
-////                invocation.getRootCompilationUnit(),
-////                sourceFolder,
-////                filePath,
-////                invocation.getExpression(),
-////                LocationInfo.CodeElementType.METHOD_INVOCATION,
-////                container
-////        );
-//
-//        // Add to method invocations list if you're tracking them
-//        //  container.add(abstractCall);
-//    }
-
-    private static boolean isInstanceMethodCall(LangMethodInvocation invocation) {
-        // For Python, check if the expression is a field access
-        if (invocation.getExpression() instanceof LangFieldAccess) {
-            LangFieldAccess fieldAccess = (LangFieldAccess) invocation.getExpression();
-            // Check if it's not a call like ClassName.method()
-            // In Python, an instance method is typically called via object.method()
-            return true;
-        }
-        return false; // Assume it's a function call or static method call
-    }
 
     public static void processFieldAccess(LangFieldAccess fieldAccess, CompositeStatementObject composite,
                                     String sourceFolder, String filePath, UMLOperation container) {
@@ -156,8 +78,7 @@ public class UMLAdapterStatementProcessor {
                 fieldAccess,
                 composite.getDepth() + 1,
                 LocationInfo.CodeElementType.FIELD_ACCESS,
-                container,
-                null
+                container
         );
         composite.addStatement(fieldAccessStatement);
     }
@@ -171,9 +92,41 @@ public class UMLAdapterStatementProcessor {
                 returnStmt,
                 composite.getDepth() + 1,
                 LocationInfo.CodeElementType.RETURN_STATEMENT,
-                container,
-                null  // No Java file content for Python
+                container
         );
         composite.addStatement(returnStatement);
     }
+
+    public static void processBlock(LangBlock block, CompositeStatementObject composite, String sourceFolder, String filePath, UMLOperation container) {
+        // For blocks, create a composite statement and process its children
+        CompositeStatementObject blockObject = new CompositeStatementObject(
+                block.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                block,
+                composite.getDepth() + 1,
+                LocationInfo.CodeElementType.BLOCK
+        );
+        composite.addStatement(blockObject);
+
+        // Process each statement in the block
+        for (LangASTNode childStatement : block.getStatements()) {
+            processStatement(childStatement, blockObject, sourceFolder, filePath, container);
+        }
+    }
+
+    public static void processExpressionStatement(LangExpressionStatement expressionStatement, CompositeStatementObject composite, String sourceFolder, String filePath, UMLOperation container) {
+        StatementObject expressionStatementObject = new StatementObject(
+                expressionStatement.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                expressionStatement,
+                composite.getDepth() + 1,
+                LocationInfo.CodeElementType.EXPRESSION_STATEMENT,
+                container
+        );
+        composite.addStatement(expressionStatementObject);
+    }
+
+
 }
