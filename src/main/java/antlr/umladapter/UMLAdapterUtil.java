@@ -117,6 +117,19 @@ public class UMLAdapterUtil {
         return umlImports;
     }
 
+    public static String extractModuleName(String filename) {
+        // Extract just the filename from the full path
+        String fileName = filename.substring(filename.lastIndexOf('/') + 1);
+        fileName = fileName.substring(fileName.lastIndexOf('\\') + 1); // Handle Windows paths
+
+        // Remove the .py extension
+        if (fileName.endsWith(".py")) {
+            return fileName.substring(0, fileName.length() - 3);
+        }
+
+        return fileName;
+    }
+
 
 
 }

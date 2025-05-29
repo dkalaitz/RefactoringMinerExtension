@@ -41,14 +41,15 @@ public class MoveClassRefactoringDetectionTest {
             """;
 
         Map<String, String> beforeFiles = Map.of(
-                "tests/before/helper.py", beforePythonCode1,
-                "tests/before/other.py", beforePythonCode2
+                "src/helper/helper.py", beforePythonCode1,    // ✅ Now: src/tests/helper.py
+                "src/tests/other.py", beforePythonCode2
         );
 
         Map<String, String> afterFiles = Map.of(
-                "tests/after/other.py", afterPythonCode1,
-                "tests/after/common.py", afterPythonCode2
+                "src/tests/other.py", afterPythonCode1,
+                "src/common/common.py", afterPythonCode2      // ✅ Now: src/tests/common.py
         );
+
 
         assertMoveClassRefactoringDetected(
                 beforeFiles,
@@ -69,12 +70,32 @@ public class MoveClassRefactoringDetectionTest {
 
         UMLModelDiff diff = beforeUML.diff(afterUML);
 
+        System.out.println("=== BEFORE UML CLASSES ===");
+        beforeUML.getClassList().forEach(cls -> {
+            System.out.println("Class non-qualified: '" + cls.getNonQualifiedName() + "'");
+            System.out.println("Class qualified (getName): '" + cls.getName() + "'");
+            System.out.println("  Package: '" + cls.getPackageName() + "'");
+            System.out.println("  Source file: '" + cls.getSourceFile() + "'");
+            System.out.println("---");
+        });
+
+        System.out.println("=== AFTER UML CLASSES ===");
+        afterUML.getClassList().forEach(cls -> {
+            System.out.println("Class non-qualified: '" + cls.getNonQualifiedName() + "'");
+            System.out.println("Class qualified (getName): '" + cls.getName() + "'");
+            System.out.println("  Package: '" + cls.getPackageName() + "'");
+            System.out.println("  Source file: '" + cls.getSourceFile() + "'");
+            System.out.println("---");
+        });
+
+
         boolean moveClassDetected = diff.getRefactorings().stream()
                 .anyMatch(ref -> ref instanceof MoveClassRefactoring moveRef &&
                         moveRef.getOriginalClassName().equals(originalClassQualifiedName) &&
                         moveRef.getMovedClassName().equals(movedClassQualifiedName));
 
         System.out.println("Refactorings size: " + diff.getRefactorings().size() + "\n");
+        diff.getRefactorings().forEach(ref -> System.out.println(ref.getName()));
         assertTrue(
                 moveClassDetected,
                 String.format(

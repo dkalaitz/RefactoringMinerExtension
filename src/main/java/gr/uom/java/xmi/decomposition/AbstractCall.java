@@ -12,7 +12,9 @@ import java.util.Map;
 import java.util.Set;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.unit.LangCompilationUnit;
+import gr.uom.java.xmi.UMLOperation;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -52,7 +54,7 @@ public abstract class AbstractCall extends LeafExpression {
 		
 	}
 
-    public LeafExpression asLeafExpression() {
+	public LeafExpression asLeafExpression() {
 		return new LeafExpression(getString(), getLocationInfo());
 	}
 

@@ -6,9 +6,13 @@ import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 
+import antlr.ast.node.expression.LangAssignment;
+import antlr.ast.node.expression.LangFieldAccess;
+import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.statement.LangBlock;
 import antlr.ast.node.unit.LangCompilationUnit;
+import antlr.ast.visitor.LangVisitor;
 import antlr.base.LangASTUtil;
 import gr.uom.java.xmi.*;
 import gr.uom.java.xmi.decomposition.*;
@@ -19,7 +23,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import static antlr.ast.visitor.LangVisitor.stringify;
-import static antlr.umladapter.UMLAdapterUtil.extractUMLImports;
+import static antlr.umladapter.UMLAdapterUtil.*;
 import static antlr.umladapter.processor.UMLAdapterStatementProcessor.*;
 import static antlr.umladapter.processor.UMLAdapterVariableProcessor.processVariableDeclarations;
 
@@ -73,8 +77,59 @@ public class UMLModelAdapter {
                 UMLClass umlClass = createUMLClass(model, typeDecl, filename, imports);
                 model.addClass(umlClass);
             }
+
+            // Handle top level methods
+            List<LangMethodDeclaration> topLevelMethods = compilationUnit.getTopLevelMethods();
+            UMLClass moduleClass = createModuleClass(compilationUnit, filename, imports);
+            String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
+            String filepath = UMLAdapterUtil.extractFilePath(filename);
+
+            moduleClass.setActualSignature(moduleClass.getName());
+            moduleClass.setVisibility(Visibility.PUBLIC);
+            moduleClass.setAbstract(false);
+            moduleClass.setInterface(false);
+            moduleClass.setFinal(false);
+            moduleClass.setStatic(false);
+            moduleClass.setAnnotation(false);
+            moduleClass.setEnum(false);
+            moduleClass.setRecord(false);
+
+            if (!topLevelMethods.isEmpty()) {
+                for (LangMethodDeclaration method : topLevelMethods) {
+                    UMLOperation operation = createUMLOperation(method, moduleClass.getName(),
+                            sourceFolder, filepath);
+                    operation.setFinal(method.isFinal());
+                    operation.setStatic(method.isStatic());
+                    operation.setConstructor(method.isConstructor());
+                    operation.setVisibility(method.getVisibility());
+                    operation.setAbstract(method.isAbstract());
+                    operation.setNative(method.isNative());
+                    operation.setSynchronized(method.isSynchronized());
+                    operation.setActualSignature(method.getActualSignature());
+                    moduleClass.addOperation(operation);
+                }
+
+                model.addClass(moduleClass);
+            }
+
         }
     }
+
+    private UMLClass createModuleClass(LangCompilationUnit compilationUnit, String filename, List<UMLImport> imports) {
+        String moduleName = UMLAdapterUtil.extractModuleName(filename);
+        String packageName = UMLAdapterUtil.extractPackageName(filename);
+        String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
+        String filepath = UMLAdapterUtil.extractFilePath(filename);
+
+        LocationInfo locationInfo = new LocationInfo(sourceFolder, filepath, compilationUnit,
+                LocationInfo.CodeElementType.TYPE_DECLARATION);
+
+        UMLClass moduleClass = new UMLClass(packageName, moduleName, locationInfo, true, imports);
+        moduleClass.setStatic(true); // Mark as a module-level class
+
+        return moduleClass;
+    }
+
 
     private UMLClass createUMLClass(UMLModel model, LangTypeDeclaration typeDecl, String filename, List<UMLImport> imports) {
 
@@ -84,6 +139,8 @@ public class UMLModelAdapter {
         String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
         String filepath = UMLAdapterUtil.extractFilePath(filename);
 
+
+        // TODO: Handle qualified names for classes that are in the same file. Add class name in the qualified name
 
         LocationInfo locationInfo = new LocationInfo(sourceFolder,
                 filepath,
@@ -168,7 +225,11 @@ public class UMLModelAdapter {
         UMLType returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation());
         UMLParameter returnParam = new UMLParameter("", returnType, "return", false);
         umlOperation.addParameter(returnParam);
-
+        // Create a dummy attribute for testing
+        List<UMLAttribute> dummyAttributes = Arrays.asList(
+                new UMLAttribute("self", UMLType.extractTypeObject("object"), null)
+        );
+        List<UMLAttribute> attributes = getAttributes(methodDecl, sourceFolder, filePath, );
 
         OperationBody opBody = new OperationBody(
                 methodDecl.getRootCompilationUnit(),
@@ -178,6 +239,7 @@ public class UMLModelAdapter {
                 umlOperation,
                 // TODO
                 new ArrayList<>()
+
         );
 
         // CRITICAL: Process the method body statements to populate the CompositeStatementObject
@@ -188,6 +250,61 @@ public class UMLModelAdapter {
         logUMLOperation(umlOperation, methodDecl);
 
         return umlOperation;
+    }
+
+    private List<UMLAttribute> getAttributes(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation container) {
+        List<UMLAttribute> attributes = new ArrayList<>();
+
+        // Only process __init__ method for attribute extraction
+        if (!"__init__".equals(methodDecl.getName())) {
+            return attributes;
+        }
+
+        LangBlock methodBody = methodDecl.getBody();
+        if (methodBody == null) {
+            return attributes;
+        }
+
+        // Visit the method body to collect assignments
+        LangVisitor visitor = new LangVisitor(methodDecl.getRootCompilationUnit(), sourceFolder, filePath, container);
+        methodBody.accept(visitor);
+
+        // Process assignments to find self.attribute = value patterns
+        for (LeafExpression assignment : visitor.getAssignments()) {
+            // Get the underlying AST node from LeafExpression
+            LangASTNode astNode = assignment.get(); // This should be the correct method
+
+            if (astNode instanceof LangAssignment) {
+                LangAssignment langAssignment = (LangAssignment) astNode;
+
+                // Check if left side is self.something
+                if (langAssignment.getLeftSide() instanceof LangFieldAccess) {
+                    LangFieldAccess fieldAccess = (LangFieldAccess) langAssignment.getLeftSide();
+
+                    // Check if expression is 'self'
+                    if (fieldAccess.getExpression() instanceof LangSimpleName) {
+                        LangSimpleName expr = (LangSimpleName) fieldAccess.getExpression();
+
+                        if ("self".equals(expr.getIdentifier())) {
+                            // This is a self.attribute assignment
+                            String attributeName = fieldAccess.getName().getIdentifier();
+
+                            UMLAttribute attribute = new UMLAttribute(
+                                    attributeName,
+                                    UMLType.extractTypeObject("Object"), // Python is dynamically typed
+                                    new LocationInfo(expr.getRootCompilationUnit(),
+                                            sourceFolder,
+                                            filePath,
+                                            expr,
+                                            LocationInfo.CodeElementType.SIMPLE_NAME)
+                            );
+                            attributes.add(attribute);
+                        }
+                    }
+                }
+            }
+        }
+        return attributes;
     }
 
     private void processMethodBody(LangBlock methodBody, CompositeStatementObject composite,
@@ -239,6 +356,7 @@ public class UMLModelAdapter {
                 .append("\nSource Folder: ").append(umlClass.getLocationInfo().getSourceFolder())
                 .append("\nFile Path: ").append(umlClass.getLocationInfo().getFilePath())
                 .append("\nActual Signature: ").append(umlClass.getActualSignature())
+                .append("\nNon Qualified Name: ").append(umlClass.getNonQualifiedName())
                 .append("\nVisibility: ").append(umlClass.getVisibility())
                 .append("\nIs Interface: ").append(umlClass.isInterface())
                 .append("\nIs Abstract: ").append(umlClass.isAbstract())
@@ -282,6 +400,8 @@ public class UMLModelAdapter {
         );
 
     }
+
+
 
     public UMLModel getUMLModel() {
         return umlModel;

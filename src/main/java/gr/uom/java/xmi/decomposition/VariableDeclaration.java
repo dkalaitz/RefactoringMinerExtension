@@ -3,10 +3,16 @@ package gr.uom.java.xmi.decomposition;
 import static gr.uom.java.xmi.Constants.JAVA;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.declaration.LangSingleVariableDeclaration;
+import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.unit.LangCompilationUnit;
+import antlr.ast.visitor.LangVisitor;
+import gr.uom.java.xmi.*;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
@@ -23,14 +29,7 @@ import org.eclipse.jdt.core.dom.VariableDeclarationExpression;
 import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
 
-import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.LocationInfoProvider;
-import gr.uom.java.xmi.UMLAnnotation;
-import gr.uom.java.xmi.UMLModifier;
-import gr.uom.java.xmi.UMLType;
-import gr.uom.java.xmi.VariableDeclarationContainer;
-import gr.uom.java.xmi.VariableDeclarationProvider;
 import gr.uom.java.xmi.diff.CodeRange;
 
 public class VariableDeclaration implements LocationInfoProvider, VariableDeclarationProvider {
@@ -49,6 +48,47 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 	private String actualSignature;
 
 	// TODO
+	public VariableDeclaration(LangCompilationUnit cu, String sourceFolder, String filePath,
+							   LangASTNode astNode, VariableDeclarationContainer container,
+							   String variableName) {
+		this.variableName = variableName;
+		// TODO
+		this.type = new LeafType("object");
+		//this.type = UMLType.extractTypeObject();
+		this.varargsParameter = false;
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, astNode, CodeElementType.FIELD_DECLARATION);
+		this.annotations = Collections.emptyList();
+		this.modifiers = Collections.emptyList();
+		this.initializer = extractInitializer(astNode, sourceFolder, filePath, container);
+		this.isAttribute = false;
+		this.scope = new VariableScope(cu, filePath);
+		this.isFinal = false;
+		this.actualSignature = generateActualSignature(astNode, variableName);
+	}
+
+	private AbstractExpression extractInitializer(LangASTNode astNode, String sourceFolder, String filePath, VariableDeclarationContainer container) {
+		// For assignments, extract the right-hand side
+		if (astNode instanceof LangAssignment) {
+			LangAssignment assignment = (LangAssignment) astNode;
+			return new AbstractExpression(astNode.getRootCompilationUnit(), sourceFolder, filePath,
+					assignment.getRightSide(), LocationInfo.CodeElementType.EXPRESSION, container);
+		}
+		// For parameters and other declarations, no initializer
+		return null;
+	}
+
+	private String generateActualSignature(LangASTNode astNode, String variableName) {
+		if (astNode instanceof LangAssignment) {
+			// For Python assignments: "variable_name = value"
+			return LangVisitor.stringify(astNode);
+		} else if (astNode instanceof LangSingleVariableDeclaration) {
+			// For function parameters: just the parameter name
+			return variableName;
+		}
+		return variableName;
+	}
+
+
 	public VariableDeclaration(
 			LangCompilationUnit cu,
 			String variableName,

@@ -16,11 +16,17 @@ public class UMLAdapterStatementProcessor {
 
     public static void processStatement(LangASTNode statement, CompositeStatementObject composite,
                                         String sourceFolder, String filePath, UMLOperation container) {
+        System.out.println("Processing statement type: " + statement.getClass().getSimpleName());
+        System.out.println("Statement content: " + statement);
+
+
         // Process the statement itself first, not just its children
         if (statement instanceof LangReturnStatement returnStmt) {
             processReturnStatement(returnStmt, composite, sourceFolder, filePath, container);
         } else if (statement instanceof LangAssignment langAssignment) {
             processAssignment(langAssignment, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangMethodInvocation langMethodInvocation) {
+            processMethodInvocation(langMethodInvocation, composite, sourceFolder, filePath, container);
         } else if (statement instanceof LangFieldAccess fieldAccess) {
             processFieldAccess(fieldAccess, composite, sourceFolder, filePath, container);
         } else if (statement instanceof LangBlock block) {
@@ -35,18 +41,6 @@ public class UMLAdapterStatementProcessor {
         // - etc.
 
         // If no specific handler, create a generic statement object
-        else {
-            StatementObject statementObject = new StatementObject(
-                    statement.getRootCompilationUnit(),
-                    sourceFolder,
-                    filePath,
-                    statement,
-                    composite.getDepth() + 1,
-                    LocationInfo.CodeElementType.EXPRESSION_STATEMENT,
-                    container
-            );
-            composite.addStatement(statementObject);
-        }
     }
 
 
@@ -83,6 +77,21 @@ public class UMLAdapterStatementProcessor {
         composite.addStatement(fieldAccessStatement);
     }
 
+    public static void processMethodInvocation(LangMethodInvocation methodInvocation, CompositeStatementObject composite,
+                                               String sourceFolder, String filePath, UMLOperation container) {
+        StatementObject methodInvocationStatement = new StatementObject(
+                methodInvocation.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                methodInvocation,
+                composite.getDepth() + 1,
+                LocationInfo.CodeElementType.METHOD_INVOCATION,
+                container
+        );
+        composite.addStatement(methodInvocationStatement);
+    }
+
+
     public static void processReturnStatement(LangReturnStatement returnStmt, CompositeStatementObject composite,
                                               String sourceFolder, String filePath, UMLOperation container){
         StatementObject returnStatement = new StatementObject(
@@ -116,17 +125,47 @@ public class UMLAdapterStatementProcessor {
     }
 
     public static void processExpressionStatement(LangExpressionStatement expressionStatement, CompositeStatementObject composite, String sourceFolder, String filePath, UMLOperation container) {
-        StatementObject expressionStatementObject = new StatementObject(
-                expressionStatement.getRootCompilationUnit(),
-                sourceFolder,
-                filePath,
-                expressionStatement,
-                composite.getDepth() + 1,
-                LocationInfo.CodeElementType.EXPRESSION_STATEMENT,
-                container
-        );
-        composite.addStatement(expressionStatementObject);
-    }
+        // Check if the expression is a method invocation
+        LangASTNode expression = expressionStatement.getExpression();
 
+        if (expression instanceof LangAssignment assignment) {
+            // ✅ CREATE ASSIGNMENT STATEMENT, NOT EXPRESSION STATEMENT
+            StatementObject assignmentStatement = new StatementObject(
+                    expressionStatement.getRootCompilationUnit(),
+                    sourceFolder,
+                    filePath,
+                    expressionStatement, // Use the expression statement as the node
+                    composite.getDepth() + 1,
+                    LocationInfo.CodeElementType.ASSIGNMENT,  // ✅ CORRECT TYPE!
+                    container
+            );
+            composite.addStatement(assignmentStatement);
+        } else if (expression instanceof LangMethodInvocation methodInvocation) {
+            // Create a statement object for the method invocation
+            StatementObject methodInvocationStatement = new StatementObject(
+                    expressionStatement.getRootCompilationUnit(),
+                    sourceFolder,
+                    filePath,
+                    expressionStatement,
+                    composite.getDepth() + 1,
+                    LocationInfo.CodeElementType.METHOD_INVOCATION,
+                    container
+            );
+            composite.addStatement(methodInvocationStatement);
+        } else {
+            // Handle other expression types
+            StatementObject expressionStatementObject = new StatementObject(
+                    expressionStatement.getRootCompilationUnit(),
+                    sourceFolder,
+                    filePath,
+                    expressionStatement,
+                    composite.getDepth() + 1,
+                    LocationInfo.CodeElementType.EXPRESSION_STATEMENT,
+                    container
+            );
+            composite.addStatement(expressionStatementObject);
+        }
+
+    }
 
 }
