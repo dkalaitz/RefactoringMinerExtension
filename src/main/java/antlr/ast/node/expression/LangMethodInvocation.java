@@ -12,10 +12,14 @@ public class LangMethodInvocation extends LangExpression {
     private LangASTNode expression;
     private List<LangASTNode> arguments;
 
-    public LangMethodInvocation() {super(NodeTypeEnum.METHOD_INVOCATION);}
+    public LangMethodInvocation() {
+        super(NodeTypeEnum.METHOD_INVOCATION);
+        this.arguments = new ArrayList<>();
+    }
 
     public LangMethodInvocation(PositionInfo positionInfo) {
         super(NodeTypeEnum.METHOD_INVOCATION, positionInfo);
+        this.arguments = new ArrayList<>();
     }
 
     public LangMethodInvocation(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn) {

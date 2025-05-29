@@ -5,6 +5,7 @@ import java.util.List;
 
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.unit.LangCompilationUnit;
+import antlr.ast.visitor.LangVisitor;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
@@ -55,43 +56,46 @@ public class StatementObject extends AbstractStatement {
 	// TODO
 	public StatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
 						   LangASTNode statement, int depth, CodeElementType codeElementType,
-						   VariableDeclarationContainer container, String javaFileContent) {
+						   VariableDeclarationContainer container) {
 		super();
+		LangVisitor visitor = new LangVisitor(cu, sourceFolder, filePath, container);
+		statement.accept(visitor);
+
 		// Set location info
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
 
 		// Initialize collections
-		this.variables = new ArrayList<>();
-		this.types = new ArrayList<>();
-		this.variableDeclarations = new ArrayList<>();
-		this.methodInvocations = new ArrayList<>();
-		this.anonymousClassDeclarations = new ArrayList<>();
-		this.textBlocks = new ArrayList<>();
-		this.stringLiterals = new ArrayList<>();
-		this.charLiterals = new ArrayList<>();
-		this.numberLiterals = new ArrayList<>();
-		this.nullLiterals = new ArrayList<>();
-		this.booleanLiterals = new ArrayList<>();
-		this.typeLiterals = new ArrayList<>();
-		this.creations = new ArrayList<>();
-		this.infixExpressions = new ArrayList<>();
-		this.assignments = new ArrayList<>();
-		this.infixOperators = new ArrayList<>();
-		this.arrayAccesses = new ArrayList<>();
-		this.prefixExpressions = new ArrayList<>();
-		this.postfixExpressions = new ArrayList<>();
-		this.thisExpressions = new ArrayList<>();
-		this.arguments = new ArrayList<>();
-		this.parenthesizedExpressions = new ArrayList<>();
-		this.castExpressions = new ArrayList<>();
-		this.ternaryOperatorExpressions = new ArrayList<>();
-		this.lambdas = new ArrayList<>();
+		this.variables = visitor.getVariables();
+		this.types = visitor.getTypes();
+		this.variableDeclarations = visitor.getVariableDeclarations();
+		this.methodInvocations = visitor.getMethodInvocations();
+		this.anonymousClassDeclarations = visitor.getAnonymousClassDeclarations();
+		this.textBlocks = visitor.getTextBlocks();
+		this.stringLiterals = visitor.getStringLiterals();
+		this.charLiterals = visitor.getCharLiterals();
+		this.numberLiterals = visitor.getNumberLiterals();
+		this.nullLiterals = visitor.getNullLiterals();
+		this.booleanLiterals = visitor.getBooleanLiterals();
+		this.typeLiterals = visitor.getTypeLiterals();
+		this.creations = visitor.getCreations();
+		this.infixExpressions = visitor.getInfixExpressions();
+		this.assignments = visitor.getAssignments();
+		this.infixOperators = visitor.getInfixOperators();
+		this.arrayAccesses = visitor.getArrayAccesses();
+		this.prefixExpressions = visitor.getPrefixExpressions();
+		this.postfixExpressions = visitor.getPostfixExpressions();
+		this.thisExpressions = visitor.getThisExpressions();
+		this.arguments = visitor.getArguments();
+		this.parenthesizedExpressions = visitor.getParenthesizedExpressions();
+		this.castExpressions = visitor.getCastExpressions();
+		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
+		this.lambdas = visitor.getLambdas();
 
 		// Set the actual code representation - this is critical for comparison
-		this.statement = statement.toString();
+		this.statement = LangVisitor.stringify(statement);
 
 		// Set the operation signature - needed for body hash calculation
-		this.actualSignature = statement.toString();
+		this.actualSignature = LangVisitor.stringify(statement);
 
 		// Set depth
 		setDepth(depth);

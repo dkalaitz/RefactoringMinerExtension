@@ -1,5 +1,9 @@
 package gr.uom.java.xmi.decomposition;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.expression.*;
+import antlr.ast.node.unit.LangCompilationUnit;
+import antlr.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.UMLAbstractClass;
 import gr.uom.java.xmi.UMLClass;
@@ -13,6 +17,7 @@ import static gr.uom.java.xmi.Constants.JAVA;
 import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.SPLIT_CONCAT_STRING_PATTERN;
 import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.containsMethodSignatureOfAnonymousClass;
 import static gr.uom.java.xmi.decomposition.Visitor.stringify;
+
 import gr.uom.java.xmi.diff.StringDistance;
 import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
 import gr.uom.java.xmi.diff.UMLClassBaseDiff;
@@ -99,8 +104,57 @@ public class OperationInvocation extends AbstractCall {
 			processExpression(invocation.getExpression(), this.subExpressions);
 		}
 	}
-	
-	private void processExpression(Expression expression, List<String> subExpressions) {
+
+	// TODO
+    public OperationInvocation(LangCompilationUnit cu, String sourceFolder, String filePath, LangMethodInvocation methodInvocation, VariableDeclarationContainer container) {
+		super(cu, sourceFolder, filePath, methodInvocation, CodeElementType.METHOD_INVOCATION, container);
+		if (methodInvocation.getExpression() instanceof LangSimpleName simpleName) {
+			this.methodName = simpleName.getIdentifier();
+			this.expression = simpleName.getIdentifier();
+		} else if (methodInvocation.getExpression() instanceof LangFieldAccess fieldAccess) {
+			this.methodName = fieldAccess.getName().getIdentifier();
+			this.expression = LangVisitor.stringify(fieldAccess.getExpression()); // "self"
+			if (fieldAccess.getExpression() instanceof LangSimpleName simpleName) {
+				// CORRECT: Set expression to just the object part
+				this.expression = simpleName.getIdentifier(); // "self"
+				// The method name is already set via this.methodName = methodInvocation.extractMethodName()
+			}
+
+		} else {
+			this.methodName = "unknownMethod";
+			this.expression = "unknown";
+		}
+
+		// 🔧 FIX: Handle null arguments list
+		if (methodInvocation.getArguments() != null) {
+			this.numberOfArguments = methodInvocation.getArguments().size();
+		} else {
+			this.numberOfArguments = 0;
+		}
+
+		this.arguments = new ArrayList<>();
+		if (methodInvocation.getArguments() != null) {
+			for (LangASTNode argument : methodInvocation.getArguments()) {
+				String argString = LangVisitor.stringify(argument);
+				this.arguments.add(argString);
+				System.out.println("Adding argument: " + argString); // Debug
+			}
+		}
+
+//		for (LangASTNode expression : methodInvocation.getArguments()) {
+//			System.out.println("Expression: " + LangVisitor.stringify(expression));
+//			this.arguments.add(LangVisitor.stringify(expression));
+//		}
+
+		if (methodInvocation.getExpression() != null) {
+			processExpression(methodInvocation.getExpression(), this.subExpressions);
+		}
+
+		System.out.println("MethodInvocation (const" +
+				"ructor): " + this.methodName + " " + this.arguments + " " + this.expression);
+	}
+
+    private void processExpression(Expression expression, List<String> subExpressions) {
 		if(expression instanceof MethodInvocation) {
 			MethodInvocation invocation = (MethodInvocation)expression;
 			if(invocation.getExpression() != null) {
@@ -128,6 +182,56 @@ public class OperationInvocation extends AbstractCall {
 			}
 		}
 	}
+
+	// TODO
+	private void processExpression(LangASTNode node, List<String> subExpressions) {
+		System.out.println("Processing node: " + node.getClass().getSimpleName() + " = " + LangVisitor.stringify(node));
+
+		if (node instanceof LangMethodInvocation methodInvocation) {
+			LangASTNode expr = methodInvocation.getExpression();
+			if (expr != null) {
+				String exprAsString = LangVisitor.stringify(expr);
+				String invocationAsString = LangVisitor.stringify(methodInvocation);
+
+				// The suffix is the part after the receiver, including the operator (like ".add(x,y)")
+				if (invocationAsString.length() > exprAsString.length() + 1) {
+					String suffix = invocationAsString.substring(exprAsString.length() + 1);
+					subExpressions.add(0, suffix);
+				} else {
+					subExpressions.add(0, invocationAsString);
+				}
+
+				// Process the expression, but handle field access specially
+				processExpression(expr, subExpressions);
+			} else {
+				subExpressions.add(0, LangVisitor.stringify(methodInvocation));
+			}
+		}
+		else if (node instanceof LangFieldAccess fieldAccess) {
+			// For "self.add", add just "self" as a variable, not "self.add"
+			LangASTNode expression = fieldAccess.getExpression();
+			if (expression != null) {
+				processExpression(expression, subExpressions);
+			}
+			// Don't add the field access itself - we already handled the method call above
+		}
+		else if (node instanceof LangSimpleName simpleName) {
+			// Add simple names as variables (like "self", "x", "y")
+			subExpressions.add(simpleName.getIdentifier());
+		}
+		else if (node instanceof LangAssignment assignment) {
+			processExpression(assignment.getLeftSide(), subExpressions);
+			processExpression(assignment.getRightSide(), subExpressions);
+		}
+		else if (node instanceof LangInfixExpression infixExpr) {
+			processExpression(infixExpr.getLeft(), subExpressions);
+			processExpression(infixExpr.getRight(), subExpressions);
+		}
+		// Add other node types as needed...
+		System.out.println("SubExpressions after processing: " + subExpressions);
+
+	}
+
 
 	public OperationInvocation(CompilationUnit cu, String sourceFolder, String filePath, SuperMethodInvocation invocation, VariableDeclarationContainer container) {
 		super(cu, sourceFolder, filePath, invocation, CodeElementType.SUPER_METHOD_INVOCATION, container);

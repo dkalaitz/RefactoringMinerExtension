@@ -32,7 +32,7 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public String getResult() {
-        root.accept(this); // Start from generic root
+//        root.accept(this); // Start from generic root
         return builder.toString();
     }
 
@@ -103,7 +103,7 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangInfixExpression expr) {
         expr.getLeft().accept(this);
-        builder.append(" ").append(expr.getOperator().getSymbol()).append(" ");
+        builder.append(expr.getOperator().getSymbol());
         expr.getRight().accept(this);
     }
 
@@ -119,7 +119,7 @@ public class PyASTFlattener implements LangASTFlattener {
             for (int i = 0; i < arguments.size(); i++) {
                 arguments.get(i).accept(this);
                 if (i != arguments.size() - 1) {
-                    builder.append(", ");
+                    builder.append(",");
                 }
             }
             builder.append(")");
@@ -185,7 +185,7 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangAssignment langAssignment) {
         langAssignment.getLeftSide().accept(this);
-        builder.append(" = ");
+        builder.append("=");
         langAssignment.getRightSide().accept(this);
     }
 
