@@ -11,8 +11,8 @@ import antlr.ast.node.expression.LangFieldAccess;
 import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.statement.LangBlock;
+import antlr.ast.node.statement.LangExpressionStatement;
 import antlr.ast.node.unit.LangCompilationUnit;
-import antlr.ast.visitor.LangVisitor;
 import antlr.base.LangASTUtil;
 import gr.uom.java.xmi.*;
 import gr.uom.java.xmi.decomposition.*;
@@ -98,20 +98,10 @@ public class UMLModelAdapter {
                 for (LangMethodDeclaration method : topLevelMethods) {
                     UMLOperation operation = createUMLOperation(method, moduleClass.getName(),
                             sourceFolder, filepath);
-                    operation.setFinal(method.isFinal());
-                    operation.setStatic(method.isStatic());
-                    operation.setConstructor(method.isConstructor());
-                    operation.setVisibility(method.getVisibility());
-                    operation.setAbstract(method.isAbstract());
-                    operation.setNative(method.isNative());
-                    operation.setSynchronized(method.isSynchronized());
-                    operation.setActualSignature(method.getActualSignature());
                     moduleClass.addOperation(operation);
                 }
-
-                model.addClass(moduleClass);
             }
-
+            model.addClass(moduleClass);
         }
     }
 
@@ -181,6 +171,14 @@ public class UMLModelAdapter {
         for (LangMethodDeclaration methodDecl : typeDecl.getMethods()) {
             UMLOperation umlOperation = createUMLOperation(methodDecl, className, sourceFolder, filepath);
             umlClass.addOperation(umlOperation);
+            if ("__init__".equals(methodDecl.getName())) {
+                List<UMLAttribute> attributes = getAttributes(methodDecl, sourceFolder, filepath);
+                for (UMLAttribute attribute : attributes) {
+                    attribute.setClassName(className); // ✅ Use the CLASS name, not method name!
+                    umlClass.addAttribute(attribute);
+                }
+                break; // Only process the first __init__ method
+            }
         }
         logUMLClass(umlClass);
         return umlClass;
@@ -229,7 +227,8 @@ public class UMLModelAdapter {
         List<UMLAttribute> dummyAttributes = Arrays.asList(
                 new UMLAttribute("self", UMLType.extractTypeObject("object"), null)
         );
-        List<UMLAttribute> attributes = getAttributes(methodDecl, sourceFolder, filePath, );
+
+       // LOGGER.info("\n\nAttributes: " + attributes);
 
         OperationBody opBody = new OperationBody(
                 methodDecl.getRootCompilationUnit(),
@@ -237,9 +236,7 @@ public class UMLModelAdapter {
                 filePath,
                 methodDecl.getBody(),
                 umlOperation,
-                // TODO
                 new ArrayList<>()
-
         );
 
         // CRITICAL: Process the method body statements to populate the CompositeStatementObject
@@ -252,7 +249,7 @@ public class UMLModelAdapter {
         return umlOperation;
     }
 
-    private List<UMLAttribute> getAttributes(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation container) {
+    private List<UMLAttribute> getAttributes(LangMethodDeclaration methodDecl, String sourceFolder, String filePath) {
         List<UMLAttribute> attributes = new ArrayList<>();
 
         // Only process __init__ method for attribute extraction
@@ -265,47 +262,82 @@ public class UMLModelAdapter {
             return attributes;
         }
 
-        // Visit the method body to collect assignments
-        LangVisitor visitor = new LangVisitor(methodDecl.getRootCompilationUnit(), sourceFolder, filePath, container);
-        methodBody.accept(visitor);
-
-        // Process assignments to find self.attribute = value patterns
-        for (LeafExpression assignment : visitor.getAssignments()) {
-            // Get the underlying AST node from LeafExpression
-            LangASTNode astNode = assignment.get(); // This should be the correct method
-
-            if (astNode instanceof LangAssignment) {
-                LangAssignment langAssignment = (LangAssignment) astNode;
-
-                // Check if left side is self.something
-                if (langAssignment.getLeftSide() instanceof LangFieldAccess) {
-                    LangFieldAccess fieldAccess = (LangFieldAccess) langAssignment.getLeftSide();
-
-                    // Check if expression is 'self'
-                    if (fieldAccess.getExpression() instanceof LangSimpleName) {
-                        LangSimpleName expr = (LangSimpleName) fieldAccess.getExpression();
-
-                        if ("self".equals(expr.getIdentifier())) {
-                            // This is a self.attribute assignment
-                            String attributeName = fieldAccess.getName().getIdentifier();
-
-                            UMLAttribute attribute = new UMLAttribute(
-                                    attributeName,
-                                    UMLType.extractTypeObject("Object"), // Python is dynamically typed
-                                    new LocationInfo(expr.getRootCompilationUnit(),
-                                            sourceFolder,
-                                            filePath,
-                                            expr,
-                                            LocationInfo.CodeElementType.SIMPLE_NAME)
-                            );
-                            attributes.add(attribute);
-                        }
+        if (methodBody.getStatements() != null) {
+            for (LangASTNode statement : methodBody.getStatements()) {
+                // Handle direct assignments
+                if (statement instanceof LangAssignment assignment) {
+                    processAssignmentForAttribute(methodDecl, assignment, attributes, sourceFolder, filePath);
+                }
+                // Handle expression statements that contain assignments
+                else if (statement instanceof LangExpressionStatement exprStmt) {
+                    if (exprStmt.getExpression() instanceof LangAssignment assignment) {
+                        processAssignmentForAttribute(methodDecl, assignment, attributes, sourceFolder, filePath);
                     }
                 }
             }
         }
+
+
         return attributes;
     }
+
+    private void processAssignmentForAttribute(LangMethodDeclaration methodDeclaration, LangAssignment assignment, List<UMLAttribute> attributes,
+                                               String sourceFolder, String filePath) {
+        LangASTNode leftSide = assignment.getLeftSide();
+
+        if (leftSide instanceof LangFieldAccess langFieldAccess) {
+            LangASTNode expression = langFieldAccess.getExpression();
+
+            // Check if it's self.attribute
+            if (expression instanceof LangSimpleName simpleName) {
+                if ("self".equals(simpleName.getIdentifier())) {
+                    String attributeName = langFieldAccess.getName().getIdentifier();
+
+                    // Create VariableDeclaration for the attribute
+                    // Pass the assignment node so extractInitializer can get the right-hand side
+                    VariableDeclaration variableDeclaration = new VariableDeclaration(
+                            assignment.getRootCompilationUnit(),
+                            sourceFolder,
+                            filePath,
+                            assignment,  // ✅ Pass the assignment, not the field access
+                            null, // ✅ Pass the method as container
+                            attributeName
+                    );
+
+                    // ✅ Mark it as an attribute
+                    variableDeclaration.setAttribute(true);
+
+                    // Create UMLAttribute
+                    UMLAttribute attribute = new UMLAttribute(
+                            attributeName,
+                            UMLType.extractTypeObject("Object"),
+                            new LocationInfo(
+                                    assignment.getRootCompilationUnit(),
+                                    sourceFolder,
+                                    filePath,
+                                    langFieldAccess,
+                                    LocationInfo.CodeElementType.FIELD_DECLARATION
+                            )
+                    );
+
+                    // Set the variable declaration on the attribute
+                    attribute.setVariableDeclaration(variableDeclaration);
+                    // TODO
+                    attribute.setVisibility(Visibility.PUBLIC);
+                    attribute.setFinal(false);
+                    attribute.setStatic(false);
+                    attribute.setClassName(methodDeclaration.getName());
+
+                    attributes.add(attribute);
+
+                    LOGGER.info("Created attribute: " + attributeName + " with initializer: " +
+                            (variableDeclaration.getInitializer() != null ? "yes" : "no"));
+                }
+            }
+        }
+    }
+
+
 
     private void processMethodBody(LangBlock methodBody, CompositeStatementObject composite,
                                    String sourceFolder, String filePath, UMLOperation container) {

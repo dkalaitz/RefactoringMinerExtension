@@ -16,9 +16,6 @@ public class UMLAdapterStatementProcessor {
 
     public static void processStatement(LangASTNode statement, CompositeStatementObject composite,
                                         String sourceFolder, String filePath, UMLOperation container) {
-        System.out.println("Processing statement type: " + statement.getClass().getSimpleName());
-        System.out.println("Statement content: " + statement);
-
 
         // Process the statement itself first, not just its children
         if (statement instanceof LangReturnStatement returnStmt) {
@@ -34,6 +31,7 @@ public class UMLAdapterStatementProcessor {
         } else if (statement instanceof LangExpressionStatement expressionStatement) {
             processExpressionStatement(expressionStatement, composite, sourceFolder, filePath, container);
         }
+        // TODO
         // Add handlers for other Python statement types:
         // - Try/except blocks
         // - With statements
