@@ -174,10 +174,10 @@ public class UMLModelAdapter {
             if ("__init__".equals(methodDecl.getName())) {
                 List<UMLAttribute> attributes = getAttributes(methodDecl, sourceFolder, filepath);
                 for (UMLAttribute attribute : attributes) {
-                    attribute.setClassName(className); // ✅ Use the CLASS name, not method name!
+                    attribute.setClassName(className);
                     umlClass.addAttribute(attribute);
                 }
-                break; // Only process the first __init__ method
+                break;
             }
         }
         logUMLClass(umlClass);
@@ -295,16 +295,16 @@ public class UMLModelAdapter {
 
                     // Create VariableDeclaration for the attribute
                     // Pass the assignment node so extractInitializer can get the right-hand side
+                    // TODO
                     VariableDeclaration variableDeclaration = new VariableDeclaration(
                             assignment.getRootCompilationUnit(),
                             sourceFolder,
                             filePath,
-                            assignment,  // ✅ Pass the assignment, not the field access
-                            null, // ✅ Pass the method as container
+                            assignment,
+                            null,
                             attributeName
                     );
 
-                    // ✅ Mark it as an attribute
                     variableDeclaration.setAttribute(true);
 
                     // Create UMLAttribute
@@ -350,10 +350,6 @@ public class UMLModelAdapter {
             processStatement(statement, composite, sourceFolder, filePath, container);
         }
 
-//        System.out.println("Composite statement: " + composite.toString());
-//        for (AbstractStatement statement : composite.getStatements()) {
-//            System.out.println("Statement: " + statement.toString());
-//        }
     }
 
     private void processComments(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation){
