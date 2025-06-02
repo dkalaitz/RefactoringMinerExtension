@@ -9,7 +9,6 @@ import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.*;
 import antlr.ast.node.literal.*;
 import antlr.ast.node.pattern.LangLiteralPattern;
-import antlr.ast.node.pattern.LangPattern;
 import antlr.ast.node.pattern.LangVariablePattern;
 import antlr.ast.node.statement.*;
 import antlr.ast.node.unit.LangCompilationUnit;
@@ -278,10 +277,10 @@ public class LangASTNodeFactory {
     }
 
     /** Literals */
-    public static LangIntegerLiteral createIntegerLiteral(ParserRuleContext ctx, String value) {
+    public static LangNumberLiteral createNumberLiteral(ParserRuleContext ctx, String value) {
         try {
             int intValue = Integer.parseInt(value);
-            return new LangIntegerLiteral(PositionUtils.getPositionInfo(ctx), intValue);
+            return new LangNumberLiteral(PositionUtils.getPositionInfo(ctx), intValue);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Invalid integer value: " + value);
         }
