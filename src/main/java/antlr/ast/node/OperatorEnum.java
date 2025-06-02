@@ -54,11 +54,11 @@ public enum OperatorEnum {
 
     // Membership operators
     IN("in", OperatorCategory.MEMBERSHIP),
-    NOT_IN("not in", OperatorCategory.MEMBERSHIP),
+    NOT_IN("notin", OperatorCategory.MEMBERSHIP),
 
     // Identity operators
     IS("is", OperatorCategory.IDENTITY),
-    IS_NOT("is not", OperatorCategory.IDENTITY);
+    IS_NOT("isnot", OperatorCategory.IDENTITY);
 
     private final String symbol;
     private final OperatorCategory category;

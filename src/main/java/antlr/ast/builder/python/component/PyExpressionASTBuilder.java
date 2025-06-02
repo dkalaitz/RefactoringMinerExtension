@@ -6,15 +6,11 @@ import antlr.ast.node.LangASTNode;
 import antlr.ast.node.LangASTNodeFactory;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangMethodInvocation;
-import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.node.literal.LangDictionaryLiteral;
-import antlr.ast.node.statement.LangExpressionStatement;
 import antlr.base.lang.python.Python3Parser;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static antlr.ast.node.LangASTNodeFactory.createExpressionStatement;
 
 public class PyExpressionASTBuilder extends PyBaseASTBuilder {
 
@@ -25,8 +21,7 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
     public LangASTNode visitAtom(Python3Parser.AtomContext ctx) {
         // Handle identifiers or literals
         if (ctx.NUMBER() != null) {
-            // TODO: handle doubles
-            return LangASTNodeFactory.createIntegerLiteral(ctx, ctx.NUMBER().getText());
+            return LangASTNodeFactory.createNumberLiteral(ctx, ctx.NUMBER().getText());
         }
         if (ctx.name() != null && ctx.name().getText().equals("None")) {
             return LangASTNodeFactory.createNullLiteral(ctx);
@@ -138,52 +133,27 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
             return LangASTNodeFactory.createExpressionStatement(expr, ctx);
         }
 
-        // For a simple assignment like "x = 10"
-        // TODO: Handle more complex assignments
+        // Case 2: Augmented assignment (+=, -=, etc.)
+        if (ctx.augassign() != null) {
+            LangASTNode left = mainBuilder.visit(ctx.testlist_star_expr(0));
+            LangASTNode right = mainBuilder.visit(ctx.testlist().test(0));
+            String operator = ctx.augassign().getText();
+
+            // Create the augmented assignment
+            LangAssignment assignment = LangASTNodeFactory.createAssignment(operator, left, right, ctx);
+
+            // Wrap in expression statement
+            return LangASTNodeFactory.createExpressionStatement(assignment, ctx);
+        }
+
         LangASTNode left = mainBuilder.visit(ctx.testlist_star_expr(0));
         LangASTNode right = mainBuilder.visit(ctx.testlist_star_expr(1));
 
-        // Create the assignment with correct source position
         LangAssignment assignment = LangASTNodeFactory.createAssignment(ctx.ASSIGN(0).getText(), left, right, ctx);
 
         // Wrap in expression statement with correct source position
         return LangASTNodeFactory.createExpressionStatement(assignment, ctx);
     }
-
-
-    // TODO: TO UNCOMMENT
-    
-//    public LangASTNode visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
-//
-//        // Case 1: Simple expression without assignment
-//        if (ctx.ASSIGN().isEmpty() && ctx.augassign() == null) {
-//            return mainBuilder.visit(ctx.testlist_star_expr(0));
-//        }
-//
-//        // TODO handle more complex assignments
-////        // Case 2: Augmented assignment (+=, -=, etc.)
-////        if (ctx.augassign() != null) {
-////            LangASTNode left = visit(ctx.testlist_star_expr(0));
-////            LangASTNode right = visit(ctx.test(0));
-////            String operator = ctx.augassign().getText();
-////
-////            return LangASTNodeFactory.createAugmentedAssignment(left, right, operator, ctx);
-////        }
-//
-//
-//        // For a simple assignment like "x = 10", we might assume:
-//        //  - ctx.testlist_star_expr(0) -> LHS
-//        //  - ctx.testlist_star_expr(1) -> RHS
-//        //  - ctx.ASSIGN(0) -> '=' token
-//        //
-//        LangASTNode left  = mainBuilder.visit(ctx.testlist_star_expr(0));
-//        LangASTNode right = mainBuilder.visit(ctx.testlist_star_expr(1));
-//
-//        LangAssignment langAssignment = LangASTNodeFactory.createAssignment(ctx.ASSIGN(0).getText(), left, right, ctx);
-//
-//        return LangASTNodeFactory.createExpressionStatement(langAssignment, ctx);
-//
-//    }
 
     
     public LangASTNode visitExpr(Python3Parser.ExprContext ctx) {
@@ -198,8 +168,6 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
             String operator = PyASTBuilderUtil.extractOperator(ctx);
             return LangASTNodeFactory.createInfixExpression(leftNode, rightNode, operator, ctx);
         }
-
-        // TODO: Handle other binary operators (** , *, /, etc.), or bitwise ops (&, |, ^)
 
         return mainBuilder.visitChildren(ctx);
     }
