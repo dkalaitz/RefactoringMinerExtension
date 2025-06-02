@@ -17,8 +17,6 @@ import antlr.ast.stringifier.PyASTFlattener;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.*;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.ArrayList;
@@ -229,10 +227,10 @@ public class LangVisitor implements LangASTVisitor {
 
 
     @Override
-    public void visit(LangIntegerLiteral langIntegerLiteral) {
+    public void visit(LangNumberLiteral langNumberLiteral) {
         // Add number literals
         LeafExpression numberLit = new LeafExpression(cu, sourceFolder, filePath,
-                langIntegerLiteral, LocationInfo.CodeElementType.NUMBER_LITERAL, container);
+                langNumberLiteral, LocationInfo.CodeElementType.NUMBER_LITERAL, container);
         numberLiterals.add(numberLit);
     }
 

@@ -172,10 +172,15 @@ public class PyASTFlattener implements LangASTFlattener {
         langForStatement.getCondition().accept(this);          // The loop variable(s)
         builder.append(" in ");
 
-        //langForStatement.getInitializers().forEach(); // The iterator/collection
+        // Visit the iterable/collection
+        for (LangASTNode initializer : langForStatement.getInitializers()) {
+            initializer.accept(this);
+        }
+
         builder.append(":");
         langForStatement.getBody().accept(this);       // The body of the loop
     }
+
 
     @Override
     public void visit(LangExpressionStatement langExpressionStatement) {
@@ -195,8 +200,8 @@ public class PyASTFlattener implements LangASTFlattener {
     }
 
     @Override
-    public void visit(LangIntegerLiteral langIntegerLiteral) {
-        builder.append(langIntegerLiteral.getValue());
+    public void visit(LangNumberLiteral langNumberLiteral) {
+        builder.append(langNumberLiteral.getValue());
     }
 
     @Override
@@ -415,12 +420,19 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangAnnotation langAnnotation) {
         builder.append("@").append(langAnnotation.getName());
-        if (langAnnotation.getArguments() != null) {
+        if (langAnnotation.getArguments() != null && !langAnnotation.getArguments().isEmpty()) {
             builder.append("(");
-            langAnnotation.getArguments().forEach(param -> param.accept(this));
+            List<LangASTNode> arguments = langAnnotation.getArguments();
+            for (int i = 0; i < arguments.size(); i++) {
+                arguments.get(i).accept(this);
+                if (i < arguments.size() - 1) {
+                    builder.append(", ");
+                }
+            }
             builder.append(")");
         }
     }
+
 
     @Override
     public void visit(LangAssertStatement langAssertStatement) {
@@ -454,8 +466,15 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangNonLocalStatement langNonLocalStatement) {
         builder.append("nonlocal ");
-        langNonLocalStatement.getNames().forEach(name -> builder.append(name).append(", "));
+        List<LangSimpleName> names = langNonLocalStatement.getNames();
+        for (int i = 0; i < names.size(); i++) {
+            builder.append(names.get(i).getIdentifier());
+            if (i < names.size() - 1) {
+                builder.append(", ");
+            }
+        }
     }
+
 
     @Override
     public void visit(LangAsyncStatement langAsyncStatement) {
@@ -479,18 +498,14 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public void visit(LangSwitchStatement langSwitchStatement) {
-        builder.append("switch ");
+        builder.append("match ");
         langSwitchStatement.getExpression().accept(this);
         builder.append(":");
         for (LangCaseStatement caseStatement : langSwitchStatement.getCases()) {
             caseStatement.accept(this);
         }
-        //TODO
-//        if (langSwitchStatement.getDefaultStatement() != null) {
-//            builder.append("default:");
-//            langSwitchStatement.getDefaultStatement().accept(this);
-//        }
     }
+
 
     @Override
     public void visit(LangCaseStatement langCaseStatement) {

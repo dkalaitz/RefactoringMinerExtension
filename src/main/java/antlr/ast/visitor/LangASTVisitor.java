@@ -29,7 +29,7 @@ public interface LangASTVisitor {
     void visit(LangExpressionStatement langExpressionStatement);
     void visit(LangAssignment langAssignment);
     void visit(LangBooleanLiteral langBooleanLiteral);
-    void visit(LangIntegerLiteral langIntegerLiteral);
+    void visit(LangNumberLiteral langNumberLiteral);
     void visit(LangStringLiteral langStringLiteral);
     void visit(LangListLiteral langListLiteral);
     void visit(LangFieldAccess langFieldAccess);
