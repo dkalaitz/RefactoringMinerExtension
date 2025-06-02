@@ -137,21 +137,13 @@ public class OperationInvocation extends AbstractCall {
 			for (LangASTNode argument : methodInvocation.getArguments()) {
 				String argString = LangVisitor.stringify(argument);
 				this.arguments.add(argString);
-				System.out.println("Adding argument: " + argString); // Debug
 			}
 		}
-
-//		for (LangASTNode expression : methodInvocation.getArguments()) {
-//			System.out.println("Expression: " + LangVisitor.stringify(expression));
-//			this.arguments.add(LangVisitor.stringify(expression));
-//		}
 
 		if (methodInvocation.getExpression() != null) {
 			processExpression(methodInvocation.getExpression(), this.subExpressions);
 		}
 
-		System.out.println("MethodInvocation (const" +
-				"ructor): " + this.methodName + " " + this.arguments + " " + this.expression);
 	}
 
     private void processExpression(Expression expression, List<String> subExpressions) {
@@ -185,8 +177,6 @@ public class OperationInvocation extends AbstractCall {
 
 	// TODO
 	private void processExpression(LangASTNode node, List<String> subExpressions) {
-		System.out.println("Processing node: " + node.getClass().getSimpleName() + " = " + LangVisitor.stringify(node));
-
 		if (node instanceof LangMethodInvocation methodInvocation) {
 			LangASTNode expr = methodInvocation.getExpression();
 			if (expr != null) {
@@ -227,9 +217,7 @@ public class OperationInvocation extends AbstractCall {
 			processExpression(infixExpr.getLeft(), subExpressions);
 			processExpression(infixExpr.getRight(), subExpressions);
 		}
-		// Add other node types as needed...
-		System.out.println("SubExpressions after processing: " + subExpressions);
-
+		// TODO: Add other node types as needed...
 	}
 
 

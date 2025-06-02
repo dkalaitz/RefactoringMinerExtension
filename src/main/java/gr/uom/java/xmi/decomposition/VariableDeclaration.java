@@ -10,6 +10,7 @@ import java.util.Set;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.expression.LangAssignment;
+import antlr.ast.node.expression.LangFieldAccess;
 import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.*;
@@ -53,8 +54,9 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 							   String variableName) {
 		this.variableName = variableName;
 		// TODO
-		this.type = new LeafType("object");
-		//this.type = UMLType.extractTypeObject();
+//		this.type = new LeafType("object");
+		// ✅ Set proper type instead of hardcoded "object"
+		this.type = UMLType.extractTypeObject("Object"); // Use UMLType.extractTypeObject()
 		this.varargsParameter = false;
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, astNode, CodeElementType.FIELD_DECLARATION);
 		this.annotations = Collections.emptyList();
@@ -63,29 +65,22 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 		this.isAttribute = false;
 		this.scope = new VariableScope(cu, filePath);
 		this.isFinal = false;
-		this.actualSignature = generateActualSignature(astNode, variableName);
+		this.actualSignature = LangVisitor.stringify(astNode);//generateActualSignature(astNode, variableName);
 	}
 
 	private AbstractExpression extractInitializer(LangASTNode astNode, String sourceFolder, String filePath, VariableDeclarationContainer container) {
 		// For assignments, extract the right-hand side
-		if (astNode instanceof LangAssignment) {
-			LangAssignment assignment = (LangAssignment) astNode;
+		if (astNode instanceof LangAssignment assignment) {
+			return new AbstractExpression(astNode.getRootCompilationUnit(), sourceFolder, filePath,
+					assignment.getRightSide(), LocationInfo.CodeElementType.EXPRESSION, container);
+		}
+		// ✅ For field access (self.attribute = value), also extract the right side
+		if (astNode instanceof LangFieldAccess fieldAccess && astNode.getParent() instanceof LangAssignment assignment) {
 			return new AbstractExpression(astNode.getRootCompilationUnit(), sourceFolder, filePath,
 					assignment.getRightSide(), LocationInfo.CodeElementType.EXPRESSION, container);
 		}
 		// For parameters and other declarations, no initializer
 		return null;
-	}
-
-	private String generateActualSignature(LangASTNode astNode, String variableName) {
-		if (astNode instanceof LangAssignment) {
-			// For Python assignments: "variable_name = value"
-			return LangVisitor.stringify(astNode);
-		} else if (astNode instanceof LangSingleVariableDeclaration) {
-			// For function parameters: just the parameter name
-			return variableName;
-		}
-		return variableName;
 	}
 
 
