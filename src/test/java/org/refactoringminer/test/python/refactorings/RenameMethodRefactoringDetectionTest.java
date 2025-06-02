@@ -33,6 +33,30 @@ class RenameMethodRefactoringDetectionTest {
     }
 
     @Test
+    void detectsMethodRename_ModuleLevelFunction_ProcessToHandle() throws Exception {
+        String beforePythonCode = """
+        def process(data):
+            return data.upper()
+        
+        def main():
+            result = process("hello")
+            print(result)
+        """;
+        String afterPythonCode = """
+        def handle(data):
+            return data.upper()
+        
+        def main():
+            result = handle("hello")
+            print(result)
+        """;
+        Map<String, String> beforeFiles = Map.of("tests/processor.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("tests/processor.py", afterPythonCode);
+        assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "process", "handle");
+    }
+
+
+    @Test
     void detectsMethodRename_GreetToSayHello() throws Exception {
         String beforePythonCode = """
             class Greeter:

@@ -38,11 +38,8 @@ public class LangASTUtil {
         System.out.println("Parse Tree:");
         System.out.println(parseTree.toStringTree(parser));
 
-//        // Print the AST using the ASTPrinter
         System.out.println("\nAST Structure:");
         System.out.println(ast.toString());
-//        LangASTPrinter printer = new LangASTPrinter();
-//        ast.accept(printer);
     }
 
     public static void printAST(Path pythonFilePath) throws IOException {

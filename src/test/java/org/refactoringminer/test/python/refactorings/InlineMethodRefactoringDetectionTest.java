@@ -70,27 +70,4 @@ public class InlineMethodRefactoringDetectionTest {
         assertInlineMethodRefactoringDetected(beforeFiles, afterFiles, "calculate", "double_value");
     }
 
-//    @Test
-//    void detectsInlineMethodAtTopLevel() throws Exception {
-//        String beforePythonCode = """
-//        def calculate_total(price, tax_rate):
-//            tax = compute_tax(price, tax_rate)
-//            return price + tax
-//
-//        def compute_tax(price, rate):
-//            return price * rate
-//        """;
-//
-//        String afterPythonCode = """
-//        def calculate_total(price, tax_rate):
-//            tax = price * tax_rate
-//            return price + tax
-//        """;
-//
-//        Map<String, String> beforeFiles = Map.of("tests/billing.py", beforePythonCode);
-//        Map<String, String> afterFiles = Map.of("tests/billing.py", afterPythonCode);
-//
-//        assertInlineMethodRefactoringDetected(beforeFiles, afterFiles, "calculate_total", "compute_tax");
-//    }
-
 }

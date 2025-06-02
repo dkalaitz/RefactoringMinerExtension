@@ -30,6 +30,30 @@ public class PyASTPrinterTest {
     }
 
     @Test
+    public void testASTVisitor_AugmentOperator() {
+        // Example Python code
+        String code = "class Calculator:\n" +
+                "    def add(self, x, y):\n" +
+                "        x += y\n" +
+                "        return x";
+        LangASTUtil.printAST(code);
+    }
+
+    @Test
+    public void testASTVisitor_IdentityOperators() {
+        // Example Python code with 'is' and 'is not' operators
+        String code = "class Checker:\n" +
+                "    def check_identity(self, x, y):\n" +
+                "        if x is None:\n" +
+                "            return True\n" +
+                "        if x is not None:\n" +
+                "            return False\n" +
+                "        return x is y";
+        LangASTUtil.printAST(code);
+    }
+
+
+    @Test
     public void testASTVisitor_IfElifElse() {
         // Example Python code with if-elif-else chain
         String code =
