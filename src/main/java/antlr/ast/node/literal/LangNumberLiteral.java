@@ -5,16 +5,16 @@ import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
 public class LangNumberLiteral extends LangLiteral {
-    private int value;
+    private String value;
 
     public LangNumberLiteral() {super(NodeTypeEnum.INTEGER_LITERAL);}
 
-    public LangNumberLiteral(PositionInfo positionInfo, int value) {
+    public LangNumberLiteral(PositionInfo positionInfo, String value) {
         super(NodeTypeEnum.INTEGER_LITERAL, positionInfo);
         this.value = value;
     }
 
-    public LangNumberLiteral(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn, int value) {
+    public LangNumberLiteral(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn, String value) {
         super(NodeTypeEnum.INTEGER_LITERAL, startLine, startChar, endLine, endChar, startColumn, endColumn);
         this.value = value;
     }
@@ -24,11 +24,11 @@ public class LangNumberLiteral extends LangLiteral {
         visitor.visit(this);
     }
 
-    public int getValue() {
+    public String getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(String value) {
         this.value = value;
     }
 

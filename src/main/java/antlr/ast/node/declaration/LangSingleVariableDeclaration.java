@@ -12,9 +12,9 @@ import antlr.ast.visitor.LangASTVisitor;
  */
 public class LangSingleVariableDeclaration extends LangDeclaration {
     private LangSimpleName langSimpleName;
-    private TypeObjectEnum typeAnnotation; // Add this field for Python type hints
-    private boolean hasTypeAnnotation = false; // Add this to track if type hint exists
-    private boolean isVarArgs = false; // TODO: Handle var args
+    private TypeObjectEnum typeAnnotation;
+    private boolean hasTypeAnnotation = false;
+    private boolean isVarArgs = false;
     private boolean isAttribute = false;
     private boolean isParameter = false;
 

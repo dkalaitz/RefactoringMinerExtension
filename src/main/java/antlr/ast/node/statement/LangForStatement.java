@@ -10,10 +10,26 @@ import java.util.List;
 
 public class LangForStatement extends LangStatement {
 
+    // Variable declarations that initialize the for loop (e.g., "int i = 0" in C-style for loops)
+    // In Python, this represents the loop variables (e.g., "i" in "for i in range(10)")
     private List<LangSingleVariableDeclaration> initializers;
+
+    // The condition/iterable expression that controls the loop execution
+    // In C-style: the boolean condition (e.g., "i < 10")
+    // In Python: the iterable expression (e.g., "range(10)", "items")
     private LangASTNode condition;
+
+    // Update expressions executed at the end of each iteration (e.g., "i++" in C-style for loops)
+    // In Python for-each loops, this is typically empty since iteration is handled automatically
     private List<LangASTNode> updates;
+
+    // The main body/block of statements executed in each loop iteration
+    // Contains all the statements inside the for loop
     private LangASTNode body;
+
+    // The optional else clause that executes when the loop completes normally (Python-specific)
+    // In languages without for-else (like Java/C), this would be null
+    // In Python: executes only if the loop wasn't terminated by a break statement
     private LangASTNode elseBody;
 
     public LangForStatement() {super(NodeTypeEnum.FOR_STATEMENT);}

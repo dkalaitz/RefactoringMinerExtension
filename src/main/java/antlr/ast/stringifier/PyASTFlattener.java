@@ -510,7 +510,9 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangCaseStatement langCaseStatement) {
         builder.append("case ");
-        langCaseStatement.getPattern().accept(this);
+        if (langCaseStatement.getPattern() != null) {
+            langCaseStatement.getPattern().accept(this);
+        }
         builder.append(":");
         langCaseStatement.getBody().accept(this);
     }

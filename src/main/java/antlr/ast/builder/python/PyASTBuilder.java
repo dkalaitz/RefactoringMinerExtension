@@ -81,11 +81,8 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> implemen
 
     @Override public LangASTNode visitAssert_stmt(Python3Parser.Assert_stmtContext ctx) { return statementBuilder.visitAssert_stmt(ctx); }
 
-
-
     // visit trailers
 
-    // TODO
     @Override public LangASTNode visitNonlocal_stmt(Python3Parser.Nonlocal_stmtContext ctx) { return statementBuilder.visitNonlocal_stmt(ctx); }
 
     @Override public LangASTNode visitGlobal_stmt(Python3Parser.Global_stmtContext ctx) { return statementBuilder.visitGlobal_stmt(ctx); }
@@ -98,21 +95,10 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> implemen
 
     @Override public LangASTNode visitAsync_stmt(Python3Parser.Async_stmtContext ctx) { return statementBuilder.visitAsync_stmt(ctx); }
 
-    // TODO
     @Override public LangASTNode visitMatch_stmt(Python3Parser.Match_stmtContext ctx) { return statementBuilder.visitMatch_stmt(ctx); }
-
-//    @Override public LangASTNode visitCase_block(Python3Parser.Case_blockContext ctx){ return expressionBuilder.visitCase_block(ctx); }
 
     @Override public LangASTNode visitPattern(Python3Parser.PatternContext ctx){ return expressionBuilder.visitPattern(ctx); }
 
-  //  @Override public LangASTNode visitPattern_expr(Python3Parser.As_patternContext ctx){ return expressionBuilder.visitPattern_expr(ctx); }
-//    @Override public LangASTNode visitMapping_pattern(Python3Parser.Mapping_patternContext ctx){ return expressionBuilder.visitMapping_pattern(ctx); }
-//
-//    @Override public LangASTNode visitItems_pattern(Python3Parser.Items_patternContext ctx){ return expressionBuilder.visitItems_pattern(ctx); }
-//
-//    @Override public LangASTNode visitStar_pattern(Python3Parser.Star_patternContext ctx){ return expressionBuilder.visitStar_pattern(ctx); }
-//
-//    @Override public LangASTNode visitKey_value_pattern(Python3Parser.Key_value_patternContext ctx){ return expressionBuilder.visitKey_value_pattern(ctx); }
     @Override public LangASTNode visitLambdef(Python3Parser.LambdefContext ctx) { return statementBuilder.visitLambdadef(ctx); }
 
     @Override public LangASTNode visitVfpdef(Python3Parser.VfpdefContext ctx) { return statementBuilder.visitVfpdef(ctx); }

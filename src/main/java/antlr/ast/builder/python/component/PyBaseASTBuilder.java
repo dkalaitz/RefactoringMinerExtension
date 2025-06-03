@@ -15,15 +15,4 @@ public class PyBaseASTBuilder {
         this.mainBuilder = mainBuilder;
     }
 
-    protected LangBlock toBlock(LangASTNode node) {
-        /*
-         * Helper to safely cast an LangASTNode to a LangBlock. If node is null or not a LangBlock,
-         * create an empty LangBlock instead. This helps to handle Python’s indentation blocks.
-         */
-        if (node instanceof LangBlock) {
-            return (LangBlock) node;
-        }
-        // Fallback: create an empty block or handle error as needed
-        return LangASTNodeFactory.createBlock(null, new ArrayList<>());
-    }
 }

@@ -24,8 +24,6 @@ public class PyCompilationUnitASTBuilder extends PyBaseASTBuilder {
     public LangASTNode visitFile_input(Python3Parser.File_inputContext ctx) {
         LangCompilationUnit compilationUnit = LangASTNodeFactory.createCompilationUnit(ctx);
 
-        // TODO: Handle module name
-
         // Process each statement in the file
         for (Python3Parser.StmtContext stmtCtx : ctx.stmt()) {
             LangASTNode stmt = mainBuilder.visit(stmtCtx);
@@ -52,10 +50,8 @@ public class PyCompilationUnitASTBuilder extends PyBaseASTBuilder {
 
 
     public LangASTNode visitImport_stmt(Python3Parser.Import_stmtContext ctx) {
-        // Create position info once for the entire import statement
         PositionInfo positionInfo = PositionUtils.getPositionInfo(ctx);
 
-        // Keep track of all import statements created from this single statement
         List<LangImportStatement> importStatements = new ArrayList<>();
 
         if (ctx.import_name() != null) {
@@ -133,13 +129,11 @@ public class PyCompilationUnitASTBuilder extends PyBaseASTBuilder {
         }
 
         // Return the last import statement created, or null if no imports were processed
-        // This is based on how ANTLR's tree visitor works - it returns the last visited node
         if (!importStatements.isEmpty()) {
             return importStatements.get(importStatements.size() - 1);
         }
 
-        // If we reach here, it means no import statements were created
-        // This shouldn't happen with valid Python code, but we return null as a fallback
+
         return null;
     }
 

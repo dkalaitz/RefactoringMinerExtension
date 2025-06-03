@@ -278,12 +278,7 @@ public class LangASTNodeFactory {
 
     /** Literals */
     public static LangNumberLiteral createNumberLiteral(ParserRuleContext ctx, String value) {
-        try {
-            int intValue = Integer.parseInt(value);
-            return new LangNumberLiteral(PositionUtils.getPositionInfo(ctx), intValue);
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid integer value: " + value);
-        }
+        return new LangNumberLiteral(PositionUtils.getPositionInfo(ctx), value);
     }
 
     public static LangStringLiteral createStringLiteral(ParserRuleContext ctx, String value) {

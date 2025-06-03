@@ -37,8 +37,6 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         setSuperClasses(ctx, langTypeDeclaration);
 
         if (ctx.block() != null && !ctx.block().stmt().isEmpty()) {
-            // TODO: Handle here class comments
-            // If there is a block context
             for (Python3Parser.StmtContext stmtContext : ctx.block().stmt()) {
                 LangASTNode statement = mainBuilder.visit(stmtContext);
                 if (statement instanceof LangMethodDeclaration) {
@@ -51,31 +49,6 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         return langTypeDeclaration;
     }
 
-    // TODO
-//    private void processClassAttributes(Python3Parser.ClassdefContext ctx, LangTypeDeclaration typeDeclaration) {
-//        if (ctx.block() != null) {
-//            for (Python3Parser.StmtContext stmtContext : ctx.block().stmt()) {
-//                // Check if this is a simple assignment at class level
-//                if (stmtContext.simple_stmts() != null &&
-//                        stmtContext.simple_stmts()(0) != null &&
-//                        stmtContext.simple_stmts().small_stmt(0).expr_stmt() != null) {
-//
-//                    Python3Parser.Expr_stmtContext exprStmt = stmtContext.simple_stmts().small_stmt(0).expr_stmt();
-//                    if (exprStmt.testlist_star_expr(0) != null) {
-//                        // This is a class attribute declaration
-//                        String attributeName = exprStmt.testlist_star_expr(0).getText();
-//                        LangSingleVariableDeclaration varDecl = LangASTNodeFactory.createSingleVariableDeclaration(
-//                                attributeName, exprStmt);
-//                        varDecl.setAttribute(true);    // Mark as attribute
-//                        varDecl.setParameter(false);   // Not a parameter
-//
-//                        // Add to class declarations
-//                        typeDeclaration.addField(varDecl);
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private void setSuperClasses(Python3Parser.ClassdefContext ctx, LangTypeDeclaration typeDeclaration) {
         if (ctx.arglist() != null) {
@@ -278,17 +251,7 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
 
             // Process arguments if any
             List<LangASTNode> arguments = new ArrayList<>();
-//            // TODO
-//            if (decoratorCtx.arglist() != null) {
-//                // Handle arguments
-//                for (Python3Parser.ArgumentContext argCtx : decoratorCtx.arglist().argument()) {
-//                    // Process each argument
-//                    LangASTNode argNode = mainBuilder.visitArglist(argCtx);
-//                    if (argNode != null) {
-//                        arguments.add(argNode);
-//                    }
-//                }
-//            }
+
             // Create the annotation
             LangAnnotation annotation = LangASTNodeFactory.createAnnotation(decoratorCtx, decoratorSimpleName, arguments);
             annotations.add(annotation);

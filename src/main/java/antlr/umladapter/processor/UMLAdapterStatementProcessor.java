@@ -1,10 +1,10 @@
 package antlr.umladapter.processor;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.expression.*;
-import antlr.ast.node.statement.LangBlock;
-import antlr.ast.node.statement.LangExpressionStatement;
-import antlr.ast.node.statement.LangReturnStatement;
+import antlr.ast.node.statement.*;
+import antlr.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.decomposition.*;
@@ -30,6 +30,20 @@ public class UMLAdapterStatementProcessor {
             processBlock(block, composite, sourceFolder, filePath, container);
         } else if (statement instanceof LangExpressionStatement expressionStatement) {
             processExpressionStatement(expressionStatement, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangIfStatement ifStatement) {
+            processIfStatement(ifStatement, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangWhileStatement whileStatement){
+            processWhileStatement(whileStatement, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangForStatement forStatement){
+            processForStatement(forStatement, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangSwitchStatement switchStatement){
+            processSwitchStatement(switchStatement, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangTryStatement tryStatement){
+            processTryStatement(tryStatement, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangBreakStatement breakStatement){
+            processBreakStatement(breakStatement, composite, sourceFolder, filePath, container);
+        } else if (statement instanceof LangContinueStatement continueStatement){
+            processContinueStatement(continueStatement, composite, sourceFolder, filePath, container);
         }
         // TODO
         // Add handlers for other Python statement types:
@@ -127,14 +141,13 @@ public class UMLAdapterStatementProcessor {
         LangASTNode expression = expressionStatement.getExpression();
 
         if (expression instanceof LangAssignment assignment) {
-            // ✅ CREATE ASSIGNMENT STATEMENT, NOT EXPRESSION STATEMENT
             StatementObject assignmentStatement = new StatementObject(
                     expressionStatement.getRootCompilationUnit(),
                     sourceFolder,
                     filePath,
                     expressionStatement, // Use the expression statement as the node
                     composite.getDepth() + 1,
-                    LocationInfo.CodeElementType.ASSIGNMENT,  // ✅ CORRECT TYPE!
+                    LocationInfo.CodeElementType.ASSIGNMENT,
                     container
             );
             composite.addStatement(assignmentStatement);
@@ -164,6 +177,199 @@ public class UMLAdapterStatementProcessor {
             composite.addStatement(expressionStatementObject);
         }
 
+    }
+
+    public static void processIfStatement(LangIfStatement ifStatement, CompositeStatementObject composite,
+                                          String sourceFolder, String filePath, UMLOperation container) {
+        // Process the condition expression
+        if (ifStatement.getCondition() != null) {
+            ifStatement.getCondition().accept(new LangVisitor(
+                    ifStatement.getRootCompilationUnit(), sourceFolder, filePath, container));
+        }
+
+
+        // Process the else block if it exists
+        if (ifStatement.getElseBody() != null) {
+            processStatement(ifStatement.getElseBody(), composite, sourceFolder, filePath, container);
+        }
+    }
+
+    public static void processWhileStatement(LangWhileStatement whileStatement, CompositeStatementObject composite,
+                                             String sourceFolder, String filePath, UMLOperation container) {
+        // Process the condition expression
+        if (whileStatement.getCondition() != null) {
+            whileStatement.getCondition().accept(new LangVisitor(
+                    whileStatement.getRootCompilationUnit(), sourceFolder, filePath, container));
+        }
+
+        // Process the loop body
+        if (whileStatement.getBody() != null) {
+            processStatement(whileStatement.getBody(), composite, sourceFolder, filePath, container);
+        }
+    }
+
+    public static void processForStatement(LangForStatement forStatement, CompositeStatementObject composite,
+                                           String sourceFolder, String filePath, UMLOperation container) {
+        // Create a CompositeStatementObject for the for statement
+        CompositeStatementObject forStatementObject = new CompositeStatementObject(
+                forStatement.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                forStatement,
+                composite.getDepth() + 1,
+                LocationInfo.CodeElementType.FOR_STATEMENT
+        );
+
+        // Process the initializers (loop variables)
+        if (forStatement.getInitializers() != null) {
+            for (LangSingleVariableDeclaration initializer : forStatement.getInitializers()) {
+                initializer.accept(new LangVisitor(
+                        forStatement.getRootCompilationUnit(), sourceFolder, filePath, container));
+            }
+        }
+
+        // Process the condition expression (for traditional for loops)
+        if (forStatement.getCondition() != null) {
+            forStatement.getCondition().accept(new LangVisitor(
+                    forStatement.getRootCompilationUnit(), sourceFolder, filePath, container));
+        }
+
+        // Process the update expressions
+        if (forStatement.getUpdates() != null) {
+            for (LangASTNode update : forStatement.getUpdates()) {
+                update.accept(new LangVisitor(
+                        forStatement.getRootCompilationUnit(), sourceFolder, filePath, container));
+            }
+        }
+
+        // Process the loop body
+        if (forStatement.getBody() != null) {
+            processStatement(forStatement.getBody(), forStatementObject, sourceFolder, filePath, container);
+        }
+
+        // Process the else body (Python for-else construct)
+        if (forStatement.getElseBody() != null) {
+            processStatement(forStatement.getElseBody(), forStatementObject, sourceFolder, filePath, container);
+        }
+
+        // Add the for statement to the parent composite
+        composite.addStatement(forStatementObject);
+    }
+
+
+    public static void processSwitchStatement(LangSwitchStatement switchStatement, CompositeStatementObject composite,
+                                              String sourceFolder, String filePath, UMLOperation container) {
+        // Create a CompositeStatementObject for the switch statement
+        CompositeStatementObject switchStatementObject = new CompositeStatementObject(
+                switchStatement.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                switchStatement,
+                composite.getDepth() + 1,
+                LocationInfo.CodeElementType.SWITCH_STATEMENT
+        );
+
+        // Process the switch expression
+        if (switchStatement.getExpression() != null) {
+            switchStatement.getExpression().accept(new LangVisitor(
+                    switchStatement.getRootCompilationUnit(), sourceFolder, filePath, container));
+        }
+
+        // Process each case statement
+        if (switchStatement.getCases() != null) {
+            for (LangASTNode caseStmt : switchStatement.getCases()) {
+                processStatement(caseStmt, switchStatementObject, sourceFolder, filePath, container);
+            }
+        }
+
+        // Add the switch statement to the parent composite
+        composite.addStatement(switchStatementObject);
+    }
+
+
+    public static void processTryStatement(LangTryStatement tryStatement, CompositeStatementObject composite,
+                                           String sourceFolder, String filePath, UMLOperation container) {
+        // Create a TryStatementObject (specialized composite for try statements)
+        TryStatementObject tryStatementObject = new TryStatementObject(
+                tryStatement.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                tryStatement,
+                composite.getDepth() + 1
+        );
+
+        // Process the try block
+        if (tryStatement.getBody() != null) {
+            processStatement(tryStatement.getBody(), tryStatementObject, sourceFolder, filePath, container);
+        }
+
+        // Process catch clauses
+        if (tryStatement.getCatchClauses() != null) {
+            for (LangCatchClause catchClause : tryStatement.getCatchClauses()) {
+                CompositeStatementObject catchStatementObject = new CompositeStatementObject(
+                        catchClause.getRootCompilationUnit(),
+                        sourceFolder,
+                        filePath,
+                        catchClause,
+                        tryStatementObject.getDepth() + 1,
+                        LocationInfo.CodeElementType.CATCH_CLAUSE
+                );
+
+                if (catchClause.getBody() != null) {
+                    processStatement(catchClause.getBody(), catchStatementObject, sourceFolder, filePath, container);
+                }
+
+                tryStatementObject.addCatchClause(catchStatementObject);
+            }
+        }
+
+        // Process finally block
+        if (tryStatement.getFinallyBlock() != null) {
+            CompositeStatementObject finallyStatementObject = new CompositeStatementObject(
+                    tryStatement.getFinallyBlock().getRootCompilationUnit(),
+                    sourceFolder,
+                    filePath,
+                    tryStatement.getFinallyBlock(),
+                    tryStatementObject.getDepth() + 1,
+                    LocationInfo.CodeElementType.FINALLY_BLOCK
+            );
+
+            processStatement(tryStatement.getFinallyBlock(), finallyStatementObject, sourceFolder, filePath, container);
+            tryStatementObject.setFinallyClause(finallyStatementObject);
+        }
+
+        // Add the try statement to the parent composite
+        composite.addStatement(tryStatementObject);
+    }
+
+    public static void processBreakStatement(LangBreakStatement breakStatement, CompositeStatementObject composite,
+                                             String sourceFolder, String filePath, UMLOperation container) {
+        // Create a simple statement object for break
+        StatementObject breakStmt = new StatementObject(
+                breakStatement.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                breakStatement,
+                0, // depth
+                LocationInfo.CodeElementType.BREAK_STATEMENT,
+                container
+        );
+        composite.addStatement(breakStmt);
+    }
+
+    public static void processContinueStatement(LangContinueStatement continueStatement, CompositeStatementObject composite,
+                                                String sourceFolder, String filePath, UMLOperation container) {
+        // Create a simple statement object for continue
+        StatementObject continueStmt = new StatementObject(
+                continueStatement.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                continueStatement,
+                0, // depth
+                LocationInfo.CodeElementType.CONTINUE_STATEMENT,
+                container
+        );
+        composite.addStatement(continueStmt);
     }
 
 }

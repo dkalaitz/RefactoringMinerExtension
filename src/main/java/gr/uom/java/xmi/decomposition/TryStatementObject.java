@@ -3,6 +3,8 @@ package gr.uom.java.xmi.decomposition;
 import java.util.ArrayList;
 import java.util.List;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 
@@ -11,6 +13,12 @@ import gr.uom.java.xmi.LocationInfo.CodeElementType;
 public class TryStatementObject extends CompositeStatementObject {
 	private List<CompositeStatementObject> catchClauses;
 	private CompositeStatementObject finallyClause;
+
+	//TODO
+	public TryStatementObject(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode statement, int depth) {
+		super(cu, sourceFolder, filePath, statement, depth, CodeElementType.TRY_STATEMENT);
+		this.catchClauses = new ArrayList<CompositeStatementObject>();
+	}
 
 	public TryStatementObject(CompilationUnit cu, String sourceFolder, String filePath, Statement statement, int depth, String javaFileContent) {
 		super(cu, sourceFolder, filePath, statement, depth, CodeElementType.TRY_STATEMENT, javaFileContent);

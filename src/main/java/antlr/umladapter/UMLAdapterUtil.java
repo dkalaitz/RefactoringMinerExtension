@@ -18,9 +18,6 @@ public class UMLAdapterUtil {
     // Assumption: sourceFolder is the top-level directory containing Python source files
     // e.g., for "src/mypkg/my_module.py", sourceFolder is "src"
     public static String extractSourceFolder(String filename) {
-        // You may want to provide this as a configuration
-        // For a quick heuristic: assume folder before the first Python package (that has __init__.py)
-        // For now, fallback to first path segment
         Path path = Paths.get(filename);
         if (path.getNameCount() > 1) {
             return path.subpath(0, 1).toString(); // e.g., "src"
@@ -52,8 +49,6 @@ public class UMLAdapterUtil {
 
     // Returns the path of the file relative to the project root
     public static String extractFilePath(String filename) {
-        // Assumes filename is already relative to project root, or you handle that before calling
-        // You may want to normalize slashes
         return filename.replace(File.separatorChar, '/');
     }
 
@@ -129,7 +124,6 @@ public class UMLAdapterUtil {
 
         return fileName;
     }
-
 
 
 }

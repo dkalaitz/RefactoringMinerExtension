@@ -42,15 +42,6 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
                 return mainBuilder.visit(ctx.simple_stmts().simple_stmt(0).import_stmt());
             }
 
-//            // For multiple statements or non-import statements, use a block as before
-//            LangBlock statementNodes = LangASTNodeFactory.createBlock(ctx, new ArrayList<>());
-//            for (Python3Parser.Simple_stmtContext simpleStmtContext : ctx.simple_stmts().simple_stmt()) {
-//                LangASTNode stmtNode = mainBuilder.visit(simpleStmtContext);
-//                if (stmtNode != null) {
-//                    statementNodes.addStatement(stmtNode);
-//                }
-//            }
-//            return statementNodes;
             List<LangASTNode> statements = new ArrayList<>();
             for (Python3Parser.Simple_stmtContext simpleStmtContext : ctx.simple_stmts().simple_stmt()) {
                 LangASTNode stmtNode = mainBuilder.visit(simpleStmtContext);
@@ -138,7 +129,6 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
         if (ctx.or_test() != null) {
             return mainBuilder.visit(ctx.or_test(0));
         }
-        // Handle other cases...
         return mainBuilder.visitChildren(ctx);
     }
 
@@ -353,8 +343,6 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
     }
 
     public LangASTNode visitAsync_stmt(Python3Parser.Async_stmtContext ctx) {
-        // The async_stmt can be "async funcdef", "async with_stmt", or "async for_stmt"
-        // We'll wrap whatever the child is in our LangAsyncStatement node
 
         LangASTNode body = null;
         // Try to detect which async form it is
@@ -407,7 +395,6 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
             // Create the case statement node without pattern
             LangCaseStatement caseStatement = LangASTNodeFactory.createCaseStatement(ctx, pattern, body);
 
-            // IMPORTANT: Add the caseStatement to the list!
              caseStatements.add(caseStatement);
         }
 
