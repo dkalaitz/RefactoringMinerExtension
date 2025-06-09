@@ -1,15 +1,11 @@
 package org.refactoringminer.test.python.refactorings.packagerelated;
 
-import antlr.umladapter.UMLModelAdapter;
-import gr.uom.java.xmi.UMLModel;
-import gr.uom.java.xmi.diff.RenamePackageRefactoring;
-import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
 import java.util.Map;
 
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.assertMovePackageRefactoringDetected;
+import static org.refactoringminer.utils.RefactoringAssertUtils.assertMovePackageRefactoringDetected;
 
 @Isolated
 public class MovePackageRefactoringDetectionTest {

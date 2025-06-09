@@ -1,4 +1,4 @@
-package org.refactoringminer.test.python.refactorings.util;
+package org.refactoringminer.utils;
 
 import antlr.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLClass;
@@ -9,7 +9,6 @@ import gr.uom.java.xmi.decomposition.AbstractCall;
 import gr.uom.java.xmi.decomposition.CompositeStatementObject;
 import gr.uom.java.xmi.decomposition.OperationBody;
 import gr.uom.java.xmi.diff.*;
-import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringType;
 
 import java.util.List;

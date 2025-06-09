@@ -5,7 +5,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 
 import java.util.Map;
 
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.assertPullUpMethodRefactoringDetected;
+import static org.refactoringminer.utils.RefactoringAssertUtils.assertPullUpMethodRefactoringDetected;
 
 @Isolated
 public class PullUpMethodRefactoringDetectionTest {

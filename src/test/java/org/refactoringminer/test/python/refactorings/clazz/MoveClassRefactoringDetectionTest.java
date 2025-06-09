@@ -1,4 +1,4 @@
-package org.refactoringminer.test.python.refactorings;
+package org.refactoringminer.test.python.refactorings.clazz;
 
 import antlr.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;

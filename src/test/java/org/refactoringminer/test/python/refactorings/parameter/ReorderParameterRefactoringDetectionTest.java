@@ -5,7 +5,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 
 import java.util.Map;
 
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.assertReorderParameterRefactoringDetected;
+import static org.refactoringminer.utils.RefactoringAssertUtils.assertReorderParameterRefactoringDetected;
 
 @Isolated
 public class ReorderParameterRefactoringDetectionTest {

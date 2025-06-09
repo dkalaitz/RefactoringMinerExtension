@@ -1,4 +1,4 @@
-package org.refactoringminer.test.python.refactorings;
+package org.refactoringminer.test.python.refactorings.method;
 
 import antlr.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.dumpOperation;
+import static org.refactoringminer.utils.RefactoringAssertUtils.dumpOperation;
 
 class MoveMethodRefactoringDetectionTest {
 

@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.dumpOperation;
+import static org.refactoringminer.utils.RefactoringAssertUtils.dumpOperation;
 
 public class ChangeVisibilityRefactoringDetectionTest {
 

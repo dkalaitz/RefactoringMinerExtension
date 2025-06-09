@@ -2,7 +2,7 @@ package org.refactoringminer.test.python.refactorings.packagerelated;
 
 import org.junit.jupiter.api.Test;
 import java.util.Map;
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.assertMoveSourceFolderRefactoringDetected;
+import static org.refactoringminer.utils.RefactoringAssertUtils.assertMoveSourceFolderRefactoringDetected;
 
 class MoveSourceFolderRefactoringDetectionTest {
 

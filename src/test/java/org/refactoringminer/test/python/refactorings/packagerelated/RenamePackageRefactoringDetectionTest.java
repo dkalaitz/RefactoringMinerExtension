@@ -1,10 +1,9 @@
 package org.refactoringminer.test.python.refactorings.packagerelated;
 
 import org.junit.jupiter.api.Test;
-import java.util.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static antlr.umladapter.UMLAdapterUtil.*;
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.assertRenamePackageRefactoringDetected;
 
 class RenamePackageRefactoringDetectionTest {
 

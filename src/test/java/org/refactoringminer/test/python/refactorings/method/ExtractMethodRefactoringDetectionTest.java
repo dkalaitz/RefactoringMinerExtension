@@ -1,4 +1,4 @@
-package org.refactoringminer.test.python.refactorings;
+package org.refactoringminer.test.python.refactorings.method;
 
 import antlr.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.*;
+import static org.refactoringminer.utils.RefactoringAssertUtils.*;
 
 @Isolated
 public class ExtractMethodRefactoringDetectionTest {

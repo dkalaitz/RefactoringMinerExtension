@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.assertPushDownAttributeRefactoringDetected;
+import static org.refactoringminer.utils.RefactoringAssertUtils.assertPushDownAttributeRefactoringDetected;
 
 public class PushDownAttributeRefactoringDetectionTest {
 

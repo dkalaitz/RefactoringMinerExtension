@@ -1,23 +1,11 @@
-package org.refactoringminer.test.python.refactorings;
+package org.refactoringminer.test.python.refactorings.method;
 
-import antlr.ast.visitor.LangVisitor;
-import antlr.umladapter.UMLModelAdapter;
-import gr.uom.java.xmi.UMLModel;
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.decomposition.*;
-import gr.uom.java.xmi.decomposition.replacement.Replacement;
-import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
-import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.assertInlineMethodRefactoringDetected;
+import static org.refactoringminer.utils.RefactoringAssertUtils.assertInlineMethodRefactoringDetected;
 
 @Isolated
 public class InlineMethodRefactoringDetectionTest {

@@ -1,10 +1,10 @@
-package org.refactoringminer.test.python.refactorings;
+package org.refactoringminer.test.python.refactorings.clazz;
 
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.assertRenameClassRefactoringDetected;
+import static org.refactoringminer.utils.RefactoringAssertUtils.assertRenameClassRefactoringDetected;
 import static org.refactoringminer.utils.LangASTUtil.readResourceFile;
 
 class RenameClassRefactoringDetectionTest {

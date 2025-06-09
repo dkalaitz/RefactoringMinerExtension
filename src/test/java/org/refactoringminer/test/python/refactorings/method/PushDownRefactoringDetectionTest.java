@@ -5,7 +5,7 @@ import org.junit.jupiter.api.parallel.Isolated;
 
 import java.util.Map;
 
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.assertPushDownMethodRefactoringDetected;
+import static org.refactoringminer.utils.RefactoringAssertUtils.assertPushDownMethodRefactoringDetected;
 
 @Isolated
 public class PushDownRefactoringDetectionTest {

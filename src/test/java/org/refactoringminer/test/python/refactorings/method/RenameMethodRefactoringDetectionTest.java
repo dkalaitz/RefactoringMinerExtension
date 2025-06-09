@@ -1,4 +1,4 @@
-package org.refactoringminer.test.python.refactorings;
+package org.refactoringminer.test.python.refactorings.method;
 
 import antlr.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
@@ -6,12 +6,10 @@ import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.diff.RenameOperationRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
-import org.refactoringminer.api.Refactoring;
 
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.refactoringminer.test.python.refactorings.util.RefactoringAssertUtils.dumpOperation;
 
 class RenameMethodRefactoringDetectionTest {
 
@@ -128,7 +126,6 @@ class RenameMethodRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("tests/dataprocessor.py", afterPythonCode);
         assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "process_list", "process_list1");
         assertRenameOperationRefactoringDetected(beforeFiles, afterFiles, "calculate_sum", "calculate_add");
-        // TODO: Assert total refactorings
     }
 
     private void assertRenameOperationRefactoringDetected(Map<String, String> beforeFiles, Map<String, String> afterFiles, String beforeName, String afterName) throws Exception {
