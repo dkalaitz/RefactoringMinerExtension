@@ -17,8 +17,6 @@ import java.io.Reader;
 public class LangASTUtil {
 
     public static LangASTNode getCustomPythonAST(Reader r) throws IOException {
-        // Create a new TreeContext to hold our tree
-        TreeContext context = new TreeContext();
 
         // Parse the Python code
         CharStream input = CharStreams.fromReader(r);
@@ -28,10 +26,10 @@ public class LangASTUtil {
 
         // Get the parse tree
         Python3Parser.File_inputContext parseTree = parser.file_input();
+        System.out.println(parseTree.toStringTree(parser));
 
         // Build our custom AST
         PyASTBuilder astBuilder = new PyASTBuilder();
-//        ParserRuleContext parseTree = LangASTUtil.getParseTree("python", r);
 
         return astBuilder.build(parseTree);
     }
