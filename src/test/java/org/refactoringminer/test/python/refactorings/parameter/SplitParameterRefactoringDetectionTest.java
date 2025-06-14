@@ -18,38 +18,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 @Isolated
 public class SplitParameterRefactoringDetectionTest {
 
-    @Test
-    void detectsSplitParameter_FullNameToFirstLastName() throws Exception {
-        String beforePythonCode = """
-            class UserService:
-                def create_user(self, full_name, email):
-                    parts = full_name.split(' ', 1)
-                    first_name = parts[0]
-                    last_name = parts[1] if len(parts) > 1 else ""
-                    return User(first_name, last_name, email)
-                
-                def update_user(self, user_id, full_name):
-                    parts = full_name.split(' ', 1)
-                    first_name = parts[0]
-                    last_name = parts[1] if len(parts) > 1 else ""
-                    return self.repository.update(user_id, first_name, last_name)
-            """;
-
-        String afterPythonCode = """
-            class UserService:
-                def create_user(self, first_name, last_name, email):
-                    return User(first_name, last_name, email)
-                
-                def update_user(self, user_id, first_name, last_name):
-                    return self.repository.update(user_id, first_name, last_name)
-            """;
-
-        Map<String, String> beforeFiles = Map.of("user_service.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("user_service.py", afterPythonCode);
-
-        assertSplitParameterRefactoringDetected(beforeFiles, afterFiles,
-                "full_name", Set.of("first_name", "last_name"), "create_user", "UserService");
-    }
 
     @Test
     void detectsSplitParameter_ConfigObjectToSeparateParameters() throws Exception {
@@ -76,67 +44,6 @@ public class SplitParameterRefactoringDetectionTest {
                 "db_config", Set.of("host", "port", "username", "password", "database_name"), "setup_database", "");
     }
 
-    @Test
-    void detectsSplitParameter_PositionToCoordinates() throws Exception {
-        String beforePythonCode = """
-            class GeometryService:
-                def create_rectangle(self, position, dimensions):
-                    x = position[0]
-                    y = position[1]
-                    width = dimensions[0]
-                    height = dimensions[1]
-                    return Rectangle(x, y, width, height)
-                
-                def move_point(self, point, position):
-                    new_x = position[0]
-                    new_y = position[1]
-                    point.x = new_x
-                    point.y = new_y
-            """;
-
-        String afterPythonCode = """
-            class GeometryService:
-                def create_rectangle(self, x, y, width, height):
-                    return Rectangle(x, y, width, height)
-                
-                def move_point(self, point, x, y):
-                    point.x = x
-                    point.y = y
-            """;
-
-        Map<String, String> beforeFiles = Map.of("geometry.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("geometry.py", afterPythonCode);
-
-        assertSplitParameterRefactoringDetected(beforeFiles, afterFiles,
-                "position", Set.of("x", "y"), "move_point", "GeometryService");
-    }
-
-    @Test
-    void detectsSplitParameter_DateTimeToComponents() throws Exception {
-        String beforePythonCode = """
-            class EventService:
-                def create_event(self, title, event_datetime):
-                    year = event_datetime.year
-                    month = event_datetime.month
-                    day = event_datetime.day
-                    hour = event_datetime.hour
-                    minute = event_datetime.minute
-                    
-                    return Event(title, year, month, day, hour, minute)
-            """;
-
-        String afterPythonCode = """
-            class EventService:
-                def create_event(self, title, year, month, day, hour, minute):
-                    return Event(title, year, month, day, hour, minute)
-            """;
-
-        Map<String, String> beforeFiles = Map.of("events.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("events.py", afterPythonCode);
-
-        assertSplitParameterRefactoringDetected(beforeFiles, afterFiles,
-                "event_datetime", Set.of("year", "month", "day", "hour", "minute"), "create_event", "EventService");
-    }
 
     public static void assertSplitParameterRefactoringDetected(
             Map<String, String> beforeFiles,

@@ -2,6 +2,8 @@ package gr.uom.java.xmi;
 
 import java.io.Serializable;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Modifier;
 
@@ -16,6 +18,12 @@ public class UMLModifier implements Serializable, LocationInfoProvider {
 		this.keyword = modifier.getKeyword().toString();
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, modifier, CodeElementType.MODIFIER);
 	}
+
+	public UMLModifier(LangCompilationUnit cu, String sourceFolder, String filePath, String keyword, LangASTNode astNode) {
+		this.keyword = keyword;
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, astNode, CodeElementType.MODIFIER);
+	}
+
 
 	public String getKeyword() {
 		return keyword;

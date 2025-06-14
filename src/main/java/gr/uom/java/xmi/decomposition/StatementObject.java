@@ -53,7 +53,6 @@ public class StatementObject extends AbstractStatement {
 	private List<TernaryOperatorExpression> ternaryOperatorExpressions;
 	private List<LambdaExpressionObject> lambdas;
 
-	// TODO
 	public StatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
 						   LangASTNode statement, int depth, CodeElementType codeElementType,
 						   VariableDeclarationContainer container) {

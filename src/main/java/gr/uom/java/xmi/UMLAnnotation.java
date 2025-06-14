@@ -5,6 +5,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.metadata.LangAnnotation;
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.Annotation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.MemberValuePair;
@@ -20,7 +23,7 @@ public class UMLAnnotation implements Serializable, LocationInfoProvider {
 	private String typeName;
 	private AbstractExpression value;
 	private Map<String, AbstractExpression> memberValuePairs = new LinkedHashMap<>();
-	
+
 	public UMLAnnotation(CompilationUnit cu, String sourceFolder, String filePath, Annotation annotation, String javaFileContent) {
 		this.typeName = annotation.getTypeName().getFullyQualifiedName();
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, annotation, CodeElementType.ANNOTATION);
@@ -37,6 +40,46 @@ public class UMLAnnotation implements Serializable, LocationInfoProvider {
 			}
 		}
 	}
+
+	public UMLAnnotation(LangCompilationUnit cu, String sourceFolder, String filePath, LangAnnotation annotation) {
+		this.typeName = annotation.getName().getIdentifier();
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, annotation, CodeElementType.ANNOTATION);
+
+		// Handle single-member annotations (e.g., @decorator(value))
+		if (annotation.isSingleMemberAnnotation()) {
+			this.value = new AbstractExpression(cu, sourceFolder, filePath,
+					annotation.getValue(), CodeElementType.SINGLE_MEMBER_ANNOTATION_VALUE, null);
+		}
+		// Handle normal annotations with named parameters (e.g., @dataclass(frozen=True, order=False))
+		else if (annotation.isNormalAnnotation()) {
+			Map<String, LangASTNode> langPairs = annotation.getMemberValuePairs();
+			for (Map.Entry<String, LangASTNode> entry : langPairs.entrySet()) {
+				AbstractExpression value = new AbstractExpression(cu, sourceFolder, filePath,
+						entry.getValue(), CodeElementType.NORMAL_ANNOTATION_MEMBER_VALUE_PAIR, null);
+				memberValuePairs.put(entry.getKey(), value);
+			}
+		}
+		// Handle positional arguments (e.g., @lru_cache(128))
+		else if (!annotation.getArguments().isEmpty()) {
+			// For now, treat the first argument as the primary value
+			// This matches common Python decorator patterns like @lru_cache(128)
+			if (annotation.getArguments().size() == 1) {
+				this.value = new AbstractExpression(cu, sourceFolder, filePath,
+						annotation.getArguments().get(0), CodeElementType.SINGLE_MEMBER_ANNOTATION_VALUE, null);
+			}
+			// For multiple positional arguments, we could store them as indexed pairs
+			// e.g., "0" -> first_arg, "1" -> second_arg, etc.
+			else {
+				for (int i = 0; i < annotation.getArguments().size(); i++) {
+					AbstractExpression value = new AbstractExpression(cu, sourceFolder, filePath,
+							annotation.getArguments().get(i), CodeElementType.NORMAL_ANNOTATION_MEMBER_VALUE_PAIR, null);
+					memberValuePairs.put(String.valueOf(i), value);
+				}
+			}
+		}
+		// Marker annotation - no additional processing needed
+	}
+
 
 	public String getTypeName() {
 		return typeName;

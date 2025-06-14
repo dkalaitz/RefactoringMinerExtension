@@ -24,7 +24,6 @@ public class LeafExpression extends AbstractCodeFragment {
 	protected LocationInfo locationInfo;
 	protected VariableDeclarationContainer container;
 
-	// TODO
 	public LeafExpression(LangCompilationUnit cu, String sourceFolder, String filePath, LangASTNode expression, CodeElementType codeElementType, VariableDeclarationContainer container) {
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, expression, codeElementType);
 		this.string = LangVisitor.stringify(expression);

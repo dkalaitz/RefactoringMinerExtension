@@ -1,6 +1,7 @@
 package antlr.ast.visitor;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.OperatorEnum;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
@@ -84,18 +85,52 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangTypeDeclaration langTypeDeclaration) {
+        // Visit class body members
+        for (LangASTNode member : langTypeDeclaration.getMethods()) {
+            member.accept(this);
+        }
 
+        // Visit decorators
+        for (LangAnnotation decorator : langTypeDeclaration.getAnnotations()) {
+            decorator.accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangMethodDeclaration methodDeclaration) {
+        // Visit method parameters
+        for (LangSingleVariableDeclaration param : methodDeclaration.getParameters()) {
+            param.accept(this);
+        }
 
+        // Visit method body
+        if (methodDeclaration.getBody() != null) {
+            methodDeclaration.getBody().accept(this);
+        }
+
+        // Visit decorators/annotations
+        for (LangAnnotation decorator : methodDeclaration.getAnnotations()) {
+            decorator.accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangSingleVariableDeclaration langSingleVariableDeclaration) {
+        // Create variable declaration for parameters
+        VariableDeclaration varDecl = new VariableDeclaration(
+                cu, sourceFolder, filePath, langSingleVariableDeclaration, container);
 
+        variableDeclarations.add(varDecl);
+
+        LeafExpression variable = new LeafExpression(cu, sourceFolder, filePath,
+                langSingleVariableDeclaration,
+                LocationInfo.CodeElementType.SIMPLE_NAME,
+                container);
+        variables.add(variable);
     }
+
 
     @Override
     public void visit(LangBlock langBlock) {
@@ -119,10 +154,37 @@ public class LangVisitor implements LangASTVisitor {
                 langInfixExpression, LocationInfo.CodeElementType.INFIX_EXPRESSION, container);
         infixExpressions.add(infix);
         infixOperators.add(langInfixExpression.getOperator().name());
+        LangASTNode leftSide = langInfixExpression.getLeft();
+        LangASTNode rightSide = langInfixExpression.getRight();
+
+        // Pattern: x + y * 2 -> we want to create "x + y"
+        if (langInfixExpression.getOperator() == OperatorEnum.PLUS) {
+            leftSide = langInfixExpression.getLeft();
+            rightSide = langInfixExpression.getRight();
+
+            if (rightSide instanceof LangInfixExpression rightInfix) {
+                if (rightInfix.getOperator() == OperatorEnum.MULTIPLY) {
+                    LangInfixExpression syntheticExpr = new LangInfixExpression(
+                            leftSide,
+                            OperatorEnum.PLUS,
+                            rightInfix.getLeft(),
+                            langInfixExpression.getPositionInfo()
+                    );
+
+                    LeafExpression syntheticLeaf = new LeafExpression(cu, sourceFolder, filePath,
+                            syntheticExpr, LocationInfo.CodeElementType.INFIX_EXPRESSION, container);
+                    infixExpressions.add(syntheticLeaf);
+                    infixOperators.add(OperatorEnum.PLUS.name());
+
+                    System.out.println("Created synthetic: " + LangVisitor.stringify(syntheticExpr));
+                }
+            }
+        }
 
         // Visit operands
-        langInfixExpression.getLeft().accept(this);
-        langInfixExpression.getRight().accept(this);
+        leftSide.accept(this);
+        rightSide.accept(this);
+
     }
 
 
@@ -136,7 +198,6 @@ public class LangVisitor implements LangASTVisitor {
             anonymous.getMethodInvocations().add(invocation);
         }
 
-        // 🔧 NEW: Check if this method invocation is on 'self' (Python's 'this')
         LangASTNode expression = langMethodInvocation.getExpression();
         if (expression instanceof LangSimpleName) {
             LangSimpleName simpleName = (LangSimpleName) expression;
@@ -171,18 +232,67 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangIfStatement langIfStatement) {
+        // Visit condition
+        if (langIfStatement.getCondition() != null) {
+            langIfStatement.getCondition().accept(this);
+        }
+
+        // Visit then block
+        if (langIfStatement.getElseBody() != null) {
+            langIfStatement.getElseBody().accept(this);
+        }
 
     }
+
 
     @Override
     public void visit(LangWhileStatement langWhileStatement) {
+        // Visit condition
+        if (langWhileStatement.getCondition() != null) {
+            langWhileStatement.getCondition().accept(this);
+        }
 
+        // Visit body
+        if (langWhileStatement.getBody() != null) {
+            langWhileStatement.getBody().accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangForStatement langForStatement) {
+        // Handle for loop variable declarations: for var in collection:
+        if (langForStatement.getInitializers() != null) {
+            // Process each loop variable (e.g., 'num' in 'for num in numbers:')
+            for (LangSingleVariableDeclaration initializer : langForStatement.getInitializers()) {
+                // Let the single variable declaration visitor handle it
+                initializer.accept(this);
+            }
+        }
 
+        // Visit the iterable expression (condition field contains the iterable in Python for loops)
+        if (langForStatement.getCondition() != null) {
+            langForStatement.getCondition().accept(this);
+        }
+
+        // Visit update expressions (typically empty in Python for-each loops)
+        if (langForStatement.getUpdates() != null) {
+            for (LangASTNode update : langForStatement.getUpdates()) {
+                update.accept(this);
+            }
+        }
+
+        // Visit the body
+        if (langForStatement.getBody() != null) {
+            langForStatement.getBody().accept(this);
+        }
+
+        // Visit the else body (Python-specific: for-else construct)
+        if (langForStatement.getElseBody() != null) {
+            langForStatement.getElseBody().accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangExpressionStatement langExpressionStatement) {
@@ -200,7 +310,6 @@ public class LangVisitor implements LangASTVisitor {
                 langAssignment, LocationInfo.CodeElementType.ASSIGNMENT, container);
         assignments.add(assignment);
 
-        // 🔧 CRITICAL: Visit left and right sides to find nested expressions
         if (langAssignment.getLeftSide() != null) {
             langAssignment.getLeftSide().accept(this);
         }
@@ -212,7 +321,17 @@ public class LangVisitor implements LangASTVisitor {
             String varName = ((LangSimpleName) langAssignment.getLeftSide()).getIdentifier();
             VariableDeclaration varDecl = new VariableDeclaration(cu, sourceFolder, filePath,
                     langAssignment, container, varName);
+
+            System.out.println("Added local variable declaration: " + varDecl);
             variableDeclarations.add(varDecl);
+
+        } // TODO
+        else if (langAssignment.getLeftSide() instanceof LangFieldAccess fieldAccess) {
+            // Handle field access like self.add, self.value etc
+            if (fieldAccess.getExpression() != null) {
+                fieldAccess.getExpression().accept(this);
+            }
+
         }
 
     }
@@ -246,8 +365,12 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangListLiteral langListLiteral) {
-
+        // Process list elements: [1, 2, 3, variable]
+        for (LangASTNode element : langListLiteral.getElements()) {
+            element.accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangFieldAccess langFieldAccess) {
@@ -255,8 +378,7 @@ public class LangVisitor implements LangASTVisitor {
 
         // Check if this is a 'self' reference (Python's equivalent of 'this')
         LangASTNode expression = langFieldAccess.getExpression();
-        if (expression instanceof LangSimpleName) {
-            LangSimpleName simpleName = (LangSimpleName) expression;
+        if (expression instanceof LangSimpleName simpleName) {
             if ("self".equals(simpleName.getIdentifier()) || "cls".equals(simpleName.getIdentifier())) {
                 // This is a 'this' expression in Python (self.something)
                 LeafExpression thisExpr = new LeafExpression(cu, sourceFolder, filePath,
@@ -269,6 +391,11 @@ public class LangVisitor implements LangASTVisitor {
         if (langFieldAccess.getExpression() != null) {
             langFieldAccess.getExpression().accept(this);
         }
+        // CRITICAL: Also visit the field name to capture attribute references
+        if (langFieldAccess.getName() != null) {
+            langFieldAccess.getName().accept(this);
+        }
+
 //        if (langFieldAccess.getName() != null) {
 //            langFieldAccess.getName().accept(this);
 //        }
@@ -277,13 +404,28 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangDictionaryLiteral langDictionaryLiteral) {
-
+        // Process dictionary key-value pairs: {"key": value}
+        for (LangDictionaryLiteral.Entry entry : langDictionaryLiteral.getEntries()) {
+            // Visit the key
+            if (entry.getKey() != null) {
+                entry.getKey().accept(this);
+            }
+            // Visit the value
+            if (entry.getValue() != null) {
+                entry.getValue().accept(this);
+            }
+        }
     }
+
 
     @Override
     public void visit(LangTupleLiteral langTupleLiteral) {
-
+        // Process tuple elements: (1, 2, variable)
+        for (LangASTNode element : langTupleLiteral.getElements()) {
+            element.accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangImportStatement langImportStatement) {
@@ -354,8 +496,14 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangGlobalStatement langGlobalStatement) {
-
+        // Handle global variable declarations
+        for (LangSimpleName varName : langGlobalStatement.getVariableNames()) {
+            LeafExpression globalVar = new LeafExpression(cu, sourceFolder, filePath,
+                    varName, LocationInfo.CodeElementType.SIMPLE_NAME, container);
+            variables.add(globalVar);
+        }
     }
+
 
     @Override
     public void visit(LangPassStatement langPassStatement) {
@@ -364,8 +512,12 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangYieldStatement langYieldStatement) {
-
+        // Visit yielded expression
+        if (langYieldStatement.getExpression() != null) {
+            langYieldStatement.getExpression().accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangAnnotation langAnnotation) {
@@ -409,7 +561,21 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangLambdaExpression langLambdaExpression) {
-
+        //TODO
+//        // Create lambda expression object
+//        LambdaExpressionObject lambdaObj = new LambdaExpressionObject(
+//                cu, sourceFolder, filePath, langLambdaExpression, container);
+//        lambdas.add(lambdaObj);
+//
+//        // Visit lambda parameters
+//        for (LangASTNode param : langLambdaExpression.getParameters()) {
+//            param.accept(this);
+//        }
+//
+//        // Visit lambda body
+//        if (langLambdaExpression.getBody() != null) {
+//            langLambdaExpression.getBody().accept(this);
+//        }
     }
 
     @Override

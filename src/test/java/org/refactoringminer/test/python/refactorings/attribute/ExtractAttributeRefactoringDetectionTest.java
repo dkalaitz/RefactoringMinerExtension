@@ -12,10 +12,43 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.refactoringminer.test.python.refactorings.DiffLogger.logExtractAttributeSpecific;
+import static org.refactoringminer.test.python.refactorings.DiffLogger.logFullDiffAnalysis;
 
 @Isolated
 public class ExtractAttributeRefactoringDetectionTest {
+
+    @Test
+    void detectsExtractAttribute_SimpleConstant() throws Exception {
+        String beforePythonCode = """
+        class Calculator:
+            def add_tax(self, amount):
+                tax_rate = 0.10
+                return amount * tax_rate
+            
+            def calculate_tax(self, price):
+                tax_rate = 0.10
+                return price * tax_rate
+        """;
+
+        String afterPythonCode = """
+        class Calculator:
+            def __init__(self):
+                self.tax_rate = 0.10
+            
+            def add_tax(self, amount):
+                return amount * self.tax_rate
+            
+            def calculate_tax(self, price):
+                return price * self.tax_rate
+        """;
+
+        Map<String, String> beforeFiles = Map.of("calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("calculator.py", afterPythonCode);
+
+        assertExtractAttributeRefactoringDetected(beforeFiles, afterFiles,
+                "tax_rate", "0.10", "Calculator");
+    }
 
     @Test
     void detectsExtractAttribute_ConstantToClassAttribute() throws Exception {
@@ -104,7 +137,8 @@ public class ExtractAttributeRefactoringDetectionTest {
 
         UMLModelDiff diff = beforeUML.diff(afterUML);
         List<Refactoring> refactorings = diff.getRefactorings();
-
+        logFullDiffAnalysis(beforeUML, afterUML, diff, "Extract Attribute Refactoring Analysis");
+        logExtractAttributeSpecific(diff, attributeName, attributeValue, className);
         System.out.println("\n=== EXTRACT ATTRIBUTE TEST: " + attributeName + " ===");
         System.out.println("Attribute: " + attributeName + " = " + attributeValue);
         System.out.println("Class: " + className);
@@ -115,28 +149,7 @@ public class ExtractAttributeRefactoringDetectionTest {
                 .filter(r -> RefactoringType.EXTRACT_ATTRIBUTE.equals(r.getRefactoringType()))
                 .anyMatch(refactoring -> refactoring.getRefactoringType() == RefactoringType.EXTRACT_ATTRIBUTE);
 
-        // Fallback: Look for any refactoring mentioning attribute extraction
-        if (!extractAttributeFound) {
-            boolean mentionsAttributeExtraction = refactorings.stream()
-                    .anyMatch(r -> r.toString().contains(attributeName) &&
-                            (r.toString().toLowerCase().contains("extract") ||
-                                    r.toString().toLowerCase().contains("add") &&
-                                            r.toString().toLowerCase().contains("attribute")));
-
-            if (mentionsAttributeExtraction) {
-                System.out.println("Found refactoring mentioning attribute extraction");
-                extractAttributeFound = true; // Accept for debugging
-            }
-        }
-
-        if (!extractAttributeFound) {
-            System.out.println("Available refactorings:");
-            refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
-
-            fail("Expected extract attribute refactoring for '" + attributeName +
-                    "' in class '" + className + "' was not detected");
-        }
-
         assertTrue(extractAttributeFound, "Expected Extract Attribute refactoring to be detected");
     }
+
 }

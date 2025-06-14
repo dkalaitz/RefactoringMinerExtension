@@ -157,7 +157,6 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
 
     
     public LangASTNode visitExpr(Python3Parser.ExprContext ctx) {
-        // 1. If the rule matched something like an atom_expr
         if (ctx.atom_expr() != null) {
             return mainBuilder.visitAtom_expr(ctx.atom_expr());
         }

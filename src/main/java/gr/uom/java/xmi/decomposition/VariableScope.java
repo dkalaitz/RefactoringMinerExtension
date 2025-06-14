@@ -19,7 +19,6 @@ public class VariableScope {
 	private Set<AbstractCodeFragment> statementsInScopeUsingVariable = new LinkedHashSet<>();
 	private String parentSignature = "";
 
-	// TODO
 	public VariableScope(
 			LangCompilationUnit cu,
 			String filePath
