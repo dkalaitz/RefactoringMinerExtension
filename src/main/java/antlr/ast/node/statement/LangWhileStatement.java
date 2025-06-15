@@ -17,6 +17,10 @@ public class LangWhileStatement extends LangStatement {
         this.condition = condition;
         this.body = body;
         this.elseBody = elseBody;
+
+        if (condition != null) addChild(condition);
+        if (body != null) addChild(body);
+        if (elseBody != null) addChild(elseBody);
     }
 
     public LangWhileStatement(int startLine, int startChar, int endLine, int endChar, int startColumn, int endColumn, LangASTNode condition, LangASTNode body, LangASTNode elseBody) {
@@ -24,6 +28,10 @@ public class LangWhileStatement extends LangStatement {
         this.condition = condition;
         this.body = body;
         this.elseBody = elseBody;
+
+        if (condition != null) addChild(condition);
+        if (body != null) addChild(body);
+        if (elseBody != null) addChild(elseBody);
     }
 
     @Override

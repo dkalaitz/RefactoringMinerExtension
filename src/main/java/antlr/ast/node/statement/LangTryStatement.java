@@ -33,6 +33,15 @@ public class LangTryStatement extends LangStatement {
         this.body = tryBlock;
         this.catchClauses = catchClauses;
         this.finallyBlock = finallyBlock;
+
+        if (tryBlock != null) addChild(tryBlock);
+        if (catchClauses != null) {
+            for (LangCatchClause catchClause : catchClauses) {
+                if (catchClause != null) addChild(catchClause);
+            }
+        }
+        if (elseBlock != null) addChild(elseBlock);
+        if (finallyBlock != null) addChild(finallyBlock);
     }
 
     public void setBody(LangASTNode body) {

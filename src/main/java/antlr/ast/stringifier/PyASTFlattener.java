@@ -374,9 +374,12 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangCatchClause langCatchClause) {
         builder.append("except ");
-        langCatchClause.getExceptionVariable().accept(this);
+        if (langCatchClause.getExceptionVariable() != null) {
+            langCatchClause.getExceptionVariable().accept(this);
+        }
         // TODO
         if (!langCatchClause.getExceptionTypes().isEmpty()) {
+            langCatchClause.getExceptionTypes().forEach(type -> type.accept(this));
         }
         builder.append(":");
         langCatchClause.getBody().accept(this);

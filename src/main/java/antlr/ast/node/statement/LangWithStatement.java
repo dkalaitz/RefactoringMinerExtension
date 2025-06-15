@@ -25,6 +25,13 @@ public class LangWithStatement extends LangStatement {
         super(NodeTypeEnum.WITH_STATEMENT, positionInfo);
         this.contextItems = contextItems;
         this.body = body;
+
+        if (contextItems != null) {
+            for (LangASTNode item : contextItems) {
+                if (item != null) addChild(item);
+            }
+        }
+        if (body != null) addChild(body);
     }
 
     @Override

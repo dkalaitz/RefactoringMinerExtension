@@ -40,10 +40,10 @@ public class CompositeStatementObject extends AbstractStatement {
 		this.statementList = new ArrayList<AbstractStatement>();
 		this.expressionList = new ArrayList<AbstractExpression>();
 		this.variableDeclarations = new ArrayList<VariableDeclaration>();
+		// TODO
 		this.tryContainer = Optional.empty();
 
 
-		// Extract signature from the statement, similar to Java version
 		String whole = LangVisitor.stringify(statement);
 		if (whole.contains(":")) {
 			// For Python statements like "if condition:", "for item in list:", etc.
