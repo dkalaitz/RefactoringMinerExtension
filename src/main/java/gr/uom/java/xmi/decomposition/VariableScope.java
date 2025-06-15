@@ -3,6 +3,7 @@ package gr.uom.java.xmi.decomposition;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import antlr.ast.node.unit.LangCompilationUnit;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import gr.uom.java.xmi.LocationInfo;
@@ -17,7 +18,28 @@ public class VariableScope {
 	private int endColumn;
 	private Set<AbstractCodeFragment> statementsInScopeUsingVariable = new LinkedHashSet<>();
 	private String parentSignature = "";
-	
+
+	public VariableScope(
+			LangCompilationUnit cu,
+			String filePath
+	) {
+		this.filePath = filePath;
+		this.startOffset = cu.getStartChar();
+		this.endOffset = cu.getEndChar();
+		this.startLine = cu.getStartLine();
+		this.endLine = cu.getEndLine();
+		this.startColumn = cu.getStartColumn();
+		this.endColumn = cu.getEndColumn();
+		//lines are 1-based
+		//columns are 0-based
+		if(this.startColumn > 0) {
+			this.startColumn += 1;
+		}
+		if(this.endColumn > 0) {
+			this.endColumn += 1;
+		}
+	}
+
 	public VariableScope(CompilationUnit cu, String filePath, int startOffset, int endOffset) {
 		//ASTNode parent = node.getParent();
 		this.filePath = filePath;

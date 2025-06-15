@@ -7,6 +7,10 @@ import java.util.regex.Pattern;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.stringifier.LangASTFlattener;
+import antlr.ast.stringifier.PyASTFlattener;
+import antlr.ast.visitor.LangASTVisitor;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
@@ -915,4 +919,5 @@ public class Visitor extends ASTVisitor {
         node.accept(printer);
         return printer.getResult();
 	}
+
 }

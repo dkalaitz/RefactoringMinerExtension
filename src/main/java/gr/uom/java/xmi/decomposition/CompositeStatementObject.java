@@ -11,6 +11,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.unit.LangCompilationUnit;
+import antlr.ast.visitor.LangVisitor;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
@@ -28,6 +31,40 @@ public class CompositeStatementObject extends AbstractStatement {
 	private LocationInfo locationInfo;
 	//for composites which are roots, owner is the VariableDeclarationContainer
 	private Optional<VariableDeclarationContainer> owner = Optional.empty();
+
+	public CompositeStatementObject(LangCompilationUnit cu, String sourceFolder, String filePath,
+									LangASTNode statement, int depth, CodeElementType codeElementType) {
+		super();
+		this.setDepth(depth);
+		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, statement, codeElementType);
+		this.statementList = new ArrayList<AbstractStatement>();
+		this.expressionList = new ArrayList<AbstractExpression>();
+		this.variableDeclarations = new ArrayList<VariableDeclaration>();
+		this.tryContainer = Optional.empty();
+
+
+		// Extract signature from the statement, similar to Java version
+		String whole = LangVisitor.stringify(statement);
+		if (whole.contains(":")) {
+			// For Python statements like "if condition:", "for item in list:", etc.
+			this.actualSignature = whole.substring(0, whole.indexOf(":") + 1);
+		} else {
+			// For statements without colons or single-line statements
+			if (whole.contains("\n")) {
+				String[] lineArray = whole.split("\\r?\\n");
+				int chars = 0;
+				for (String line : lineArray) {
+					chars += line.length();
+					if (line.endsWith(":") || line.trim().isEmpty()) {
+						break;
+					}
+				}
+				this.actualSignature = whole.substring(0, Math.min(chars, whole.length()));
+			} else {
+				this.actualSignature = whole;
+			}
+		}
+	}
 
 	public CompositeStatementObject(CompilationUnit cu, String sourceFolder, String filePath, ASTNode statement, int depth, CodeElementType codeElementType, String javaFileContent) {
 		super();
@@ -262,7 +299,6 @@ public class CompositeStatementObject extends AbstractStatement {
 	@Override
 	public List<VariableDeclaration> getVariableDeclarations() {
 		List<VariableDeclaration> variableDeclarations = new ArrayList<VariableDeclaration>();
-		//special handling for enhanced-for formal parameter
 		variableDeclarations.addAll(this.variableDeclarations);
 		for(AbstractExpression expression : expressionList) {
 			variableDeclarations.addAll(expression.getVariableDeclarations());
