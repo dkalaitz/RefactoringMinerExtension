@@ -155,6 +155,197 @@ public class MoveAndRenameClassRefactoringDetectionTest {
                 "Helper", "StringUtils", "helper.py", "tools/string_utils.py");
     }
 
+    @Test
+    void detectsMoveAndRenameClass_ReaderToIoFileReader() throws Exception {
+        String beforeReaderCode = """
+        class Reader:
+            def __init__(self, filename):
+                self.filename = filename
+            
+            def read_content(self):
+                return f"Reading from {self.filename}"
+            
+            def read_lines(self):
+                return ["line1", "line2", "line3"]
+        """;
+
+        String afterFileReaderCode = """
+        class FileReader:
+            def __init__(self, filename):
+                self.filename = filename
+            
+            def read_content(self):
+                return f"Reading from {self.filename}"
+            
+            def read_lines(self):
+                return ["line1", "line2", "line3"]
+        """;
+
+        Map<String, String> beforeFiles = Map.of("reader.py", beforeReaderCode);
+        Map<String, String> afterFiles = Map.of("io/file_reader.py", afterFileReaderCode);
+
+        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
+                "Reader", "FileReader", "reader.py", "io/file_reader.py");
+    }
+
+    @Test
+    void detectsMoveAndRenameClass_ClientToNetworkHttpClient() throws Exception {
+        String beforeClientCode = """
+        class Client:
+            def __init__(self, base_url):
+                self.base_url = base_url
+                self.headers = {}
+            
+            def request(self, method, endpoint):
+                return f"{method} {self.base_url}/{endpoint}"
+            
+            def set_header(self, key, value):
+                self.headers[key] = value
+        """;
+
+        String afterHttpClientCode = """
+        class HttpClient:
+            def __init__(self, base_url):
+                self.base_url = base_url
+                self.headers = {}
+            
+            def request(self, method, endpoint):
+                return f"{method} {self.base_url}/{endpoint}"
+            
+            def set_header(self, key, value):
+                self.headers[key] = value
+        """;
+
+        Map<String, String> beforeFiles = Map.of("client.py", beforeClientCode);
+        Map<String, String> afterFiles = Map.of("network/http_client.py", afterHttpClientCode);
+
+        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
+                "Client", "HttpClient", "client.py", "network/http_client.py");
+    }
+
+    @Test
+    void detectsMoveAndRenameClass_HandlerToEventActionHandler() throws Exception {
+        String beforeHandlerCode = """
+        class Handler:
+            def __init__(self, name):
+                self.name = name
+                self.actions = []
+            
+            def execute(self, action):
+                self.actions.append(action)
+                return f"Executed {action}"
+            
+            def get_history(self):
+                return self.actions
+        """;
+
+        String afterActionHandlerCode = """
+        class ActionHandler:
+            def __init__(self, name):
+                self.name = name
+                self.actions = []
+            
+            def execute(self, action):
+                self.actions.append(action)
+                return f"Executed {action}"
+            
+            def get_history(self):
+                return self.actions
+        """;
+
+        Map<String, String> beforeFiles = Map.of("handler.py", beforeHandlerCode);
+        Map<String, String> afterFiles = Map.of("event/action_handler.py", afterActionHandlerCode);
+
+        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
+                "Handler", "ActionHandler", "handler.py", "event/action_handler.py");
+    }
+
+    @Test
+    void detectsMoveAndRenameClass_BuilderToFactoryObjectBuilder() throws Exception {
+        String beforeBuilderCode = """
+        class Builder:
+            def __init__(self):
+                self.components = {}
+            
+            def add_component(self, name, value):
+                self.components[name] = value
+                return self
+            
+            def build(self):
+                return self.components.copy()
+            
+            def reset(self):
+                self.components.clear()
+        """;
+
+        String afterObjectBuilderCode = """
+        class ObjectBuilder:
+            def __init__(self):
+                self.components = {}
+            
+            def add_component(self, name, value):
+                self.components[name] = value
+                return self
+            
+            def build(self):
+                return self.components.copy()
+            
+            def reset(self):
+                self.components.clear()
+        """;
+
+        Map<String, String> beforeFiles = Map.of("builder.py", beforeBuilderCode);
+        Map<String, String> afterFiles = Map.of("factory/object_builder.py", afterObjectBuilderCode);
+
+        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
+                "Builder", "ObjectBuilder", "builder.py", "factory/object_builder.py");
+    }
+
+    @Test
+    void detectsMoveAndRenameClass_ValidatorToChecksDataValidator() throws Exception {
+        String beforeValidatorCode = """
+        class Validator:
+            def __init__(self, rules):
+                self.rules = rules
+            
+            def validate(self, data):
+                for rule in self.rules:
+                    if not self.check_rule(data, rule):
+                        return False
+                return True
+            
+            def check_rule(self, data, rule):
+                return rule in str(data)
+            
+            def add_rule(self, rule):
+                self.rules.append(rule)
+        """;
+
+        String afterDataValidatorCode = """
+        class DataValidator:
+            def __init__(self, rules):
+                self.rules = rules
+            
+            def validate(self, data):
+                for rule in self.rules:
+                    if not self.check_rule(data, rule):
+                        return False
+                return True
+            
+            def check_rule(self, data, rule):
+                return rule in str(data)
+            
+            def add_rule(self, rule):
+                self.rules.append(rule)
+        """;
+
+        Map<String, String> beforeFiles = Map.of("validator.py", beforeValidatorCode);
+        Map<String, String> afterFiles = Map.of("checks/data_validator.py", afterDataValidatorCode);
+
+        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
+                "Validator", "DataValidator", "validator.py", "checks/data_validator.py");
+    }
+
     public static void assertMoveAndRenameClassRefactoringDetected(
             Map<String, String> beforeFiles,
             Map<String, String> afterFiles,

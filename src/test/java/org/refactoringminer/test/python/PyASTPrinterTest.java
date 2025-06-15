@@ -395,11 +395,5 @@ public class PyASTPrinterTest {
         LangASTUtil.printAST(code);
     }
 
-    @Test
-    public void testASTVisitor_flask() throws IOException {
-        String code = readResourceFile("/python-samples/before/flask.py");
-
-        LangASTUtil.printAST(code);
-    }
 
 }

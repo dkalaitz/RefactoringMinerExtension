@@ -140,6 +140,122 @@ public class ExtractVariableRefactoringDetectionTest {
     }
 
 
+    @Test
+    void detectsExtractVariable_ListComprehension() throws Exception {
+        String beforePythonCode = """
+        class DataProcessor:
+            def process_scores(self, students):
+                return [student['score'] * 1.1 for student in students if student['active']]
+        """;
+
+        String afterPythonCode = """
+        class DataProcessor:
+            def process_scores(self, students):
+                active_students = [student for student in students if student['active']]
+                return [student['score'] * 1.1 for student in active_students]
+        """;
+
+        Map<String, String> beforeFiles = Map.of("data_processor.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("data_processor.py", afterPythonCode);
+
+        assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
+                "active_students", "[student for student in students if student['active']]",
+                "process_scores", "DataProcessor");
+    }
+
+    @Test
+    void detectsExtractVariable_DictionaryAccess() throws Exception {
+        String beforePythonCode = """
+        class ConfigReader:
+            def get_database_url(self, config):
+                return config['database']['host'] + ':' + str(config['database']['port'])
+        """;
+
+        String afterPythonCode = """
+        class ConfigReader:
+            def get_database_url(self, config):
+                db_config = config['database']
+                return db_config['host'] + ':' + str(db_config['port'])
+        """;
+
+        Map<String, String> beforeFiles = Map.of("config_reader.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("config_reader.py", afterPythonCode);
+
+        assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
+                "db_config", "config['database']", "get_database_url", "ConfigReader");
+    }
+
+    @Test
+    void detectsExtractVariable_ComplexArithmetic() throws Exception {
+        String beforePythonCode = """
+        class GeometryCalculator:
+            def calculate_area(self, radius):
+                return 3.14159 * radius * radius + 2 * 3.14159 * radius
+        """;
+
+        String afterPythonCode = """
+        class GeometryCalculator:
+            def calculate_area(self, radius):
+                circle_area = 3.14159 * radius * radius
+                return circle_area + 2 * 3.14159 * radius
+        """;
+
+        Map<String, String> beforeFiles = Map.of("geometry_calculator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("geometry_calculator.py", afterPythonCode);
+
+        assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
+                "circle_area", "3.14159 * radius * radius", "calculate_area", "GeometryCalculator");
+    }
+
+    @Test
+    void detectsExtractVariable_NestedMethodCall() throws Exception {
+        String beforePythonCode = """
+        class TextAnalyzer:
+            def analyze_text(self, text):
+                return len(text.strip().lower().split())
+        """;
+
+        String afterPythonCode = """
+        class TextAnalyzer:
+            def analyze_text(self, text):
+                cleaned_text = text.strip().lower()
+                return len(cleaned_text.split())
+        """;
+
+        Map<String, String> beforeFiles = Map.of("text_analyzer.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("text_analyzer.py", afterPythonCode);
+
+        assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
+                "cleaned_text", "text.strip().lower()", "analyze_text", "TextAnalyzer");
+    }
+
+    @Test
+    void detectsExtractVariable_ConditionalWithComparison() throws Exception {
+        String beforePythonCode = """
+        class AgeValidator:
+            def is_eligible(self, person):
+                if person['age'] >= 18 and person['country'] == 'US':
+                    return True
+                return False
+        """;
+
+        String afterPythonCode = """
+        class AgeValidator:
+            def is_eligible(self, person):
+                is_adult = person['age'] >= 18
+                if is_adult and person['country'] == 'US':
+                    return True
+                return False
+        """;
+
+        Map<String, String> beforeFiles = Map.of("age_validator.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("age_validator.py", afterPythonCode);
+
+        assertExtractVariableRefactoringDetected(beforeFiles, afterFiles,
+                "is_adult", "person['age'] >= 18", "is_eligible", "AgeValidator");
+    }
+
+
     public static void assertExtractVariableRefactoringDetected(
             Map<String, String> beforeFiles,
             Map<String, String> afterFiles,

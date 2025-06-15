@@ -152,6 +152,225 @@ public class RenameParameterRefactoringDetectionTest {
                 "first", "num1", "calculate", "Calculator");
     }
 
+    @Test
+    void detectsRenameParameter_CountToSize() throws Exception {
+        String beforePythonCode = """
+        class ArrayProcessor:
+            def resize_array(self, arr, count):
+                if count > len(arr):
+                    arr.extend([0] * (count - len(arr)))
+                elif count < len(arr):
+                    arr = arr[:count]
+                return arr
+            
+            def validate_size(self, arr, count):
+                return count > 0 and count <= 1000
+        """;
+
+        String afterPythonCode = """
+        class ArrayProcessor:
+            def resize_array(self, arr, size):
+                if size > len(arr):
+                    arr.extend([0] * (size - len(arr)))
+                elif size < len(arr):
+                    arr = arr[:size]
+                return arr
+            
+            def validate_size(self, arr, size):
+                return size > 0 and size <= 1000
+        """;
+
+        Map<String, String> beforeFiles = Map.of("array_processor.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("array_processor.py", afterPythonCode);
+
+        assertRenameParameterRefactoringDetected(beforeFiles, afterFiles,
+                "count", "size", "resize_array", "ArrayProcessor");
+    }
+
+    @Test
+    void detectsRenameParameter_FileToPath() throws Exception {
+        String beforePythonCode = """
+        def read_config(file):
+            settings = {}
+            try:
+                with open(file, 'r') as f:
+                    for line in f:
+                        if '=' in line:
+                            key, value = line.strip().split('=', 1)
+                            settings[key] = value
+            except FileNotFoundError:
+                print(f"Config file not found: {file}")
+            return settings
+        
+        def backup_file(file):
+            import shutil
+            shutil.copy(file, f"{file}.backup")
+        """;
+
+        String afterPythonCode = """
+        def read_config(path):
+            settings = {}
+            try:
+                with open(path, 'r') as f:
+                    for line in f:
+                        if '=' in line:
+                            key, value = line.strip().split('=', 1)
+                            settings[key] = value
+            except FileNotFoundError:
+                print(f"Config file not found: {path}")
+            return settings
+        
+        def backup_file(path):
+            import shutil
+            shutil.copy(path, f"{path}.backup")
+        """;
+
+        Map<String, String> beforeFiles = Map.of("config_utils.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("config_utils.py", afterPythonCode);
+
+        assertRenameParameterRefactoringDetected(beforeFiles, afterFiles,
+                "file", "path", "read_config", null);
+    }
+
+    @Test
+    void detectsRenameParameter_NumToAmount() throws Exception {
+        String beforePythonCode = """
+        class BankAccount:
+            def __init__(self, balance):
+                self.balance = balance
+            
+            def deposit(self, num):
+                if num > 0:
+                    self.balance += num
+                    return f"Deposited {num}. New balance: {self.balance}"
+                return "Invalid deposit amount"
+            
+            def withdraw(self, num):
+                if 0 < num <= self.balance:
+                    self.balance -= num
+                    return f"Withdrew {num}. New balance: {self.balance}"
+                return "Insufficient funds or invalid amount"
+        """;
+
+        String afterPythonCode = """
+        class BankAccount:
+            def __init__(self, balance):
+                self.balance = balance
+            
+            def deposit(self, amount):
+                if amount > 0:
+                    self.balance += amount
+                    return f"Deposited {amount}. New balance: {self.balance}"
+                return "Invalid deposit amount"
+            
+            def withdraw(self, amount):
+                if 0 < amount <= self.balance:
+                    self.balance -= amount
+                    return f"Withdrew {amount}. New balance: {self.balance}"
+                return "Insufficient funds or invalid amount"
+        """;
+
+        Map<String, String> beforeFiles = Map.of("bank_account.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("bank_account.py", afterPythonCode);
+
+        assertRenameParameterRefactoringDetected(beforeFiles, afterFiles,
+                "num", "amount", "deposit", "BankAccount");
+    }
+
+    @Test
+    void detectsRenameParameter_TextToContent() throws Exception {
+        String beforePythonCode = """
+        def process_document(text, format_type):
+            lines = text.split('\\n')
+            processed = []
+            for i, line in enumerate(lines):
+                if format_type == "numbered":
+                    processed.append(f"{i+1}. {line}")
+                elif format_type == "bulleted":
+                    processed.append(f"• {line}")
+                else:
+                    processed.append(line)
+            return '\\n'.join(processed)
+        
+        def count_words(text):
+            return len(text.split())
+        """;
+
+        String afterPythonCode = """
+        def process_document(content, format_type):
+            lines = content.split('\\n')
+            processed = []
+            for i, line in enumerate(lines):
+                if format_type == "numbered":
+                    processed.append(f"{i+1}. {line}")
+                elif format_type == "bulleted":
+                    processed.append(f"• {line}")
+                else:
+                    processed.append(line)
+            return '\\n'.join(processed)
+        
+        def count_words(content):
+            return len(content.split())
+        """;
+
+        Map<String, String> beforeFiles = Map.of("document_processor.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("document_processor.py", afterPythonCode);
+
+        assertRenameParameterRefactoringDetected(beforeFiles, afterFiles,
+                "text", "content", "process_document", null);
+    }
+
+    @Test
+    void detectsRenameParameter_ListToItems() throws Exception {
+        String beforePythonCode = """
+        class DataFilter:
+            def filter_positive(self, list):
+                result = []
+                index = 0
+                while index < len(list):
+                    if isinstance(list[index], (int, float)) and list[index] > 0:
+                        result.append(list[index])
+                    index += 1
+                return result
+            
+            def find_maximum(self, list):
+                if not list:
+                    return None
+                max_val = list[0]
+                for item in list:
+                    if item > max_val:
+                        max_val = item
+                return max_val
+        """;
+
+        String afterPythonCode = """
+        class DataFilter:
+            def filter_positive(self, items):
+                result = []
+                index = 0
+                while index < len(items):
+                    if isinstance(items[index], (int, float)) and items[index] > 0:
+                        result.append(items[index])
+                    index += 1
+                return result
+            
+            def find_maximum(self, items):
+                if not items:
+                    return None
+                max_val = items[0]
+                for item in items:
+                    if item > max_val:
+                        max_val = item
+                return max_val
+        """;
+
+        Map<String, String> beforeFiles = Map.of("data_filter.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("data_filter.py", afterPythonCode);
+
+        assertRenameParameterRefactoringDetected(beforeFiles, afterFiles,
+                "list", "items", "filter_positive", "DataFilter");
+    }
+
     public static void assertRenameParameterRefactoringDetected(
             Map<String, String> beforeFiles,
             Map<String, String> afterFiles,

@@ -99,6 +99,220 @@ public class RenameVariableRefactoringDetectionTest {
                 "count", "index", "iterate", "Iterator");
     }
 
+
+    @Test
+    void detectsRenameVariable_DataToRecords() throws Exception {
+        String beforePythonCode = """
+        class DataAnalyzer:
+            def analyze(self, input_list):
+                data = []
+                for item in input_list:
+                    if item.get('valid', True):
+                        data.append(item)
+                return len(data)
+        """;
+
+        String afterPythonCode = """
+        class DataAnalyzer:
+            def analyze(self, input_list):
+                records = []
+                for item in input_list:
+                    if item.get('valid', True):
+                        records.append(item)
+                return len(records)
+        """;
+
+        Map<String, String> beforeFiles = Map.of("analyzer.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("analyzer.py", afterPythonCode);
+
+        assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
+                "data", "records", "analyze", "DataAnalyzer");
+    }
+
+    @Test
+    void detectsRenameVariable_SumToTotal() throws Exception {
+        String beforePythonCode = """
+        def calculate_expenses(amounts):
+            sum = 0
+            for amount in amounts:
+                if amount > 0:
+                    sum += amount
+            return sum
+        """;
+
+        String afterPythonCode = """
+        def calculate_expenses(amounts):
+            total = 0
+            for amount in amounts:
+                if amount > 0:
+                    total += amount
+            return total
+        """;
+
+        Map<String, String> beforeFiles = Map.of("expenses.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("expenses.py", afterPythonCode);
+
+        assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
+                "sum", "total", "calculate_expenses", null);
+    }
+
+    @Test
+    void detectsRenameVariable_IToIndex() throws Exception {
+        String beforePythonCode = """
+        class ListProcessor:
+            def process_items(self, items):
+                results = []
+                i = 0
+                while i < len(items):
+                    if items[i] is not None:
+                        results.append(f"Item {i}: {items[i]}")
+                    i += 1
+                return results
+        """;
+
+        String afterPythonCode = """
+        class ListProcessor:
+            def process_items(self, items):
+                results = []
+                index = 0
+                while index < len(items):
+                    if items[index] is not None:
+                        results.append(f"Item {index}: {items[index]}")
+                    index += 1
+                return results
+        """;
+
+        Map<String, String> beforeFiles = Map.of("processor.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("processor.py", afterPythonCode);
+
+        assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
+                "i", "index", "process_items", "ListProcessor");
+    }
+
+    @Test
+    void detectsRenameVariable_ConfigToSettings() throws Exception {
+        String beforePythonCode = """
+        def load_configuration(filename):
+            config = {}
+            with open(filename, 'r') as file:
+                for line in file:
+                    if '=' in line:
+                        key, value = line.strip().split('=', 1)
+                        config[key] = value
+            return config
+        """;
+
+        String afterPythonCode = """
+        def load_configuration(filename):
+            settings = {}
+            with open(filename, 'r') as file:
+                for line in file:
+                    if '=' in line:
+                        key, value = line.strip().split('=', 1)
+                        settings[key] = value
+            return settings
+        """;
+
+        Map<String, String> beforeFiles = Map.of("config_loader.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("config_loader.py", afterPythonCode);
+
+        assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
+                "config", "settings", "load_configuration", null);
+    }
+
+    @Test
+    void detectsRenameVariable_ValueToScore() throws Exception {
+        String beforePythonCode = """
+        class GameScorer:
+            def calculate_final_score(self, points, multiplier):
+                value = points * multiplier
+                if value > 1000:
+                    value = value + 100  # bonus
+                elif value > 500:
+                    value = value + 50   # small bonus
+                return value
+        """;
+
+        String afterPythonCode = """
+        class GameScorer:
+            def calculate_final_score(self, points, multiplier):
+                score = points * multiplier
+                if score > 1000:
+                    score = score + 100  # bonus
+                elif score > 500:
+                    score = score + 50   # small bonus
+                return score
+        """;
+
+        Map<String, String> beforeFiles = Map.of("scorer.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("scorer.py", afterPythonCode);
+
+        assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
+                "value", "score", "calculate_final_score", "GameScorer");
+    }
+
+    @Test
+    void detectsRenameVariable_TextToMessage() throws Exception {
+        String beforePythonCode = """
+        def format_notification(title, content):
+            text = f"{title}: {content}"
+            if len(text) > 100:
+                text = text[:97] + "..."
+            text = text.strip()
+            return text.upper()
+        """;
+
+        String afterPythonCode = """
+        def format_notification(title, content):
+            message = f"{title}: {content}"
+            if len(message) > 100:
+                message = message[:97] + "..."
+            message = message.strip()
+            return message.upper()
+        """;
+
+        Map<String, String> beforeFiles = Map.of("notification.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("notification.py", afterPythonCode);
+
+        assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
+                "text", "message", "format_notification", null);
+    }
+
+    @Test
+    void detectsRenameVariable_NumToCount() throws Exception {
+        String beforePythonCode = """
+        class InventoryManager:
+            def count_valid_items(self, inventory):
+                num = 0
+                for item in inventory:
+                    try:
+                        if item['status'] == 'active' and item['quantity'] > 0:
+                            num += 1
+                    except KeyError:
+                        continue
+                return num
+        """;
+
+        String afterPythonCode = """
+        class InventoryManager:
+            def count_valid_items(self, inventory):
+                count = 0
+                for item in inventory:
+                    try:
+                        if item['status'] == 'active' and item['quantity'] > 0:
+                            count += 1
+                    except KeyError:
+                        continue
+                return count
+        """;
+
+        Map<String, String> beforeFiles = Map.of("inventory.py", beforePythonCode);
+        Map<String, String> afterFiles = Map.of("inventory.py", afterPythonCode);
+
+        assertRenameVariableRefactoringDetected(beforeFiles, afterFiles,
+                "num", "count", "count_valid_items", "InventoryManager");
+    }
+
     public static void assertRenameVariableRefactoringDetected(
             Map<String, String> beforeFiles,
             Map<String, String> afterFiles,
