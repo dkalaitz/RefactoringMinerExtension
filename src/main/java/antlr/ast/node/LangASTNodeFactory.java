@@ -1,13 +1,13 @@
 package antlr.ast.node;
 
 import antlr.ast.builder.python.PyASTBuilderUtil;
-import antlr.ast.node.metadata.LangAnnotation;
-import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.*;
 import antlr.ast.node.literal.*;
+import antlr.ast.node.metadata.LangAnnotation;
+import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.pattern.LangLiteralPattern;
 import antlr.ast.node.pattern.LangVariablePattern;
 import antlr.ast.node.statement.*;

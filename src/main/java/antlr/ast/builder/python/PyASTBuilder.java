@@ -1,11 +1,13 @@
 package antlr.ast.builder.python;
 
 import antlr.ast.builder.LangASTBuilder;
-import antlr.ast.builder.python.component.*;
+import antlr.ast.builder.python.component.PyCompilationUnitASTBuilder;
+import antlr.ast.builder.python.component.PyDeclarationASTBuilder;
+import antlr.ast.builder.python.component.PyExpressionASTBuilder;
+import antlr.ast.builder.python.component.PyStatementASTBuilder;
 import antlr.ast.node.LangASTNode;
 import antlr.base.lang.python.Python3Parser;
 import antlr.base.lang.python.Python3ParserBaseVisitor;
-import org.antlr.v4.runtime.TokenStream;
 
 /**
  * Βuilder class to traverse the ANTLR parse tree

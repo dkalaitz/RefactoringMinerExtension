@@ -3,10 +3,9 @@ package antlr.ast.node.unit;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
-import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
-import antlr.ast.node.statement.LangBlock;
+import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.statement.LangImportStatement;
 import antlr.ast.visitor.LangASTVisitor;
 

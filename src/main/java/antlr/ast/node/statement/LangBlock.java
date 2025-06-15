@@ -6,7 +6,6 @@ import antlr.ast.node.PositionInfo;
 import antlr.ast.visitor.LangASTVisitor;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class LangBlock extends LangStatement {

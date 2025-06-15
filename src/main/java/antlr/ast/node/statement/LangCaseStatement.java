@@ -3,9 +3,6 @@ package antlr.ast.node.statement;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
-import antlr.ast.node.pattern.LangPattern;
-
-import java.util.List;
 
 /**
  * Represents a case within a switch/match statement in the AST.

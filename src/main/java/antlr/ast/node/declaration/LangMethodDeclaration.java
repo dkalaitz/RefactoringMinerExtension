@@ -1,6 +1,5 @@
 package antlr.ast.node.declaration;
 
-import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
 import antlr.ast.node.metadata.LangAnnotation;
@@ -10,7 +9,6 @@ import antlr.ast.visitor.LangASTVisitor;
 import gr.uom.java.xmi.Visibility;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 // Class representing a method within a type

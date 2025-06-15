@@ -7,7 +7,10 @@ import antlr.ast.node.PositionUtils;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.node.literal.LangTupleLiteral;
-import antlr.ast.node.statement.*;
+import antlr.ast.node.statement.LangBlock;
+import antlr.ast.node.statement.LangCaseStatement;
+import antlr.ast.node.statement.LangCatchClause;
+import antlr.ast.node.statement.LangWithContextItem;
 import antlr.base.lang.python.Python3Parser;
 
 import java.util.ArrayList;

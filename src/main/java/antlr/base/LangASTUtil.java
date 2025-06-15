@@ -4,7 +4,6 @@ import antlr.ast.builder.python.PyASTBuilder;
 import antlr.ast.node.LangASTNode;
 import antlr.base.lang.python.Python3Lexer;
 import antlr.base.lang.python.Python3Parser;
-import com.github.gumtreediff.tree.TreeContext;
 import org.antlr.v4.runtime.*;
 
 import java.io.IOException;
