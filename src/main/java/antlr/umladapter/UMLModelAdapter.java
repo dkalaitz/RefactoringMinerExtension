@@ -5,19 +5,21 @@ import antlr.ast.node.LangASTNode;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
-
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangFieldAccess;
 import antlr.ast.node.expression.LangSimpleName;
+import antlr.ast.node.metadata.LangAnnotation;
 import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.node.statement.LangBlock;
 import antlr.ast.node.statement.LangExpressionStatement;
 import antlr.ast.node.unit.LangCompilationUnit;
-import antlr.ast.visitor.LangVisitor;
 import antlr.base.LangASTUtil;
 import antlr.umladapter.processor.UMLAdapterVariableProcessor;
 import gr.uom.java.xmi.*;
-import gr.uom.java.xmi.decomposition.*;
+import gr.uom.java.xmi.decomposition.AbstractStatement;
+import gr.uom.java.xmi.decomposition.CompositeStatementObject;
+import gr.uom.java.xmi.decomposition.OperationBody;
+import gr.uom.java.xmi.decomposition.VariableDeclaration;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -25,10 +27,8 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import static antlr.ast.visitor.LangVisitor.stringify;
-import static antlr.base.LangASTUtil.getParseTree;
-import static antlr.umladapter.UMLAdapterUtil.*;
-import static antlr.umladapter.processor.UMLAdapterStatementProcessor.*;
-import static antlr.umladapter.processor.UMLAdapterVariableProcessor.processAttributeAssignment;
+import static antlr.umladapter.UMLAdapterUtil.extractUMLImports;
+import static antlr.umladapter.processor.UMLAdapterStatementProcessor.processStatement;
 import static antlr.umladapter.processor.UMLAdapterVariableProcessor.processVariableDeclarations;
 
 public class UMLModelAdapter {
@@ -103,6 +103,13 @@ public class UMLModelAdapter {
                     for (LangMethodDeclaration method : topLevelMethods) {
                         UMLOperation operation = createUMLOperation(method, moduleClass.getName(),
                                 sourceFolder, filepath);
+                        for (LangAnnotation langAnnotation : method.getAnnotations()) {
+                            operation.addAnnotation(new UMLAnnotation(
+                                    method.getRootCompilationUnit(),
+                                    sourceFolder,
+                                    filepath,
+                                    langAnnotation));
+                        }
                         moduleClass.addOperation(operation);
                     }
                 }
@@ -144,6 +151,14 @@ public class UMLModelAdapter {
                 LocationInfo.CodeElementType.TYPE_DECLARATION);
 
         UMLClass umlClass = new UMLClass(packageName, className, locationInfo, typeDecl.isTopLevel(), imports);
+
+        for (LangAnnotation langAnnotation : typeDecl.getAnnotations()) {
+            umlClass.addAnnotation(new UMLAnnotation(
+                    typeDecl.getRootCompilationUnit(),
+                    sourceFolder,
+                    filepath,
+                    langAnnotation));
+        }
 
         if (!typeDecl.getSuperClassNames().isEmpty()) {
             // Set the first superclass as the main superclass
@@ -195,6 +210,16 @@ public class UMLModelAdapter {
         String operationName = methodDecl.getCleanName();
         UMLOperation umlOperation = new UMLOperation(operationName, locationInfo);
         umlOperation.setClassName(className);
+
+        // Convert to UMLAnnotations
+        for (LangAnnotation langAnnotation : methodDecl.getAnnotations()) {
+            umlOperation.addAnnotation(new UMLAnnotation(
+                    methodDecl.getRootCompilationUnit(),
+                    sourceFolder,
+                    filePath,
+                    langAnnotation));
+        }
+
         List<LangSingleVariableDeclaration> params = methodDecl.getParameters();
         List<String> parameterNames = new ArrayList<>();
 
@@ -227,12 +252,6 @@ public class UMLModelAdapter {
         UMLType returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation());
         UMLParameter returnParam = new UMLParameter("", returnType, "return", false);
         umlOperation.addParameter(returnParam);
-        // Create a dummy attribute for testing
-        List<UMLAttribute> dummyAttributes = Arrays.asList(
-                new UMLAttribute("self", UMLType.extractTypeObject("object"), null)
-        );
-
-       // LOGGER.info("\n\nAttributes: " + attributes);
 
         OperationBody opBody = new OperationBody(
                 methodDecl.getRootCompilationUnit(),
@@ -243,11 +262,10 @@ public class UMLModelAdapter {
                 getAttributes(methodDecl, sourceFolder, filePath, umlOperation)
         );
 
-        // CRITICAL: Process the method body statements to populate the CompositeStatementObject
+        // Process the method body statements to populate the CompositeStatementObject
         processMethodBody(methodDecl.getBody(), opBody.getCompositeStatement(), sourceFolder, filePath, umlOperation);
 
         umlOperation.setBody(opBody);
-
         logUMLOperation(umlOperation, methodDecl);
 
         return umlOperation;
@@ -325,9 +343,8 @@ public class UMLModelAdapter {
                     attribute.setFinal(false);
                     attribute.setStatic(false);
 
-                    LangTypeDeclaration containingClass = findContainingClass(methodDeclaration);
-                    if (containingClass != null) {
-                        attribute.setClassName(containingClass.getName());
+                    if (methodDeclaration.getParent() instanceof LangTypeDeclaration typeDeclaration){
+                        attribute.setClassName(typeDeclaration.getName());
                     } else {
                         attribute.setClassName("UnknownClass");
                     }

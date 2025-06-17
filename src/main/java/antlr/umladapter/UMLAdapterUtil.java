@@ -4,6 +4,7 @@ import antlr.ast.node.LangASTNode;
 import antlr.ast.node.statement.LangImportStatement;
 import antlr.ast.node.unit.LangCompilationUnit;
 import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLImport;
 import gr.uom.java.xmi.Visibility;
 
@@ -12,39 +13,61 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class UMLAdapterUtil {
 
-    // Assumption: sourceFolder is the top-level directory containing Python source files
-    // e.g., for "src/mypkg/my_module.py", sourceFolder is "src"
     public static String extractSourceFolder(String filename) {
         Path path = Paths.get(filename);
-        if (path.getNameCount() > 1) {
-            return path.subpath(0, 1).toString(); // e.g., "src"
-        }
-        return ""; // fallback
-    }
+        Set<String> commonSourceFolders = Set.of("src", "lib", "tests", "");
 
-    // Extracts package (dot-separated) from filename
-    // Example: src/mypkg/subpkg/module.py -> mypkg.subpkg
-    public static String extractPackageName(String filename) {
-        Path path = Paths.get(filename);
-        // Remove extension
-        String fileName = path.getFileName().toString();
-        if (fileName.endsWith(".py")) {
-            // walk up path to remove the file segment
-            Path parent = path.getParent();
-            if (parent == null) return "";
-            // Assume source root is first segment; drop it
-            int packageStartIdx = 1; // skip source folder
-            int count = parent.getNameCount();
-            if (count > packageStartIdx) {
-                Path packagePath = parent.subpath(packageStartIdx, count);
-                // Convert to dot-separated package name
-                return packagePath.toString().replace(File.separatorChar, '.');
+
+        // Check for common source folder patterns
+        for (int i = 0; i < path.getNameCount() - 1; i++) {
+            String segment = path.getName(i).toString();
+            if (commonSourceFolders.contains(segment)) {
+                return path.subpath(0, i + 1).toString();
             }
         }
-        return "";
+
+        // Fallback to project root if no source folder found
+        return path.getNameCount() > 1 ? path.subpath(0, 1).toString() : "";
+    }
+
+    // Add this to UMLAdapterUtil.java
+    public static String extractPackageName(String filename) {
+        String sourceFolder = extractSourceFolder(filename);
+        return extractPackageName(filename, sourceFolder);
+    }
+
+    public static String extractPackageName(String filename, String sourceFolder) {
+        Path path = Paths.get(filename);
+        Path sourcePath = Paths.get(sourceFolder);
+
+        try {
+            Path relativePath = sourcePath.relativize(path);
+            Path parent = relativePath.getParent();
+
+            if (parent == null) return "";
+
+            // Convert path segments to dot notation, validating Python package names
+            List<String> packageParts = new ArrayList<>();
+            for (int i = 0; i < parent.getNameCount(); i++) {
+                String segment = parent.getName(i).toString();
+                if (isValidPythonPackageName(segment)) {
+                    packageParts.add(segment);
+                }
+            }
+
+            return String.join(".", packageParts);
+        } catch (IllegalArgumentException e) {
+            // Path is not relative to source folder
+            return "";
+        }
+    }
+
+    private static boolean isValidPythonPackageName(String name) {
+        return name.matches("[a-zA-Z_][a-zA-Z0-9_]*"); //&& !PYTHON_KEYWORDS.contains(name);
     }
 
     // Returns the path of the file relative to the project root

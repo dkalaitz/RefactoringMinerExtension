@@ -164,8 +164,11 @@ public class LangMethodDeclaration extends LangDeclaration {
         return langAnnotations;
     }
 
-    public void setLangAnnotations(List<LangAnnotation> langAnnotations) {
-        this.langAnnotations = langAnnotations;
+    public void setLangAnnotations(List<LangAnnotation> annotations) {
+        this.langAnnotations = annotations;
+        for (LangAnnotation annotation : annotations) {
+            addChild(annotation);
+        }
     }
 
     public List<LangComment> getComments() {

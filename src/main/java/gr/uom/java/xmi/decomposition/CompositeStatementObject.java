@@ -40,7 +40,6 @@ public class CompositeStatementObject extends AbstractStatement {
 		this.statementList = new ArrayList<AbstractStatement>();
 		this.expressionList = new ArrayList<AbstractExpression>();
 		this.variableDeclarations = new ArrayList<VariableDeclaration>();
-		// TODO
 		this.tryContainer = Optional.empty();
 
 

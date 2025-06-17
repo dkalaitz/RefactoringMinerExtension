@@ -2,6 +2,7 @@ package antlr.ast.node.declaration;
 
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
+import antlr.ast.node.metadata.LangAnnotation;
 import antlr.ast.node.metadata.comment.LangComment;
 import antlr.ast.visitor.LangASTVisitor;
 import gr.uom.java.xmi.Visibility;
@@ -25,7 +26,9 @@ public class LangTypeDeclaration extends LangDeclaration {
     private boolean isRecord = false;
     private boolean isTopLevel = false;
     private String actualSignature;
-    List<LangComment> comments = new ArrayList<>();
+    private List<LangComment> comments = new ArrayList<>();
+    private List<LangAnnotation> langAnnotations = new ArrayList<>();
+
 
     public LangTypeDeclaration() {super(NodeTypeEnum.TYPE_DECLARATION);}
 
@@ -179,6 +182,26 @@ public class LangTypeDeclaration extends LangDeclaration {
 
     public void setSuperClassNames(List<String> superClassNames) {
         this.superClassNames = superClassNames;
+    }
+
+    public List<LangComment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<LangComment> comments) {
+        this.comments = comments;
+    }
+
+
+    public List<LangAnnotation> getLangAnnotations() {
+        return langAnnotations;
+    }
+
+    public void setLangAnnotations(List<LangAnnotation> annotations) {
+        this.langAnnotations = annotations;
+        for (LangAnnotation annotation : annotations) {
+            addChild(annotation);
+        }
     }
 
     public String toString() {

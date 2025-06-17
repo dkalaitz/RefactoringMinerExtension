@@ -42,6 +42,7 @@ public class UMLAnnotation implements Serializable, LocationInfoProvider {
 	}
 
 	public UMLAnnotation(LangCompilationUnit cu, String sourceFolder, String filePath, LangAnnotation annotation) {
+		// TODO
 		this.typeName = annotation.getName().getIdentifier();
 		this.locationInfo = new LocationInfo(cu, sourceFolder, filePath, annotation, CodeElementType.ANNOTATION);
 

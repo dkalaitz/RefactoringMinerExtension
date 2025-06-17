@@ -135,8 +135,7 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         String docstring = null;
         if (!body.getStatements().isEmpty() &&
                 body.getStatements().get(0) instanceof LangExpressionStatement stmt &&
-                stmt.getExpression() instanceof LangStringLiteral) {
-            LangStringLiteral str = (LangStringLiteral) stmt.getExpression();
+                stmt.getExpression() instanceof LangStringLiteral str) {
             docstring = str.getValue();
             body.getStatements().remove(0);
         }
@@ -255,6 +254,8 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
             // Create the annotation
             LangAnnotation annotation = LangASTNodeFactory.createAnnotation(decoratorCtx, decoratorSimpleName, arguments);
             annotations.add(annotation);
+
+            System.out.println("Add annotation: " + annotation);
         }
 
         LangASTNode decoratedNode = null;
@@ -277,6 +278,15 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                     }
 
                     // Add annotation to the node
+                    decoratedNode.addChild(annotation);
+                }
+            }
+        } else if (ctx.classdef() != null) {
+            decoratedNode = mainBuilder.visitClassdef(ctx.classdef());
+            if (decoratedNode instanceof LangTypeDeclaration classDecl) {
+                classDecl.setLangAnnotations(annotations);
+
+                for (LangAnnotation annotation : annotations) {
                     decoratedNode.addChild(annotation);
                 }
             }

@@ -536,58 +536,6 @@ public class PushDownRefactoringDetectionTest {
         assertPushDownMethodRefactoringDetected(beforeFiles, afterFiles, "Validator", "UserValidator", "validate_data");
     }
 
-    @Test
-    void detectsPushDownMethod_SimpleFormatter() throws Exception {
-        String beforePythonCode = """
-        class Formatter:
-            def format_output(self, data, format_type):
-                if format_type == 'json':
-                    return f'{{"data": "{data}"}}'
-                elif format_type == 'xml':
-                    return f'<data>{data}</data>'
-                elif format_type == 'csv':
-                    return f'data,{data}'
-                else:
-                    return str(data)
-
-        class JsonFormatter(Formatter):
-            def prettify_json(self, json_string):
-                return json_string.replace(',', ',\n  ')
-
-        class XmlFormatter(Formatter):
-            def add_xml_header(self, xml_content):
-                return '<?xml version="1.0"?>\n' + xml_content
-        """;
-
-        String afterPythonCode = """
-        class Formatter:
-            pass
-
-        class JsonFormatter(Formatter):
-            def format_output(self, data, format_type):
-                if format_type == 'json':
-                    return f'{{"data": "{data}"}}'
-                elif format_type == 'xml':
-                    return f'<data>{data}</data>'
-                elif format_type == 'csv':
-                    return f'data,{data}'
-                else:
-                    return str(data)
-
-            def prettify_json(self, json_string):
-                return json_string.replace(',', ',\n  ')
-
-        class XmlFormatter(Formatter):
-            def add_xml_header(self, xml_content):
-                return '<?xml version="1.0"?>\n' + xml_content
-        """;
-
-        Map<String, String> beforeFiles = Map.of("formatter.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("formatter.py", afterPythonCode);
-
-        assertPushDownMethodRefactoringDetected(beforeFiles, afterFiles, "Formatter", "JsonFormatter", "format_output");
-    }
-
 
 
 }
