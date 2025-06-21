@@ -4,9 +4,11 @@ import antlr.ast.builder.python.PyASTBuilder;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.LangASTNodeFactory;
 import antlr.ast.node.PositionUtils;
+import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.node.literal.LangTupleLiteral;
+import antlr.ast.node.metadata.LangAnnotation;
 import antlr.ast.node.statement.LangBlock;
 import antlr.ast.node.statement.LangCaseStatement;
 import antlr.ast.node.statement.LangCatchClause;
@@ -346,17 +348,42 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
     }
 
     public LangASTNode visitAsync_stmt(Python3Parser.Async_stmtContext ctx) {
-
         LangASTNode body = null;
+
         // Try to detect which async form it is
         if (ctx.funcdef() != null) {
+            // For async functions, we want to return the modified function directly
             body = mainBuilder.visit(ctx.funcdef());
+
+            if (body instanceof LangMethodDeclaration methodDeclaration) {
+                // Mark the method as async by adding an annotation
+                LangAnnotation asyncAnnotation = LangASTNodeFactory.createAnnotation(
+                        ctx,
+                        LangASTNodeFactory.createSimpleName("async", ctx),
+                        new ArrayList<>()
+                );
+
+                List<LangAnnotation> annotations = methodDeclaration.getLangAnnotations();
+                if (annotations == null) {
+                    annotations = new ArrayList<>();
+                }
+                annotations.add(asyncAnnotation);
+                methodDeclaration.setLangAnnotations(annotations);
+                methodDeclaration.setAsync(true);
+
+                String currentSignature = methodDeclaration.getActualSignature();
+                if (currentSignature != null && !currentSignature.startsWith("async ")) {
+                    methodDeclaration.setActualSignature("async " + currentSignature);
+                }
+                return methodDeclaration;
+            }
         } else if (ctx.with_stmt() != null) {
             body = mainBuilder.visit(ctx.with_stmt());
         } else if (ctx.for_stmt() != null) {
             body = mainBuilder.visit(ctx.for_stmt());
         }
 
+        // For non-function async statements, wrap them in AsyncStatement
         return LangASTNodeFactory.createAsyncStatement(ctx, body);
     }
 

@@ -165,6 +165,33 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         return methodDeclaration;
     }
 
+
+    public LangASTNode visitAsync_funcdef(Python3Parser.Async_funcdefContext ctx) {
+        LangASTNode astNode = visitFuncdef(ctx.funcdef());
+
+        System.out.println("AST NODE: " + astNode.getNodeType());
+        System.out.println("AST NODE DETAILS: " + astNode.toString());
+
+        if (astNode instanceof LangMethodDeclaration methodDeclaration) {
+            LangAnnotation asyncAnnotation = LangASTNodeFactory.createAnnotation(
+                    ctx,
+                    LangASTNodeFactory.createSimpleName("async", ctx),
+                    new ArrayList<>()
+            );
+
+            List<LangAnnotation> annotations = methodDeclaration.getLangAnnotations();
+            if (annotations == null) {
+                annotations = new ArrayList<>();
+            }
+            annotations.add(asyncAnnotation);
+            methodDeclaration.setLangAnnotations(annotations);
+            methodDeclaration.setActualSignature("async " + methodDeclaration.getActualSignature());
+            methodDeclaration.setAsync(true);
+        }
+
+        return astNode;
+    }
+
     private Visibility getMethodVisibility(LangMethodDeclaration methodDecl) {
         String methodName = methodDecl.getName();
 

@@ -16,6 +16,8 @@ public class LangSingleVariableDeclaration extends LangDeclaration {
     private boolean isVarArgs = false;
     private boolean isAttribute = false;
     private boolean isParameter = false;
+    private boolean isEnumConstant = false;
+    private boolean isFinal = false;
 
     public LangSingleVariableDeclaration() {super(NodeTypeEnum.SINGLE_VARIABLE_DECLARATION);}
 
@@ -50,7 +52,7 @@ public class LangSingleVariableDeclaration extends LangDeclaration {
         this.typeAnnotation = typeAnnotation;
     }
 
-    public boolean isHasTypeAnnotation() {
+    public boolean hasTypeAnnotation() {
         return hasTypeAnnotation;
     }
 
@@ -80,6 +82,22 @@ public class LangSingleVariableDeclaration extends LangDeclaration {
 
     public void setParameter(boolean parameter) {
         isParameter = parameter;
+    }
+
+    public boolean isEnumConstant() {
+        return isEnumConstant;
+    }
+
+    public void setEnumConstant(boolean enumConstant) {
+        isEnumConstant = enumConstant;
+    }
+
+    public boolean isFinal() {
+        return isFinal;
+    }
+
+    public void setFinal(boolean aFinal) {
+        isFinal = aFinal;
     }
 
     public String toString() {

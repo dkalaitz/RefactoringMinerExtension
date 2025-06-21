@@ -83,7 +83,11 @@ public class PyASTBuilder extends Python3ParserBaseVisitor<LangASTNode> implemen
 
     @Override public LangASTNode visitAssert_stmt(Python3Parser.Assert_stmtContext ctx) { return statementBuilder.visitAssert_stmt(ctx); }
 
-    // visit trailers
+    @Override public LangASTNode visitTestlist_star_expr(Python3Parser.Testlist_star_exprContext ctx) { return expressionBuilder.visitTestlist_star_expr(ctx); }
+
+    @Override public LangASTNode visitStar_expr(Python3Parser.Star_exprContext ctx) { return expressionBuilder.visitStar_expr(ctx); }
+
+    @Override public LangASTNode visitAsync_funcdef(Python3Parser.Async_funcdefContext ctx) { return declarationBuilder.visitAsync_funcdef(ctx); }
 
     @Override public LangASTNode visitNonlocal_stmt(Python3Parser.Nonlocal_stmtContext ctx) { return statementBuilder.visitNonlocal_stmt(ctx); }
 

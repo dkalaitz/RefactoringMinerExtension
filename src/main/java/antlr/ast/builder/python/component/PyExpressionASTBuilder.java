@@ -4,10 +4,13 @@ import antlr.ast.builder.python.PyASTBuilder;
 import antlr.ast.builder.python.PyASTBuilderUtil;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.LangASTNodeFactory;
+import antlr.ast.node.OperatorEnum;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.literal.LangDictionaryLiteral;
+import antlr.ast.node.literal.LangStringLiteral;
 import antlr.base.lang.python.Python3Parser;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,17 +121,49 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         return result;
     }
 
-    // TODO: might not be needed
-    public LangASTNode visitTestlist_star_expr(Python3Parser.Testlist_star_exprContext ctx) {
+    public LangASTNode visitStar_expr(Python3Parser.Star_exprContext ctx) {
+        LangASTNode expr = mainBuilder.visit(ctx.expr());
+        return LangASTNodeFactory.createPrefixExpression(expr, OperatorEnum.fromSymbol("*").getSymbol(), ctx);
+    }
 
-        return mainBuilder.visit(ctx.test(0));
+
+    public LangASTNode visitTestlist_star_expr(Python3Parser.Testlist_star_exprContext ctx) {
+        // Handle single element case
+        if (ctx.test().size() == 1 && ctx.star_expr().isEmpty()) {
+            return mainBuilder.visit(ctx.test(0));
+        }
+
+        // Handle multiple elements or star expressions - create a list/tuple
+        List<LangASTNode> elements = new ArrayList<>();
+
+        // Add regular test expressions
+        for (Python3Parser.TestContext testCtx : ctx.test()) {
+            elements.add(mainBuilder.visit(testCtx));
+        }
+
+        // Add star expressions
+        for (Python3Parser.Star_exprContext starCtx : ctx.star_expr()) {
+            elements.add(mainBuilder.visit(starCtx));
+        }
+
+        if (elements.size() > 1) {
+            return LangASTNodeFactory.createTupleLiteral(ctx, elements);
+        }
+
+        // Single element
+        return elements.get(0);
     }
 
     public LangASTNode visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
-
         // Case 1: Simple expression without assignment
         if (ctx.ASSIGN().isEmpty() && ctx.augassign() == null) {
             LangASTNode expr = mainBuilder.visit(ctx.testlist_star_expr(0));
+
+            // Check if this is a module-level docstring
+            if (expr instanceof LangStringLiteral && isModuleLevelDocstring(ctx)) {
+                return LangASTNodeFactory.createComment(ctx, ((LangStringLiteral) expr).getValue(), false, true);
+            }
+
             // Create an expression statement to wrap the expression
             return LangASTNodeFactory.createExpressionStatement(expr, ctx);
         }
@@ -146,16 +181,34 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
             return LangASTNodeFactory.createExpressionStatement(assignment, ctx);
         }
 
+        // Case 3: Regular assignment (=)
         LangASTNode left = mainBuilder.visit(ctx.testlist_star_expr(0));
         LangASTNode right = mainBuilder.visit(ctx.testlist_star_expr(1));
 
-        LangAssignment assignment = LangASTNodeFactory.createAssignment(ctx.ASSIGN(0).getText(), left, right, ctx);
+        LangAssignment assignment = LangASTNodeFactory.createAssignment("=", left, right, ctx);
 
-        // Wrap in expression statement with correct source position
+        // Wrap in expression statement
         return LangASTNodeFactory.createExpressionStatement(assignment, ctx);
     }
 
-    
+
+    private boolean isModuleLevelDocstring(Python3Parser.Expr_stmtContext ctx) {
+        ParserRuleContext parent = ctx.getParent();
+        while (parent != null) {
+            if (parent instanceof Python3Parser.FuncdefContext ||
+                    parent instanceof Python3Parser.ClassdefContext) {
+                return false; // Inside a function or class
+            }
+            if (parent instanceof Python3Parser.File_inputContext) {
+                return true; // At module level
+            }
+            parent = parent.getParent();
+        }
+        return false;
+    }
+
+
+
     public LangASTNode visitExpr(Python3Parser.ExprContext ctx) {
         if (ctx.atom_expr() != null) {
             return mainBuilder.visitAtom_expr(ctx.atom_expr());

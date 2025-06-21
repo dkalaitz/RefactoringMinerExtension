@@ -18,12 +18,13 @@ public class LangMethodDeclaration extends LangDeclaration {
     private List<LangSingleVariableDeclaration> parameters = new ArrayList<>();
     private LangBlock body;
     private Visibility visibility;
-    private boolean isStatic = false; //  Top Level Methods should be static!
+    private boolean isStatic = false; //  Top Level Methods should be static
     private boolean isConstructor = false;
     private boolean isAbstract = false;
     private boolean isFinal = false;
     private boolean isNative = false;
     private boolean isSynchronized = false;
+    private boolean isAsync = false;
     private String actualSignature;
     private String returnTypeAnnotation; // Add this field for Python type hints
     private List<LangAnnotation> langAnnotations = new ArrayList<>();
@@ -177,6 +178,14 @@ public class LangMethodDeclaration extends LangDeclaration {
 
     public void setComments(List<LangComment> comments) {
         this.comments = comments;
+    }
+
+    public boolean isAsync() {
+        return isAsync;
+    }
+
+    public void setAsync(boolean async) {
+        isAsync = async;
     }
 
     public String toString() {

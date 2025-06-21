@@ -68,6 +68,9 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public void visit(LangMethodDeclaration method) {
+        if (method.isAsync()) {
+            builder.append("async ");
+        }
         builder.append("def ").append(method.getName()).append("(");
         List<LangSingleVariableDeclaration> parameters = method.getParameters();
         for (LangSingleVariableDeclaration param : parameters) {
