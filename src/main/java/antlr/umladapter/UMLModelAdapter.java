@@ -88,38 +88,42 @@ public class UMLModelAdapter {
 
             // Handle top level methods
             if (compilationUnit.getTopLevelMethods() != null && !compilationUnit.getTopLevelMethods().isEmpty()){
-                List<LangMethodDeclaration> topLevelMethods = compilationUnit.getTopLevelMethods();
-                UMLClass moduleClass = createModuleClass(compilationUnit, filename, imports);
-                String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
-                String filepath = UMLAdapterUtil.extractFilePath(filename);
-
-                moduleClass.setActualSignature(moduleClass.getName());
-                moduleClass.setVisibility(Visibility.PUBLIC);
-                moduleClass.setAbstract(false);
-                moduleClass.setInterface(false);
-                moduleClass.setFinal(false);
-                moduleClass.setStatic(false);
-                moduleClass.setAnnotation(false);
-                moduleClass.setEnum(false);
-                moduleClass.setRecord(false);
-
-                if (!topLevelMethods.isEmpty()) {
-                    for (LangMethodDeclaration method : topLevelMethods) {
-                        UMLOperation operation = createUMLOperation(method, moduleClass.getName(),
-                                sourceFolder, filepath);
-                        for (LangAnnotation langAnnotation : method.getAnnotations()) {
-                            operation.addAnnotation(new UMLAnnotation(
-                                    method.getRootCompilationUnit(),
-                                    sourceFolder,
-                                    filepath,
-                                    langAnnotation));
-                        }
-                        moduleClass.addOperation(operation);
-                    }
-                }
-                model.addClass(moduleClass);
+                handleTopLevelMethods(model, filename, compilationUnit, imports);
             }
         }
+    }
+
+    private void handleTopLevelMethods(UMLModel model, String filename, LangCompilationUnit compilationUnit, List<UMLImport> imports) {
+        List<LangMethodDeclaration> topLevelMethods = compilationUnit.getTopLevelMethods();
+        UMLClass moduleClass = createModuleClass(compilationUnit, filename, imports);
+        String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
+        String filepath = UMLAdapterUtil.extractFilePath(filename);
+
+        moduleClass.setActualSignature(moduleClass.getName());
+        moduleClass.setVisibility(Visibility.PUBLIC);
+        moduleClass.setAbstract(false);
+        moduleClass.setInterface(false);
+        moduleClass.setFinal(false);
+        moduleClass.setStatic(false);
+        moduleClass.setAnnotation(false);
+        moduleClass.setEnum(false);
+        moduleClass.setRecord(false);
+
+        if (!topLevelMethods.isEmpty()) {
+            for (LangMethodDeclaration method : topLevelMethods) {
+                UMLOperation operation = createUMLOperation(method, moduleClass.getName(),
+                        sourceFolder, filepath);
+                for (LangAnnotation langAnnotation : method.getAnnotations()) {
+                    operation.addAnnotation(new UMLAnnotation(
+                            method.getRootCompilationUnit(),
+                            sourceFolder,
+                            filepath,
+                            langAnnotation));
+                }
+                moduleClass.addOperation(operation);
+            }
+        }
+        model.addClass(moduleClass);
     }
 
     private UMLClass createModuleClass(LangCompilationUnit compilationUnit, String filename, List<UMLImport> imports) {
@@ -132,7 +136,7 @@ public class UMLModelAdapter {
                 LocationInfo.CodeElementType.TYPE_DECLARATION);
 
         UMLClass moduleClass = new UMLClass(packageName, moduleName, locationInfo, true, imports);
-        moduleClass.setStatic(true); // Mark as a module-level class
+        moduleClass.setStatic(true);
 
         return moduleClass;
     }
@@ -145,9 +149,6 @@ public class UMLModelAdapter {
         String packageName = UMLAdapterUtil.extractPackageName(filename);
         String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
         String filepath = UMLAdapterUtil.extractFilePath(filename);
-
-
-        // TODO: Handle qualified names for classes that are in the same file. Add class name in the qualified name
 
         LocationInfo locationInfo = new LocationInfo(sourceFolder,
                 filepath,
