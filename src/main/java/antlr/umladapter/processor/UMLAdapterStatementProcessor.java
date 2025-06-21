@@ -1,6 +1,7 @@
 package antlr.umladapter.processor;
 
 import antlr.ast.node.LangASTNode;
+import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangFieldAccess;
@@ -20,95 +21,95 @@ public class UMLAdapterStatementProcessor {
     public static void processStatement(LangASTNode statement, CompositeStatementObject composite,
                                         String sourceFolder, String filePath, UMLOperation container) {
 
-        System.out.println("Processing statement type: " + statement.getClass().getSimpleName());
+        System.out.println("Processing statement type: " + statement.getNodeType());
 
-        switch (statement.getClass().getSimpleName()) {
-            case "LangReturnStatement":
+        switch (statement.getNodeType()) {
+            case RETURN_STATEMENT:
                 processReturnStatement((LangReturnStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangAssignment":
+            case ASSIGNMENT:
                 processAssignment((LangAssignment) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangMethodInvocation":
+            case METHOD_INVOCATION:
                 processMethodInvocation((LangMethodInvocation) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangFieldAccess":
+            case FIELD_ACCESS:
                 processFieldAccess((LangFieldAccess) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangBlock":
+            case BLOCK:
                 processBlock((LangBlock) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangExpressionStatement":
+            case EXPRESSION_STATEMENT:
                 processExpressionStatement((LangExpressionStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangIfStatement":
+            case IF_STATEMENT:
                 processIfStatement((LangIfStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangWhileStatement":
+            case WHILE_STATEMENT:
                 processWhileStatement((LangWhileStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangForStatement":
+            case FOR_STATEMENT:
                 processForStatement((LangForStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangSwitchStatement":
+            case SWITCH_STATEMENT:
                 processSwitchStatement((LangSwitchStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangTryStatement":
+            case TRY_STATEMENT:
                 processTryStatement((LangTryStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangBreakStatement":
+            case BREAK_STATEMENT:
                 processBreakStatement((LangBreakStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangContinueStatement":
+            case CONTINUE_STATEMENT:
                 processContinueStatement((LangContinueStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangPassStatement":
+            case PASS_STATEMENT:
                 processPassStatement((LangPassStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangWithStatement":
+            case WITH_STATEMENT:
                 processWithStatement((LangWithStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
             // TODO: Add the new Python-specific statements
-            case "LangDelStatement":
+            case DEL_STATEMENT:
                 processDelStatement((LangDelStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangGlobalStatement":
+            case GLOBAL_STATEMENT:
                 processGlobalStatement((LangGlobalStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangAssertStatement":
+            case ASSERT_STATEMENT:
                 processAssertStatement((LangAssertStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangYieldStatement":
+            case YIELD_STATEMENT:
                 processYieldStatement((LangYieldStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangThrowStatement":
+            case THROW_STATEMENT:
                 processThrowStatement((LangThrowStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangNonLocalStatement":
+            case NON_LOCAL_STATEMENT:
                 processNonLocalStatement((LangNonLocalStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
-            case "LangAsyncStatement":
+            case ASYNC_STATEMENT:
                 processAsyncStatement((LangAsyncStatement) statement, composite, sourceFolder, filePath, container);
                 break;
 
