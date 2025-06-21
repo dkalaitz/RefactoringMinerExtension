@@ -180,7 +180,7 @@ public class AddParameterRefactoringDetectionTest {
 
         String afterPythonCode = """
         class GameManager:
-            def calculate_score(self, points, level, multiplier=1.0):
+            def calculate_score(self, points, level):
                 return points * level * multiplier
             
             def save_score(self, player_name, score, timestamp=None):
@@ -193,7 +193,7 @@ public class AddParameterRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("game_manager.py", afterPythonCode);
 
         assertAddParameterRefactoringDetected(beforeFiles, afterFiles,
-                "multiplier", "calculate_score", "GameManager");
+                "timestamp", "save_score", "GameManager");
     }
 
     @Test

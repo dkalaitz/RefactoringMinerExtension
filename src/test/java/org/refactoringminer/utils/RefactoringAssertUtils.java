@@ -6,9 +6,11 @@ import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLOperation;
 import gr.uom.java.xmi.UMLParameter;
 import gr.uom.java.xmi.decomposition.AbstractCall;
+import gr.uom.java.xmi.decomposition.AbstractStatement;
 import gr.uom.java.xmi.decomposition.CompositeStatementObject;
 import gr.uom.java.xmi.decomposition.OperationBody;
 import gr.uom.java.xmi.diff.*;
+import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 
 import java.util.List;
@@ -56,80 +58,33 @@ public class RefactoringAssertUtils {
         }
     }
 
+
     public static boolean detectExtractMethod(UMLModel beforeUML, UMLModel afterUML,
-                                        String sourceMethodName, String extractedMethodName) {
-        // Find source method before extraction
-        UMLOperation sourceBefore = null;
-        for (UMLClass umlClass : beforeUML.getClassList()) {
-            for (UMLOperation op : umlClass.getOperations()) {
-                if (op.getName().equals(sourceMethodName)) {
-                    sourceBefore = op;
-                    break;
-                }
-            }
-        }
+                                              String sourceMethodName, String extractedMethodName) throws RefactoringMinerTimedOutException {
+        UMLModelDiff diff = beforeUML.diff(afterUML);
 
-        // Find source method after extraction and extracted method
-        UMLOperation sourceAfter = null;
-        UMLOperation extracted = null;
-        for (UMLClass umlClass : afterUML.getClassList()) {
-            for (UMLOperation op : umlClass.getOperations()) {
-                if (op.getName().equals(sourceMethodName)) {
-                    sourceAfter = op;
-                } else if (op.getName().equals(extractedMethodName)) {
-                    extracted = op;
-                }
-            }
-        }
+        boolean extractDetected = diff.getRefactorings().stream()
+                .anyMatch(ref -> ref instanceof ExtractOperationRefactoring &&
+                        ((ExtractOperationRefactoring) ref).getSourceOperationBeforeExtraction().getName().equals(sourceMethodName) &&
+                        ((ExtractOperationRefactoring) ref).getExtractedOperation().getName().equals(extractedMethodName));
 
-        if (sourceBefore == null || sourceAfter == null || extracted == null) {
-            System.out.println("Could not find all required methods");
-            return false;
-        }
-
-        // Verify extraction conditions:
-        // 1. Source method body changed - check body hash codes
-        boolean bodyChanged = !(sourceBefore.getBody().getBodyHashCode()
-                == (sourceAfter.getBody().getBodyHashCode()));
-
-        // 2. Source method calls extracted method after refactoring
-        boolean callsExtractedMethod = false;
-        for (AbstractCall call : sourceAfter.getAllOperationInvocations()) {
-            if (call.getName().equals(extractedMethodName)) {
-                callsExtractedMethod = true;
-                break;
-            }
-        }
-
-        // 3. Source method has fewer statements after extraction
-        boolean fewerStatements = sourceAfter.getBody().getCompositeStatement().getStatements().size() <
-                sourceBefore.getBody().getCompositeStatement().getStatements().size();
-
-        // 4. Extracted method contains statements that were in the source method
-        boolean containsOriginalCode = false;
-        List<String> beforeStatementStrings = sourceBefore.getBody().stringRepresentation();
-        List<String> extractedStatementStrings = extracted.getBody().stringRepresentation();
-
-        for (String extractedStmt : extractedStatementStrings) {
-            if (beforeStatementStrings.contains(extractedStmt)) {
-                containsOriginalCode = true;
-                break;
-            }
-        }
-
-        boolean extractDetected = bodyChanged && callsExtractedMethod &&
-                fewerStatements && containsOriginalCode;
-
-        System.out.println("Extract Method Detection:");
-        System.out.println("- Body changed: " + bodyChanged);
-        System.out.println("- Calls extracted method: " + callsExtractedMethod);
-        System.out.println("- Fewer statements: " + fewerStatements);
-        System.out.println("- Contains original code: " + containsOriginalCode);
-        System.out.println("- Extract detected: " + extractDetected);
+        System.out.println("==== DIFF ====");
+        diff.getRefactorings().forEach(System.out::println);
 
         return extractDetected;
     }
 
+    private static int countAllStatements(CompositeStatementObject composite) {
+        int count = 0;
+        for (AbstractStatement stmt : composite.getStatements()) {
+            count++;
+            if (stmt instanceof CompositeStatementObject) {
+                // Recursively count nested statements
+                count += countAllStatements((CompositeStatementObject) stmt);
+            }
+        }
+        return count;
+    }
 
     public static void assertExtractFunctionRefactoringDetected(
             Map<String, String> beforeFiles,

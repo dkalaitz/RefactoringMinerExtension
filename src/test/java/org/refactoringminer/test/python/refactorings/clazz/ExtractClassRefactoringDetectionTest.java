@@ -95,6 +95,7 @@ public class ExtractClassRefactoringDetectionTest {
 
     @Test
     void detectsExtractClass_BookToAuthor() throws Exception {
+        // Test extract class detection with all attributes renamed
         String beforePythonCode = """
         class Book:
             def __init__(self, title, author_name, author_email, author_bio):
@@ -155,9 +156,9 @@ public class ExtractClassRefactoringDetectionTest {
 
         String afterPythonCode = """
         class Customer:
-            def __init__(self, name, phone, address):
-                self.name = name
-                self.phone = phone
+            def __init__(self, customer_name, customer_phone, address):
+                self.customer_name = customer_name
+                self.customer_phone = customer_phone
                 self.address = address
             
             def get_customer_contact(self):
@@ -333,10 +334,10 @@ public class ExtractClassRefactoringDetectionTest {
 
         String afterPythonCode = """
         class Transaction:
-            def __init__(self, amount, transaction_type, date):
+            def __init__(self, amount, transaction_type, transaction_date):
                 self.amount = amount
                 self.transaction_type = transaction_type
-                self.date = date
+                self.transaction_date = transaction_date
             
             def get_transaction_details(self):
                 return f"{self.transaction_type}: ${self.amount} on {self.date}"

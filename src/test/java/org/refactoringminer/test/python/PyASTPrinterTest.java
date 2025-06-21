@@ -395,5 +395,69 @@ public class PyASTPrinterTest {
         LangASTUtil.printAST(code);
     }
 
+    @Test
+    public void testASTVisitor_PythonDocstringsAndExpressions() {
+        String code =
+                "'''\n" +
+                        "This is a module-level docstring.\n" +
+                        "It documents what this module does.\n" +
+                        "'''\n" +
+                        "\n" +
+                        "import os\n" +
+                        "import sys\n" +
+                        "\n" +
+                        "# Regular assignments\n" +
+                        "x = 5\n" +
+                        "y = \"hello world\"\n" +
+                        "z = [1, 2, 3]\n" +
+                        "\n" +
+                        "# Tuple assignments\n" +
+                        "a, b, c = 1, 2, 3\n" +
+                        "first, *middle, last = [1, 2, 3, 4, 5]\n" +
+                        "\n" +
+                        "# Augmented assignments\n" +
+                        "x += 10\n" +
+                        "y *= 2\n" +
+                        "z.append(4)\n" +
+                        "\n" +
+                        "def my_function(param1, param2):\n" +
+                        "    '''This is a function docstring'''\n" +
+                        "    result = param1 + param2\n" +
+                        "    return result\n" +
+                        "\n" +
+                        "class MyClass:\n" +
+                        "    '''This is a class docstring'''\n" +
+                        "    \n" +
+                        "    def __init__(self):\n" +
+                        "        self.value = 42\n" +
+                        "        \n" +
+                        "    def method(self, *args):\n" +
+                        "        '''Method docstring'''\n" +
+                        "        return sum(args)\n" +
+                        "\n" +
+                        "# Expression statements\n" +
+                        "print(\"Hello\")\n" +
+                        "my_function(1, 2)\n" +
+                        "obj.method_call()\n" +
+                        "\n" +
+                        "# Star expressions in function calls\n" +
+                        "numbers = [1, 2, 3]\n" +
+                        "print(*numbers)\n" +
+                        "\n" +
+                        "# Complex assignments with unpacking\n" +
+                        "data = {'a': 1, 'b': 2}\n" +
+                        "key, value = data.items()\n" +
+                        "\n" +
+                        "# This should NOT be a docstring (inside function)\n" +
+                        "def another_func():\n" +
+                        "    x = \"This is just a string assignment\"\n" +
+                        "    return x\n" +
+                        "\n" +
+                        "# This should NOT be a docstring (in assignment)\n" +
+                        "message = \"This is also not a docstring\"\n";
+
+        LangASTUtil.printAST(code);
+    }
+
 
 }

@@ -5,6 +5,7 @@ import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
+import org.refactoringminer.api.Refactoring;
 
 import java.util.Map;
 
@@ -173,6 +174,7 @@ public class ExtractMethodRefactoringDetectionTest {
         UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
 
         boolean extractDetected = detectExtractMethod(beforeUML, afterUML, "process_items", "clean_item");
+
         assertTrue(extractDetected, "Expected extract method refactoring from process_items to clean_item");
     }
 

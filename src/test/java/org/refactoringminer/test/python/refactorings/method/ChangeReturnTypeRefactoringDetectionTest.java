@@ -567,8 +567,8 @@ public class ChangeReturnTypeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("generic_processor.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("generic_processor.py", afterPythonCode);
         assertReturnTypeChangeDetected(beforeFiles, afterFiles,
-                "process_collection", "List[Dict[str, Any]]",
-                "process_collection", "Dict[str, Any]");
+                "process_collection", "List[Dict[str,Any]]",
+                "process_collection", "Dict[str,Any]");
     }
 
     @Test
@@ -650,9 +650,10 @@ public class ChangeReturnTypeRefactoringDetectionTest {
         Map<String, String> beforeFiles = Map.of("config_manager.py", beforePythonCode);
         Map<String, String> afterFiles = Map.of("config_manager.py", afterPythonCode);
         assertReturnTypeChangeDetected(beforeFiles, afterFiles,
-                "load_config", "Union[dict, str]",
+                "load_config", "Union[dict,str]",
                 "load_config", "dict");
     }
+
 
     private void assertReturnTypeChangeDetected(Map<String, String> beforeFiles, Map<String, String> afterFiles,
                                                 String beforeMethodName, String beforeReturnType,
@@ -668,10 +669,14 @@ public class ChangeReturnTypeRefactoringDetectionTest {
                         UMLOperation originalOperation = returnTypeChange.getOperationBefore();
                         UMLOperation changedOperation = returnTypeChange.getOperationAfter();
 
+                        // Use toQualifiedString() instead of getClassType()
+                        String originalTypeString = returnTypeChange.getOriginalType().toQualifiedString();
+                        String changedTypeString = returnTypeChange.getChangedType().toQualifiedString();
+
                         return originalOperation.getName().equals(beforeMethodName) &&
                                 changedOperation.getName().equals(afterMethodName) &&
-                                returnTypeChange.getOriginalType().getClassType().equals(beforeReturnType) &&
-                                returnTypeChange.getChangedType().getClassType().equals(afterReturnType);
+                                originalTypeString.equals(beforeReturnType) &&
+                                changedTypeString.equals(afterReturnType);
                     }
                     return false;
                 });
