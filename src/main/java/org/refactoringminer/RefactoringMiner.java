@@ -28,7 +28,7 @@ public class RefactoringMiner {
 		if (args.length < 1) {
 			throw argumentException();
 		}
-		logger.info("Running Python Version");
+		logger.info("Running RefactoringMinerX (Currently Supported Languages: Java, Python)");
 		final String option = args[0];
 		if (option.equalsIgnoreCase("-h") || option.equalsIgnoreCase("--h") || option.equalsIgnoreCase("-help")
 				|| option.equalsIgnoreCase("--help")) {

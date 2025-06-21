@@ -14,6 +14,7 @@ import antlr.ast.node.statement.LangBlock;
 import antlr.ast.node.statement.LangExpressionStatement;
 import antlr.ast.node.unit.LangCompilationUnit;
 import antlr.base.LangASTUtil;
+import antlr.base.LangSupportedEnum;
 import antlr.umladapter.processor.UMLAdapterVariableProcessor;
 import gr.uom.java.xmi.*;
 import gr.uom.java.xmi.decomposition.AbstractStatement;
@@ -34,6 +35,8 @@ import static antlr.umladapter.processor.UMLAdapterVariableProcessor.processVari
 public class UMLModelAdapter {
 
     private UMLModel umlModel;
+    private String language;
+
     private static final Logger LOGGER = Logger.getLogger(UMLModelAdapter.class.getName());
 
 
@@ -51,6 +54,7 @@ public class UMLModelAdapter {
             LangASTNode ast = LangASTUtil.getCustomPythonAST(
                     new StringReader(entry.getValue()));
             System.out.print("AST Structure: " + ast.toString());
+            this.language = LangSupportedEnum.PYTHON.name();
             result.put(entry.getKey(), ast);
         }
 
@@ -249,7 +253,12 @@ public class UMLModelAdapter {
 
         processComments(methodDecl, sourceFolder, filePath, umlOperation);
 
-        UMLType returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation());
+        UMLType returnType;
+        if (LangSupportedEnum.PYTHON.name().equals(language)){
+            returnType = UMLType.extractPythonTypeObject(methodDecl.getReturnTypeAnnotation());
+        } else {
+            returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation());
+        }
         UMLParameter returnParam = new UMLParameter("", returnType, "return", false);
         umlOperation.addParameter(returnParam);
 
@@ -320,7 +329,7 @@ public class UMLModelAdapter {
                             sourceFolder,
                             filePath,
                             attributeName,
-                            umlOperation // Now we can pass the proper container
+                            umlOperation
                     );
 
 
@@ -375,31 +384,12 @@ public class UMLModelAdapter {
             allMethodVarDecls.addAll(stmt.getVariableDeclarations());
         }
 
-        // Add to composite (this might be missing!)
         composite.getVariableDeclarations().addAll(allMethodVarDecls);
-        LOGGER.info("Method " + container.getName() + " has " +
-                composite.getVariableDeclarations().size() + " variable declarations:");
-
-
-        LOGGER.info("=== FINAL UML MODEL DEBUG ===");
-        LOGGER.info("Method " + container.getName() + " has " + allMethodVarDecls.size() + " variable declarations:");
-        for (VariableDeclaration vd : allMethodVarDecls) {
-            LOGGER.info("  - Variable: " + vd.getVariableName() +
-                    " | Type: " + vd.getType() +
-                    " | Scope: " + vd.getScope() +
-                    " | Initializer: " + (vd.getInitializer() != null ? vd.getInitializer().getString() : "null"));
-        }
-
-        LOGGER.info("Method body statements: " + composite.getStatements().size());
-        for (AbstractStatement stmt : composite.getStatements()) {
-            LOGGER.info("  - Statement: " + stmt.getClass().getSimpleName() +
-                    " | Variables: " + stmt.getVariables().size() +
-                    " | VarDecls: " + stmt.getVariableDeclarations().size());
-        }
-        LOGGER.info("=== END UML MODEL DEBUG ===");
-
+      //  logMethodDetails(composite, container, allMethodVarDecls);
 
     }
+
+
 
     private void processComments(LangMethodDeclaration methodDecl, String sourceFolder, String filePath, UMLOperation umlOperation){
         List<UMLComment> comments = new ArrayList<>();
@@ -423,6 +413,29 @@ public class UMLModelAdapter {
             }
         }
         umlOperation.setComments(comments);
+    }
+
+    private static void logMethodDetails(CompositeStatementObject composite, UMLOperation container, List<VariableDeclaration> allMethodVarDecls) {
+        LOGGER.info("Method " + container.getName() + " has " +
+                composite.getVariableDeclarations().size() + " variable declarations:");
+
+
+        LOGGER.info("=== FINAL UML MODEL DEBUG ===");
+        LOGGER.info("Method " + container.getName() + " has " + allMethodVarDecls.size() + " variable declarations:");
+        for (VariableDeclaration vd : allMethodVarDecls) {
+            LOGGER.info("  - Variable: " + vd.getVariableName() +
+                    " | Type: " + vd.getType() +
+                    " | Scope: " + vd.getScope() +
+                    " | Initializer: " + (vd.getInitializer() != null ? vd.getInitializer().getString() : "null"));
+        }
+
+        LOGGER.info("Method body statements: " + composite.getStatements().size());
+        for (AbstractStatement stmt : composite.getStatements()) {
+            LOGGER.info("  - Statement: " + stmt.getClass().getSimpleName() +
+                    " | Variables: " + stmt.getVariables().size() +
+                    " | VarDecls: " + stmt.getVariableDeclarations().size());
+        }
+        LOGGER.info("=== END UML MODEL DEBUG ===");
     }
 
     private void logUMLClass(UMLClass umlClass) {

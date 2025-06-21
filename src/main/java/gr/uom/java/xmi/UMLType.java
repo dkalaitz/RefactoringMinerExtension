@@ -33,6 +33,15 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 	private boolean parameterized;
 	private List<UMLType> typeArguments = new ArrayList<UMLType>();
 	protected List<UMLAnnotation> annotations = new ArrayList<UMLAnnotation>();
+	private boolean isPythonType = false;
+
+	public boolean isPythonType() {
+		return isPythonType;
+	}
+
+	public void setPythonType(boolean isPythonType) {
+		this.isPythonType = isPythonType;
+	}
 
 	public LocationInfo getLocationInfo() {
 		return locationInfo;
@@ -60,19 +69,19 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 
 	protected String typeArgumentsToString() {
 		StringBuilder sb = new StringBuilder();
-		if(typeArguments.isEmpty()) {
-			if(parameterized) {
-				sb.append("<>");
+		if(getTypeArguments().isEmpty()) {
+			if(isParameterized()) {
+				sb.append(isPythonType ? "[]" : "<>");
 			}
 		}
 		else {
-			sb.append("<");
-			for(int i = 0; i < typeArguments.size(); i++) {
-				sb.append(typeArguments.get(i).toQualifiedString());
-				if(i < typeArguments.size() - 1)
+			sb.append(isPythonType ? "[" : "<");
+			for(int i = 0; i < getTypeArguments().size(); i++) {
+				sb.append(getTypeArguments().get(i).toQualifiedString());
+				if(i < getTypeArguments().size() - 1)
 					sb.append(",");
 			}
-			sb.append(">");
+			sb.append(isPythonType ? "]" : ">");
 		}
 		return sb.toString();
 	}
@@ -228,6 +237,80 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		typeObject.typeArguments = typeArgumentDecomposition;
 		typeObject.parameterized = parameterized;
 		return (LeafType)typeObject;
+	}
+
+	public static LeafType extractPythonTypeObject(String qualifiedName) {
+
+		int arrayDimension = 0;
+		boolean parameterized = false;
+		List<UMLType> typeArgumentDecomposition = new ArrayList<UMLType>();
+
+		// Python does not use [][] for arrays like Java, so skip this part
+
+		// Handle Python generic types with square brackets: List[str], Dict[str, Any]
+		if (qualifiedName.contains("[") && qualifiedName.contains("]") &&
+				!closingBracketBeforeOpeningBracket(qualifiedName.substring(qualifiedName.indexOf("[") + 1, qualifiedName.lastIndexOf("]")))) {
+
+			String typeArguments = qualifiedName.substring(qualifiedName.indexOf("[") + 1, qualifiedName.lastIndexOf("]"));
+			parameterized = true;
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < typeArguments.length(); i++) {
+				char charAt = typeArguments.charAt(i);
+				if (charAt != ',') {
+					sb.append(charAt);
+				} else {
+					if (!sb.isEmpty() && equalOpeningClosingBrackets(sb.toString())) {
+						typeArgumentDecomposition.add(extractPythonTypeObject(sb.toString().trim()));
+						sb = new StringBuilder();
+					} else {
+						sb.append(charAt);
+					}
+				}
+			}
+
+			if (!sb.isEmpty()) {
+				typeArgumentDecomposition.add(extractPythonTypeObject(sb.toString().trim()));
+			}
+
+			qualifiedName = qualifiedName.substring(0, qualifiedName.indexOf("["));
+		}
+
+		UMLType typeObject = new LeafType(qualifiedName);
+		typeObject.arrayDimension = arrayDimension;
+		typeObject.typeArguments = typeArgumentDecomposition;
+		typeObject.parameterized = parameterized;
+		typeObject.setPythonType(true);
+
+        return (LeafType) typeObject;
+	}
+
+	// Helper methods for Python brackets
+	private static boolean closingBracketBeforeOpeningBracket(String typeArguments) {
+		int openingBrackets = 0;
+		for (char c : typeArguments.toCharArray()) {
+			if (c == '[') {
+				openingBrackets++;
+			} else if (c == ']') {
+				openingBrackets--;
+				if (openingBrackets < 0) {
+					return true; // Closing bracket before opening
+				}
+			}
+		}
+		return false;
+	}
+
+	private static boolean equalOpeningClosingBrackets(String typeArguments) {
+		int openingBrackets = 0;
+		for (char c : typeArguments.toCharArray()) {
+			if (c == '[') {
+				openingBrackets++;
+			} else if (c == ']') {
+				openingBrackets--;
+			}
+		}
+		return openingBrackets == 0;
 	}
 
 	private static boolean closingTagBeforeOpeningTag(String typeArguments) {

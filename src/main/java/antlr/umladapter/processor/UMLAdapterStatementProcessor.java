@@ -4,6 +4,7 @@ import antlr.ast.node.LangASTNode;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangFieldAccess;
+import antlr.ast.node.expression.LangLambdaExpression;
 import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.statement.*;
 import antlr.ast.visitor.LangVisitor;
@@ -19,18 +20,7 @@ public class UMLAdapterStatementProcessor {
     public static void processStatement(LangASTNode statement, CompositeStatementObject composite,
                                         String sourceFolder, String filePath, UMLOperation container) {
 
-        System.out.println("statement: " + statement.getClass().getSimpleName());
-        if (statement.getParent() != null){
-            System.out.println("statement.parent() : " + statement.getParent().getClass().getSimpleName());
-        } else {
-            System.out.println("statement.parent() : null");
-        }
-        if (statement.getRootCompilationUnit() != null){
-            System.out.println("statement.getRootCompilationUnit(): " + statement.getRootCompilationUnit().getClass().getSimpleName());
-        } else {
-            System.out.println("statement.getRootCompilationUnit(): null");
-        }
-        System.out.println("\n");
+        System.out.println("Processing statement type: " + statement.getClass().getSimpleName());
 
         switch (statement.getClass().getSimpleName()) {
             case "LangReturnStatement":
@@ -92,7 +82,8 @@ public class UMLAdapterStatementProcessor {
             case "LangWithStatement":
                 processWithStatement((LangWithStatement) statement, composite, sourceFolder, filePath, container);
                 break;
-            // Add the new Python-specific statements
+
+            // TODO: Add the new Python-specific statements
             case "LangDelStatement":
                 processDelStatement((LangDelStatement) statement, composite, sourceFolder, filePath, container);
                 break;
@@ -120,6 +111,10 @@ public class UMLAdapterStatementProcessor {
             case "LangAsyncStatement":
                 processAsyncStatement((LangAsyncStatement) statement, composite, sourceFolder, filePath, container);
                 break;
+
+//            case "LangLambdaExpression":
+//                processLambdaExpression((LangLambdaExpression) statement, composite, sourceFolder, filePath, container);
+//                break;
 
 
             default:
@@ -607,9 +602,6 @@ public class UMLAdapterStatementProcessor {
         composite.addStatement(withComposite);
     }
 
-    // Python-specific statements
-
-// Replace the Python-specific statement processors with these corrected versions:
 
     // Python-specific statements
     public static void processDelStatement(LangDelStatement delStatement, CompositeStatementObject composite,
@@ -714,5 +706,20 @@ public class UMLAdapterStatementProcessor {
             processStatement(asyncStatement.getBody(), asyncComposite, sourceFolder, filePath, container);
         }
     }
+
+    //TODO
+//    private static void processLambdaExpression(LangLambdaExpression statement, CompositeStatementObject composite, String sourceFolder, String filePath, UMLOperation container) {
+//        // Create a LambdaExpressionObject for the lambda expression
+//        LambdaExpressionObject lambdaExpressionObject = new LambdaExpressionObject(
+//                statement.getRootCompilationUnit(),
+//                sourceFolder,
+//                filePath,
+//                statement,
+//                composite.getDepth() + 1,
+//                LocationInfo.CodeElementType.LAMBDA_EXPRESSION,
+//                container
+//        )
+//    }
+
 
 }
