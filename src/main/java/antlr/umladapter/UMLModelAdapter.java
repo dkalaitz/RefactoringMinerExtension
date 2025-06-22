@@ -204,7 +204,6 @@ public class UMLModelAdapter {
                 }
             }
         }
-        logUMLClass(umlClass);
         return umlClass;
     }
 
@@ -361,8 +360,8 @@ public class UMLModelAdapter {
 
                     attributes.add(attribute);
 
-                    LOGGER.info("Created attribute: " + attributeName + " with initializer: " +
-                            (variableDeclaration.getInitializer() != null ? "yes" : "no"));
+//                    LOGGER.info("Created attribute: " + attributeName + " with initializer: " +
+//                            (variableDeclaration.getInitializer() != null ? "yes" : "no"));
                 }
             }
         }
