@@ -127,7 +127,7 @@ public class UMLModelAdapter {
     }
 
     private UMLClass createModuleClass(LangCompilationUnit compilationUnit, String filename, List<UMLImport> imports) {
-        String moduleName = UMLAdapterUtil.extractModuleName(filename) + "$Module";
+        String moduleName = UMLAdapterUtil.extractModuleName(filename);
         String packageName = UMLAdapterUtil.extractPackageName(filename);
         String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
         String filepath = UMLAdapterUtil.extractFilePath(filename);

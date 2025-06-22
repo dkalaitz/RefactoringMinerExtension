@@ -136,17 +136,17 @@ public class UMLAdapterUtil {
     }
 
     public static String extractModuleName(String filename) {
-        // Extract just the filename from the full path
-        String fileName = filename.substring(filename.lastIndexOf('/') + 1);
-        fileName = fileName.substring(fileName.lastIndexOf('\\') + 1); // Handle Windows paths
+        // Extract the logical package or namespace
+        String packageName = UMLAdapterUtil.extractPackageName(filename);
 
-        // Remove the .py extension
-        if (fileName.endsWith(".py")) {
-            return fileName.substring(0, fileName.length() - 3);
-        }
+        // Generate a hash or unique identifier based on the module's content
+        // This ensures stability even if the file name changes
+        String moduleContentHash = Integer.toHexString(filename.hashCode());
 
-        return fileName;
+        // Combine package and unique identifier to form a stable module name
+        return packageName + ".TopLevelMethodsWrapper$" + moduleContentHash;
     }
+
 
 
 }
