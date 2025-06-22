@@ -573,7 +573,7 @@ public class UMLAdapterStatementProcessor {
                 filePath,
                 withStatement,
                 composite.getDepth() + 1,
-                LocationInfo.CodeElementType.ENHANCED_FOR_STATEMENT
+                LocationInfo.CodeElementType.BLOCK
         );
 
         // Process context items (the resources being managed)

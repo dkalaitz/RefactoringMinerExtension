@@ -26,8 +26,6 @@ import java.util.regex.Pattern;
 
 public class LangVisitor implements LangASTVisitor {
 
-    public static final Pattern METHOD_INVOCATION_PATTERN = Pattern.compile("!(\\w|\\.)*@\\w*");
-    public static final Pattern METHOD_SIGNATURE_PATTERN = Pattern.compile("(public|protected|private|static|\\s) +[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])");
     private LangCompilationUnit cu;
     private String sourceFolder;
     private String filePath;
@@ -66,17 +64,6 @@ public class LangVisitor implements LangASTVisitor {
         this.filePath = filePath;
         this.container = container;
     }
-
-    private void processArgument(LangASTNode argument) {
-        // Create a LeafExpression for this argument and add to arguments list
-        LeafExpression argExpression = new LeafExpression(cu, sourceFolder, filePath, argument,
-                LocationInfo.CodeElementType.EXPRESSION, container);
-        arguments.add(argExpression);
-
-        // Continue visiting the argument to collect its sub-expressions
-        argument.accept(this);
-    }
-
 
     @Override
     public void visit(LangCompilationUnit langCompilationUnit) {
