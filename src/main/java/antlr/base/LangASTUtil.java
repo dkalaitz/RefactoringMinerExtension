@@ -10,10 +10,28 @@ import java.io.IOException;
 import java.io.Reader;
 
 /**
- * Mapper Factory class to get the JDT AST mapper
- * based on the name of the programming language or file extension
+ * Utility class to create Language AST parsers
+ * based on file extensions and supported programming languages
  */
 public class LangASTUtil {
+
+
+    public static LangASTNode getLangAST(String fileName, Reader reader) throws IOException {
+
+        LangSupportedEnum language = LangSupportedEnum.fromFileName(fileName);
+
+        if (language == null) {
+            throw new UnsupportedOperationException("Language not supported for file: " + fileName);
+        }
+
+        switch (language) {
+            case PYTHON:
+                return getCustomPythonAST(reader);
+            default:
+                throw new UnsupportedOperationException("Parser not implemented for language: " + language);
+        }
+
+    }
 
     public static LangASTNode getCustomPythonAST(Reader r) throws IOException {
 
@@ -25,38 +43,12 @@ public class LangASTUtil {
 
         // Get the parse tree
         Python3Parser.File_inputContext parseTree = parser.file_input();
-        System.out.println(parseTree.toStringTree(parser));
 
-        // Build our custom AST
+        // Build custom AST
         PyASTBuilder astBuilder = new PyASTBuilder();
 
         return astBuilder.build(parseTree);
     }
 
-    public static ParserRuleContext getParseTree(String lang, Parser parser){
-        ParserRuleContext parseTree;
-        try {
-            if ("python".equals(lang) || "py".equals(lang)) {
-                parseTree = ((Python3Parser)parser).file_input();
-            } else {
-                // Handle other languages as they are added
-                throw new UnsupportedOperationException("Parser rule not defined for language: " + lang);
-            }
-        } catch (ClassCastException e) {
-            throw new RuntimeException("Parser type mismatch for language: " + lang, e);
-        }
-        return parseTree;
-    }
-
-    public static LangASTNode getLangAST(String lang, ParserRuleContext parseTree){
-        LangASTNode langAST;
-        if ("python".equals(lang) || "py".equals(lang)) {
-            PyASTBuilder astBuilder = new PyASTBuilder();
-            langAST = astBuilder.build((Python3Parser.File_inputContext) parseTree);
-        } else {
-            throw new UnsupportedOperationException("AST builder not defined for language: " + lang);
-        }
-        return langAST;
-    }
 
 }

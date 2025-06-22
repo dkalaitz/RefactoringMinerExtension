@@ -50,22 +50,24 @@ public class UMLModelAdapter {
 
     private Map<String, LangASTNode> parseLangSupportedFiles(Map<String, String> langSupportedFiles) throws IOException {
         Map<String, LangASTNode> result = new HashMap<>();
+
         for (Map.Entry<String, String> entry : langSupportedFiles.entrySet()) {
-            LangASTNode ast = LangASTUtil.getCustomPythonAST(
-                    new StringReader(entry.getValue()));
+            LangASTNode ast = LangASTUtil.getLangAST(
+                    entry.getKey(), // fileName for language detection
+                    new StringReader(entry.getValue())); // code content
             System.out.print("AST Structure: " + ast.toString());
-            this.language = LangSupportedEnum.PYTHON.name();
             result.put(entry.getKey(), ast);
         }
 
         return result;
     }
 
-    private UMLModel createUMLModel(Map<String, LangASTNode> pythonASTMap) {
+
+    private UMLModel createUMLModel(Map<String, LangASTNode> astMap) {
         UMLModel model = new UMLModel(Collections.emptySet());
 
-        // Process each Python AST and populate the UML model
-        for (Map.Entry<String, LangASTNode> entry : pythonASTMap.entrySet()) {
+        // Process each AST and populate the UML model
+        for (Map.Entry<String, LangASTNode> entry : astMap.entrySet()) {
             String filename = entry.getKey();
             LangASTNode ast = entry.getValue();
 

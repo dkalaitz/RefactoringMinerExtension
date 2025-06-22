@@ -26,35 +26,26 @@ public enum LangSupportedEnum {
         return langName;
     }
 
-    public static Optional<LangSupportedEnum> fromFileExtension(String extension) {
-        if (extension == null) {
-            return Optional.empty();
-        }
-
-        String normalizedExtension = extension.startsWith(".")
-                ? extension.substring(1)
-                : extension;
-
+    public static LangSupportedEnum fromFileExtension(String extension) {
+        String cleanExt = extension.startsWith(".") ? extension.substring(1) : extension;
         return Arrays.stream(values())
-                .filter(lang -> lang.fileExtension.equalsIgnoreCase(normalizedExtension))
-                .findFirst();
+                .filter(lang -> lang.fileExtension.equals(cleanExt))
+                .findFirst()
+                .orElse(null);
     }
 
 
-    public static Optional<LangSupportedEnum> fromLangName(String name) {
-        if (name == null) {
-            return Optional.empty();
-        }
-
+    public static LangSupportedEnum fromLangName(String langName) {
         return Arrays.stream(values())
-                .filter(lang -> lang.langName.equalsIgnoreCase(name) ||
-                        lang.fileExtension.equalsIgnoreCase(name))
-                .findFirst();
+                .filter(lang -> lang.langName.equals(langName))
+                .findFirst()
+                .orElse(null);
     }
 
-    public static boolean isSupported(String langNameOrExtension) {
-        return fromLangName(langNameOrExtension).isPresent() ||
-                fromFileExtension(langNameOrExtension).isPresent();
+
+    public static LangSupportedEnum fromFileName(String fileName) {
+        String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
+        return fromFileExtension(extension);
     }
 
 
