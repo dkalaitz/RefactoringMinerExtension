@@ -52,6 +52,7 @@ public class UMLModelAdapter {
         Map<String, LangASTNode> result = new HashMap<>();
 
         for (Map.Entry<String, String> entry : langSupportedFiles.entrySet()) {
+            this.language = LangSupportedEnum.fromFileName(entry.getKey()).name();
             LangASTNode ast = LangASTUtil.getLangAST(
                     entry.getKey(), // fileName for language detection
                     new StringReader(entry.getValue())); // code content
