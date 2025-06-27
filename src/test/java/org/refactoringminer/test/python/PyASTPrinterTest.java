@@ -5,11 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.refactoringminer.utils.LangASTUtil;
 
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.refactoringminer.utils.LangASTUtil.readResourceFile;
-
 @Isolated
 public class PyASTPrinterTest {
 

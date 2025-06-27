@@ -13,6 +13,8 @@ public enum OperatorEnum {
     FLOOR_DIVIDE("//", OperatorCategory.ARITHMETIC),
     MODULUS("%", OperatorCategory.ARITHMETIC),
     POWER("**", OperatorCategory.ARITHMETIC),
+    MATMUL("@", OperatorCategory.ARITHMETIC),
+
 
     // Augmented assignment operators
     PLUS_ASSIGN("+=", OperatorCategory.ASSIGNMENT),
