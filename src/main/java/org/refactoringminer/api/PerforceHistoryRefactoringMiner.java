@@ -1,8 +1,7 @@
 package org.refactoringminer.api;
 
-import org.refactoringminer.astDiff.models.ProjectASTDiff;
-
 import com.perforce.p4java.server.IOptionsServer;
+import org.refactoringminer.astDiff.models.ProjectASTDiff;
 
 public interface PerforceHistoryRefactoringMiner {
 

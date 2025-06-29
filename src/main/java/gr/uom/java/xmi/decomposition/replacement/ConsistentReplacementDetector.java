@@ -1,10 +1,10 @@
 package gr.uom.java.xmi.decomposition.replacement;
 
+import gr.uom.java.xmi.diff.CandidateAttributeRefactoring;
+
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-
-import gr.uom.java.xmi.diff.CandidateAttributeRefactoring;
 
 public class ConsistentReplacementDetector {
 

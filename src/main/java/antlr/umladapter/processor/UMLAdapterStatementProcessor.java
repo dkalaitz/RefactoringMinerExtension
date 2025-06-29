@@ -1,13 +1,11 @@
 package antlr.umladapter.processor;
 
 import antlr.ast.node.LangASTNode;
-import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
 import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangFieldAccess;
-import antlr.ast.node.expression.LangLambdaExpression;
 import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.metadata.LangAnnotation;
 import antlr.ast.node.statement.*;

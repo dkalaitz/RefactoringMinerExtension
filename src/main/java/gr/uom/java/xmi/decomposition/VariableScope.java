@@ -1,12 +1,11 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import antlr.ast.node.unit.LangCompilationUnit;
+import gr.uom.java.xmi.LocationInfo;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import gr.uom.java.xmi.LocationInfo;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class VariableScope {
 	private String filePath;

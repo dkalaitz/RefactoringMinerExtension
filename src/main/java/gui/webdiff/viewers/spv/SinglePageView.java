@@ -1,6 +1,5 @@
 package gui.webdiff.viewers.spv;
 
-import gui.webdiff.WebDiff;
 import gui.webdiff.dir.DirComparator;
 import gui.webdiff.viewers.monaco.MonacoCore;
 import org.rendersnake.HtmlCanvas;
@@ -8,7 +7,8 @@ import org.rendersnake.Renderable;
 
 import java.io.IOException;
 
-import static org.rendersnake.HtmlAttributesFactory.*;
+import static org.rendersnake.HtmlAttributesFactory.charset;
+import static org.rendersnake.HtmlAttributesFactory.name;
 
 /* Created by pourya on 2024-07-22*/
 public class SinglePageView extends AbstractSinglePageView implements Renderable {

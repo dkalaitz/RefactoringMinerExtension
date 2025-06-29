@@ -1,9 +1,9 @@
 package gr.uom.java.xmi;
 
+import gr.uom.java.xmi.diff.CodeRange;
+
 import java.io.Serializable;
 import java.util.Objects;
-
-import gr.uom.java.xmi.diff.CodeRange;
 
 public class UMLPackage implements LocationInfoProvider, Serializable {
 	private String name;

@@ -1,7 +1,6 @@
 package antlr.base;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 /**
  * Enum representing supported programming languages.

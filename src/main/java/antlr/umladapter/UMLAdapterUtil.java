@@ -1,12 +1,9 @@
 package antlr.umladapter;
 
-import antlr.ast.node.LangASTNode;
 import antlr.ast.node.statement.LangImportStatement;
 import antlr.ast.node.unit.LangCompilationUnit;
 import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLImport;
-import gr.uom.java.xmi.Visibility;
 
 import java.io.File;
 import java.nio.file.Path;

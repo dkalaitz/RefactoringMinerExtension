@@ -1,14 +1,13 @@
 package gr.uom.java.xmi.diff;
 
+import gr.uom.java.xmi.UMLAttribute;
+import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
+import org.refactoringminer.api.RefactoringType;
+
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.refactoringminer.api.RefactoringType;
-
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.decomposition.AbstractCodeMapping;
 
 public class MoveAndRenameAttributeRefactoring extends MoveAttributeRefactoring implements ReferenceBasedRefactoring {
 	private Set<CandidateAttributeRefactoring> attributeRenames;

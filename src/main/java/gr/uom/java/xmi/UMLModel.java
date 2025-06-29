@@ -1,18 +1,11 @@
 package gr.uom.java.xmi;
 
+import com.github.gumtreediff.tree.TreeContext;
 import gr.uom.java.xmi.diff.UMLClassDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 
-import com.github.gumtreediff.tree.TreeContext;
+import java.util.*;
 
 public class UMLModel {
 	private Set<String> repositoryDirectories;

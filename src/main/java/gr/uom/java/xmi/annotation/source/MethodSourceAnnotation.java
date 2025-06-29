@@ -1,11 +1,11 @@
 package gr.uom.java.xmi.annotation.source;
 
 import gr.uom.java.xmi.*;
+import gr.uom.java.xmi.annotation.MarkerAnnotation;
+import gr.uom.java.xmi.annotation.SingleMemberAnnotation;
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
 import gr.uom.java.xmi.decomposition.StatementObject;
 import gr.uom.java.xmi.decomposition.VariableDeclaration;
-import gr.uom.java.xmi.annotation.MarkerAnnotation;
-import gr.uom.java.xmi.annotation.SingleMemberAnnotation;
 
 import java.util.*;
 import java.util.stream.Collectors;

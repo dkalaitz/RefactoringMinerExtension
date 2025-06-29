@@ -1,10 +1,10 @@
 package gr.uom.java.xmi;
 
-import java.util.Optional;
-import java.util.Scanner;
-
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.decomposition.CompositeStatementObject;
+
+import java.util.Optional;
+import java.util.Scanner;
 
 public class UMLComment extends UMLAbstractDocumentation {
 

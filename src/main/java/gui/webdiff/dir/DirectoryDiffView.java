@@ -1,16 +1,15 @@
 package gui.webdiff.dir;
 
-import gui.webdiff.tree.TreeNodeInfo;
 import gui.webdiff.WebDiff;
+import gui.webdiff.tree.TreeNodeInfo;
 import org.refactoringminer.astDiff.models.ASTDiff;
 import org.rendersnake.DocType;
 import org.rendersnake.HtmlCanvas;
 import org.rendersnake.Renderable;
 
+import javax.swing.tree.DefaultMutableTreeNode;
 import java.io.IOException;
 import java.util.Set;
-
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import static org.rendersnake.HtmlAttributesFactory.*;
 

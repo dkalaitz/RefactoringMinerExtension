@@ -1,11 +1,10 @@
 package org.refactoringminer.api;
 
-import java.io.Serializable;
-import java.util.Set;
-
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import com.fasterxml.jackson.core.io.JsonStringEncoder;
+import java.io.Serializable;
+import java.util.Set;
 
 public interface Refactoring extends Serializable, CodeRangeProvider {
 

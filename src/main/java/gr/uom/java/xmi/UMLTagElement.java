@@ -1,9 +1,9 @@
 package gr.uom.java.xmi;
 
+import gr.uom.java.xmi.diff.CodeRange;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import gr.uom.java.xmi.diff.CodeRange;
 
 public class UMLTagElement implements LocationInfoProvider {
 	private LocationInfo locationInfo;

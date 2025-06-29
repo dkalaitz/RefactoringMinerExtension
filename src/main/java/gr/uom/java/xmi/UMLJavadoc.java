@@ -1,10 +1,10 @@
 package gr.uom.java.xmi;
 
+import gr.uom.java.xmi.diff.UMLModelDiff;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import gr.uom.java.xmi.diff.UMLModelDiff;
 
 public class UMLJavadoc extends UMLAbstractDocumentation {
 	private List<UMLTagElement> tags;

@@ -1,23 +1,20 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.decomposition.Visitor.stringify;
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.unit.LangCompilationUnit;
+import antlr.ast.visitor.LangVisitor;
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.VariableDeclarationContainer;
+import gr.uom.java.xmi.diff.CodeRange;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import antlr.ast.node.LangASTNode;
-import antlr.ast.node.expression.LangSimpleName;
-import antlr.ast.node.unit.LangCompilationUnit;
-import antlr.ast.visitor.LangVisitor;
-import gr.uom.java.xmi.UMLOperation;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-
-import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.VariableDeclarationContainer;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 
 public class LeafExpression extends AbstractCodeFragment {
 	private String string;

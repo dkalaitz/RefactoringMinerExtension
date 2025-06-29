@@ -3,7 +3,6 @@ package gr.uom.java.xmi.annotation.source;
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.annotation.source.EmptySourceAnnotation;
 
 import java.util.Collections;
 import java.util.List;

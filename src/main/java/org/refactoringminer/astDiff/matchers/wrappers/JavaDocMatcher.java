@@ -4,7 +4,6 @@ import com.github.gumtreediff.matchers.CompositeMatchers;
 import com.github.gumtreediff.matchers.Mapping;
 import com.github.gumtreediff.matchers.MappingStore;
 import com.github.gumtreediff.tree.Tree;
-
 import gr.uom.java.xmi.UMLDocElement;
 import gr.uom.java.xmi.UMLJavadoc;
 import gr.uom.java.xmi.UMLTagElement;

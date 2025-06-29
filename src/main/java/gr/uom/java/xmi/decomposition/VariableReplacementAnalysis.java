@@ -1,65 +1,20 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.AbstractMap.SimpleEntry;
-
-import static gr.uom.java.xmi.Constants.JAVA;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.*;
+import gr.uom.java.xmi.decomposition.replacement.*;
+import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
+import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation.Direction;
+import gr.uom.java.xmi.diff.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.util.PrefixSuffixUtils;
 
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.UMLParameter;
-import gr.uom.java.xmi.UMLType;
-import gr.uom.java.xmi.VariableDeclarationContainer;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.UMLAnnotation;
-import gr.uom.java.xmi.UMLAnonymousClass;
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.decomposition.replacement.ConsistentReplacementDetector;
-import gr.uom.java.xmi.decomposition.replacement.MergeVariableReplacement;
-import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
-import gr.uom.java.xmi.decomposition.replacement.Replacement;
-import gr.uom.java.xmi.decomposition.replacement.VariableDeclarationReplacement;
-import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation;
-import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation.Direction;
-import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
-import gr.uom.java.xmi.decomposition.replacement.SplitVariableReplacement;
-import gr.uom.java.xmi.diff.AddVariableAnnotationRefactoring;
-import gr.uom.java.xmi.diff.AddVariableModifierRefactoring;
-import gr.uom.java.xmi.diff.CandidateAttributeRefactoring;
-import gr.uom.java.xmi.diff.CandidateMergeVariableRefactoring;
-import gr.uom.java.xmi.diff.CandidateSplitVariableRefactoring;
-import gr.uom.java.xmi.diff.ChangeVariableTypeRefactoring;
-import gr.uom.java.xmi.diff.ExtractAttributeRefactoring;
-import gr.uom.java.xmi.diff.ExtractVariableRefactoring;
-import gr.uom.java.xmi.diff.InlineAttributeRefactoring;
-import gr.uom.java.xmi.diff.InlineVariableRefactoring;
-import gr.uom.java.xmi.diff.MergeVariableRefactoring;
-import gr.uom.java.xmi.diff.ModifyVariableAnnotationRefactoring;
-import gr.uom.java.xmi.diff.RemoveVariableAnnotationRefactoring;
-import gr.uom.java.xmi.diff.RemoveVariableModifierRefactoring;
-import gr.uom.java.xmi.diff.RenameVariableRefactoring;
-import gr.uom.java.xmi.diff.ReplaceGenericWithDiamondRefactoring;
-import gr.uom.java.xmi.diff.SplitVariableRefactoring;
-import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
-import gr.uom.java.xmi.diff.UMLAnnotationDiff;
-import gr.uom.java.xmi.diff.UMLAnnotationListDiff;
-import gr.uom.java.xmi.diff.UMLClassBaseDiff;
-import gr.uom.java.xmi.diff.UMLModelDiff;
-import gr.uom.java.xmi.diff.UMLOperationDiff;
-import gr.uom.java.xmi.diff.UMLParameterDiff;
-import gr.uom.java.xmi.diff.UMLTypeParameterListDiff;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.*;
+
+import static gr.uom.java.xmi.Constants.JAVA;
 
 public class VariableReplacementAnalysis {
 	private UMLOperationBodyMapper mapper;

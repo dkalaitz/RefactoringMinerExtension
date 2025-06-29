@@ -1,14 +1,13 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.unit.LangCompilationUnit;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Statement;
 
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TryStatementObject extends CompositeStatementObject {
 	private List<CompositeStatementObject> catchClauses;

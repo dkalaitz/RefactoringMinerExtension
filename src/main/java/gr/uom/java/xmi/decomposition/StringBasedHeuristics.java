@@ -1,53 +1,20 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.util.PrefixSuffixUtils;
-
-import gr.uom.java.xmi.LeafType;
-import gr.uom.java.xmi.UMLAnonymousClass;
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.UMLParameter;
-import gr.uom.java.xmi.UMLType;
-import gr.uom.java.xmi.VariableDeclarationContainer;
+import gr.uom.java.xmi.*;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.decomposition.AbstractCall.StatementCoverageType;
 import gr.uom.java.xmi.decomposition.UMLOperationBodyMapper.ReplacementInfo;
-import gr.uom.java.xmi.decomposition.replacement.AddVariableReplacement;
-import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
-import gr.uom.java.xmi.decomposition.replacement.IntersectionReplacement;
-import gr.uom.java.xmi.decomposition.replacement.MergeVariableReplacement;
-import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
-import gr.uom.java.xmi.decomposition.replacement.Replacement;
-import gr.uom.java.xmi.decomposition.replacement.SplitVariableReplacement;
-import gr.uom.java.xmi.decomposition.replacement.SwapArgumentReplacement;
-import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation;
+import gr.uom.java.xmi.decomposition.replacement.*;
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
 import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation.Direction;
-import gr.uom.java.xmi.diff.ExtractVariableRefactoring;
-import gr.uom.java.xmi.diff.InvertConditionRefactoring;
-import gr.uom.java.xmi.diff.LeafMappingProvider;
-import gr.uom.java.xmi.diff.MergeConditionalRefactoring;
-import gr.uom.java.xmi.diff.ReplaceConditionalWithTernaryRefactoring;
-import gr.uom.java.xmi.diff.SplitConditionalRefactoring;
-import gr.uom.java.xmi.diff.StringDistance;
-import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
-import gr.uom.java.xmi.diff.UMLOperationDiff;
-import gr.uom.java.xmi.diff.UMLParameterDiff;
+import gr.uom.java.xmi.diff.*;
+import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.util.PrefixSuffixUtils;
+
+import java.util.*;
+import java.util.regex.Pattern;
+
+import static gr.uom.java.xmi.Constants.JAVA;
 
 public class StringBasedHeuristics {
 	protected static final Pattern SPLIT_CONDITIONAL_PATTERN = Pattern.compile("( \\|\\| )|( && )|( \\? )|( : )");

@@ -1,22 +1,17 @@
 package gr.uom.java.xmi;
 
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.metadata.LangAnnotation;
+import antlr.ast.node.unit.LangCompilationUnit;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.decomposition.AbstractExpression;
+import gr.uom.java.xmi.diff.CodeRange;
+import org.eclipse.jdt.core.dom.*;
+
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import antlr.ast.node.LangASTNode;
-import antlr.ast.node.metadata.LangAnnotation;
-import antlr.ast.node.unit.LangCompilationUnit;
-import org.eclipse.jdt.core.dom.Annotation;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.MemberValuePair;
-import org.eclipse.jdt.core.dom.NormalAnnotation;
-import org.eclipse.jdt.core.dom.SingleMemberAnnotation;
-
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.decomposition.AbstractExpression;
-import gr.uom.java.xmi.diff.CodeRange;
 
 public class UMLAnnotation implements Serializable, LocationInfoProvider {
 	private LocationInfo locationInfo;

@@ -1,22 +1,21 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-import static gr.uom.java.xmi.decomposition.Visitor.stringify;
-import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.SPLIT_COMMA_PATTERN;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.UMLType;
+import gr.uom.java.xmi.VariableDeclarationContainer;
+import gr.uom.java.xmi.diff.StringDistance;
 import org.eclipse.jdt.core.dom.ArrayCreation;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.UMLType;
-import gr.uom.java.xmi.VariableDeclarationContainer;
-import gr.uom.java.xmi.diff.StringDistance;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static gr.uom.java.xmi.Constants.JAVA;
+import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.SPLIT_COMMA_PATTERN;
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 
 public class ObjectCreation extends AbstractCall {
 	private UMLType type;

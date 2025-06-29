@@ -1,13 +1,13 @@
 package org.refactoringminer.api;
 
+import org.refactoringminer.util.AstUtils;
+import org.refactoringminer.util.RefactoringRelationship;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.refactoringminer.util.AstUtils;
-import org.refactoringminer.util.RefactoringRelationship;
 
 public enum RefactoringType {
 

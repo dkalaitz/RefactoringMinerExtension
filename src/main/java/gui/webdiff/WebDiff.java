@@ -12,7 +12,7 @@ import org.rendersnake.HtmlCanvas;
 import org.rendersnake.Renderable;
 import spark.Spark;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

@@ -1,19 +1,18 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-import static gr.uom.java.xmi.decomposition.Visitor.stringify;
-
-import java.util.ArrayList;
-
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.UMLType;
+import gr.uom.java.xmi.VariableDeclarationContainer;
+import gr.uom.java.xmi.diff.StringDistance;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.ExpressionMethodReference;
 import org.eclipse.jdt.core.dom.SuperMethodReference;
 import org.eclipse.jdt.core.dom.TypeMethodReference;
 
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.StringDistance;
-import gr.uom.java.xmi.UMLType;
-import gr.uom.java.xmi.VariableDeclarationContainer;
+import java.util.ArrayList;
+
+import static gr.uom.java.xmi.Constants.JAVA;
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 
 public class MethodReference extends AbstractCall {
 	private String methodName;

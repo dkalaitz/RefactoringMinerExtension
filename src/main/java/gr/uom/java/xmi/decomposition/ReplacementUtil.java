@@ -2,6 +2,7 @@ package gr.uom.java.xmi.decomposition;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.containsMethodSignatureOfAnonymousClass;
 
 public class ReplacementUtil {

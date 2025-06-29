@@ -3,7 +3,7 @@ package org.refactoringminer.astDiff.utils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.gumtreediff.actions.model.*;
+import com.github.gumtreediff.actions.model.Action;
 import com.github.gumtreediff.matchers.Mapping;
 import org.apache.commons.io.FileUtils;
 import org.refactoringminer.astDiff.models.ASTDiff;

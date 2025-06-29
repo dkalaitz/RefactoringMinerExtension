@@ -1,13 +1,13 @@
 package org.refactoringminer.astDiff.models;
 
-import java.util.*;
-
 import com.github.gumtreediff.matchers.Mapping;
 import com.github.gumtreediff.matchers.MappingStore;
 import com.github.gumtreediff.matchers.MultiMappingStore;
 import com.github.gumtreediff.tree.FakeTree;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.utils.Pair;
+
+import java.util.*;
 
 /**
  * @author  Pourya Alikhani Fard pouryafard75@gmail.com

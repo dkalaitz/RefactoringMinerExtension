@@ -1,15 +1,5 @@
 package gr.uom.java.xmi;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-
-import org.refactoringminer.util.PrefixSuffixUtils;
-
 import gr.uom.java.xmi.UMLClassMatcher.MatchResult;
 import gr.uom.java.xmi.decomposition.AbstractCall;
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
@@ -19,6 +9,9 @@ import gr.uom.java.xmi.diff.CodeRange;
 import gr.uom.java.xmi.diff.RenamePattern;
 import gr.uom.java.xmi.diff.StringDistance;
 import gr.uom.java.xmi.diff.UMLAnnotationListDiff;
+import org.refactoringminer.util.PrefixSuffixUtils;
+
+import java.util.*;
 
 public abstract class UMLAbstractClass {
 	protected LocationInfo locationInfo;

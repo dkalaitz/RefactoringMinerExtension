@@ -1,8 +1,8 @@
 package org.refactoringminer.util;
 
-import java.util.EnumSet;
-
 import org.refactoringminer.api.RefactoringType;
+
+import java.util.EnumSet;
 
 public class RefactoringRelationship implements Comparable<RefactoringRelationship> {
 

@@ -1,8 +1,8 @@
 package org.refactoringminer.api;
 
-import java.util.List;
-
 import gr.uom.java.xmi.diff.UMLModelDiff;
+
+import java.util.List;
 
 /**
  * Handler object that works in conjunction with {@link org.refactoringminer.api.GitHistoryRefactoringMiner}.

@@ -1,8 +1,8 @@
 package gr.uom.java.xmi;
 
-import java.util.Objects;
-
 import gr.uom.java.xmi.diff.CodeRange;
+
+import java.util.Objects;
 
 public class UMLDocElement implements LocationInfoProvider {
 	private String text;

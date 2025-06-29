@@ -1,14 +1,13 @@
 package gr.uom.java.xmi;
 
-import java.util.List;
-
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.unit.LangCompilationUnit;
+import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
+import gr.uom.java.xmi.diff.CodeRange;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
-import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
-import gr.uom.java.xmi.diff.CodeRange;
+import java.util.List;
 
 public class LocationInfo {
 	private String sourceFolder;

@@ -1,13 +1,14 @@
 package org.refactoringminer.astDiff.matchers.vanilla;
 
-import com.github.gumtreediff.matchers.*;
+import com.github.gumtreediff.matchers.Mapping;
+import com.github.gumtreediff.matchers.MultiMappingStore;
 import com.github.gumtreediff.matchers.heuristic.gt.DefaultPriorityTreeQueue;
 import com.github.gumtreediff.matchers.heuristic.gt.GreedySubtreeMatcher;
 import com.github.gumtreediff.matchers.heuristic.gt.PriorityTreeQueue;
 import com.github.gumtreediff.tree.Tree;
-import org.refactoringminer.astDiff.utils.Constants;
-import org.refactoringminer.astDiff.models.ExtendedMultiMappingStore;
 import org.refactoringminer.astDiff.matchers.TreeMatcher;
+import org.refactoringminer.astDiff.models.ExtendedMultiMappingStore;
+import org.refactoringminer.astDiff.utils.Constants;
 import org.refactoringminer.astDiff.utils.TreeUtilFunctions;
 
 import java.util.*;

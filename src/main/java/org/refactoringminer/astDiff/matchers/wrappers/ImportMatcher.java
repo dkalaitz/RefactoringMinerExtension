@@ -4,9 +4,9 @@ import com.github.gumtreediff.tree.Tree;
 import gr.uom.java.xmi.UMLImport;
 import gr.uom.java.xmi.diff.UMLImportListDiff;
 import org.apache.commons.lang3.tuple.Pair;
-import org.refactoringminer.astDiff.utils.Constants;
-import org.refactoringminer.astDiff.models.ExtendedMultiMappingStore;
 import org.refactoringminer.astDiff.matchers.TreeMatcher;
+import org.refactoringminer.astDiff.models.ExtendedMultiMappingStore;
+import org.refactoringminer.astDiff.utils.Constants;
 
 import java.util.Map;
 import java.util.Set;

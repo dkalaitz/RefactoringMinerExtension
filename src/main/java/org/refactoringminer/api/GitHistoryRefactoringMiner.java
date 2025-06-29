@@ -1,12 +1,12 @@
 package org.refactoringminer.api;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.Map;
-
 import org.eclipse.jgit.lib.Repository;
 import org.kohsuke.github.GitHub;
 import org.refactoringminer.astDiff.models.ProjectASTDiff;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Map;
 
 /**
  * Detect refactorings in the git history.

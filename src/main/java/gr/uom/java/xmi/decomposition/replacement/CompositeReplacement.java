@@ -1,8 +1,8 @@
 package gr.uom.java.xmi.decomposition.replacement;
 
-import java.util.Set;
-
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
+
+import java.util.Set;
 
 public class CompositeReplacement extends Replacement {
 	private Set<AbstractCodeFragment> additionallyMatchedStatements1;

@@ -2,7 +2,6 @@ package org.refactoringminer.astDiff.actions.classifier;
 
 import com.github.gumtreediff.actions.model.*;
 import com.github.gumtreediff.tree.Tree;
-import org.refactoringminer.astDiff.actions.classifier.ExtendedAbstractITreeClassifier;
 import org.refactoringminer.astDiff.actions.model.MoveIn;
 import org.refactoringminer.astDiff.actions.model.MoveOut;
 import org.refactoringminer.astDiff.actions.model.MultiMove;

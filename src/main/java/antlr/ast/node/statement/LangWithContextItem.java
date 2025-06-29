@@ -3,7 +3,6 @@ package antlr.ast.node.statement;
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
 import antlr.ast.node.PositionInfo;
-import antlr.ast.node.expression.LangSimpleName;
 import antlr.ast.visitor.LangASTVisitor;
 
 public class LangWithContextItem extends LangStatement {

@@ -1,14 +1,13 @@
 package gr.uom.java.xmi;
 
-import java.io.Serializable;
-
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.unit.LangCompilationUnit;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.diff.CodeRange;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Modifier;
 
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
+import java.io.Serializable;
 
 public class UMLModifier implements Serializable, LocationInfoProvider {
 	private String keyword;

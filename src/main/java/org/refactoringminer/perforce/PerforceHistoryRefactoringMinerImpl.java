@@ -1,38 +1,23 @@
 package org.refactoringminer.perforce;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import org.refactoringminer.api.PerforceHistoryRefactoringMiner;
-import org.refactoringminer.api.Refactoring;
-import org.refactoringminer.api.RefactoringHandler;
-import org.refactoringminer.api.RefactoringMinerTimedOutException;
-import org.refactoringminer.api.RefactoringType;
-import org.refactoringminer.astDiff.matchers.ProjectASTDiffer;
-import org.refactoringminer.astDiff.models.ProjectASTDiff;
-import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.perforce.p4java.core.IChangelist;
 import com.perforce.p4java.core.file.FileSpecOpStatus;
 import com.perforce.p4java.core.file.IFileSpec;
 import com.perforce.p4java.exception.ConnectionException;
 import com.perforce.p4java.server.IOptionsServer;
 import com.perforce.p4java.server.ServerFactory;
-
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.MoveSourceFolderRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
+import org.refactoringminer.api.*;
+import org.refactoringminer.astDiff.matchers.ProjectASTDiffer;
+import org.refactoringminer.astDiff.models.ProjectASTDiff;
+import org.refactoringminer.rm1.GitHistoryRefactoringMinerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Main class to provide operations to support Perforce in RefactoringMiner

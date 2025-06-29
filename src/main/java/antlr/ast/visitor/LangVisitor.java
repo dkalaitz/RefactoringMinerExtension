@@ -22,7 +22,6 @@ import gr.uom.java.xmi.decomposition.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class LangVisitor implements LangASTVisitor {
 

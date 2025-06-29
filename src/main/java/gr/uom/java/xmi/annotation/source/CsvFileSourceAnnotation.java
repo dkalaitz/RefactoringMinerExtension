@@ -4,11 +4,11 @@ import gr.uom.java.xmi.SourceAnnotation;
 import gr.uom.java.xmi.UMLAnnotation;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.annotation.NormalAnnotation;
+import gr.uom.java.xmi.annotation.SingleMemberAnnotation;
 import gr.uom.java.xmi.decomposition.AbstractExpression;
 import gr.uom.java.xmi.decomposition.LeafExpression;
 import gr.uom.java.xmi.util.CsvUtils;
-import gr.uom.java.xmi.annotation.NormalAnnotation;
-import gr.uom.java.xmi.annotation.SingleMemberAnnotation;
 
 import java.io.IOException;
 import java.util.Collections;

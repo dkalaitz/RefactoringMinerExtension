@@ -1,8 +1,7 @@
 package gui.webdiff.tree;
 
-import org.refactoringminer.astDiff.models.ASTDiff;
-
 import com.github.gumtreediff.utils.Pair;
+import org.refactoringminer.astDiff.models.ASTDiff;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;

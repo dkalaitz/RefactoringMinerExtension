@@ -1,27 +1,20 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.SPLIT_CONDITIONAL_PATTERN;
-import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.subConditionIntersection;
-import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.hasElseBranch;
-import static gr.uom.java.xmi.decomposition.UMLOperationBodyMapper.extractCommentsWithinStatement;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.refactoringminer.api.RefactoringType;
-
+import gr.uom.java.xmi.LeafType;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.VariableDeclarationContainer;
 import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
-import gr.uom.java.xmi.LeafType;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.diff.StringDistance;
+import org.refactoringminer.api.RefactoringType;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static gr.uom.java.xmi.Constants.JAVA;
+import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.*;
+import static gr.uom.java.xmi.decomposition.UMLOperationBodyMapper.extractCommentsWithinStatement;
 
 public class LeafMapping extends AbstractCodeMapping implements Comparable<LeafMapping> {
 	private List<Double> levelParentEditDistance;

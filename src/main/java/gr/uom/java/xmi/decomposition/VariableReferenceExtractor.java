@@ -1,12 +1,12 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
+
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class VariableReferenceExtractor {
 

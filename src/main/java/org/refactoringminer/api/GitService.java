@@ -1,11 +1,11 @@
 package org.refactoringminer.api;
 
-import java.util.Map;
-import java.util.Set;
-
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.eclipse.jgit.revwalk.RevWalk;
+
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Simple service to make git related tasks easier.  

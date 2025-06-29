@@ -1,14 +1,14 @@
 package org.refactoringminer.astDiff.actions.classifier;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import com.github.gumtreediff.actions.Diff;
 import com.github.gumtreediff.actions.model.Action;
 import com.github.gumtreediff.tree.Tree;
 import org.refactoringminer.astDiff.models.ASTDiff;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author  Pourya Alikhani Fard pouryafard75@gmail.com

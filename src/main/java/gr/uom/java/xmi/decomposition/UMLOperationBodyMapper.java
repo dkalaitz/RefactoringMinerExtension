@@ -1,83 +1,13 @@
 package gr.uom.java.xmi.decomposition;
 
-import gr.uom.java.xmi.UMLAnonymousClass;
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLClass;
-import gr.uom.java.xmi.UMLComment;
-import gr.uom.java.xmi.UMLInitializer;
-import gr.uom.java.xmi.UMLOperation;
-import gr.uom.java.xmi.UMLParameter;
-import gr.uom.java.xmi.VariableDeclarationContainer;
-import gr.uom.java.xmi.ListCompositeType;
+import gr.uom.java.xmi.*;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.UMLAnnotation;
-
-import static gr.uom.java.xmi.Constants.JAVA;
-import static gr.uom.java.xmi.UMLModelASTReader.processBlock;
-import static gr.uom.java.xmi.decomposition.ReplacementAlgorithm.findReplacementsWithExactMatching;
-import static gr.uom.java.xmi.decomposition.ReplacementAlgorithm.processLambdas;
-import static gr.uom.java.xmi.decomposition.ReplacementAlgorithm.streamAPICalls;
-import static gr.uom.java.xmi.decomposition.ReplacementAlgorithm.streamAPIName;
-import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.*;
-import static gr.uom.java.xmi.decomposition.Visitor.stringify;
-import static gr.uom.java.xmi.diff.UMLClassBaseDiff.getParameterValues;
-import static gr.uom.java.xmi.diff.UMLClassBaseDiff.matchParamsWithReplacements;
-
 import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
 import gr.uom.java.xmi.decomposition.replacement.IntersectionReplacement;
 import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement;
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
-import gr.uom.java.xmi.diff.UMLAnonymousClassDiff;
-import gr.uom.java.xmi.diff.AddParameterRefactoring;
-import gr.uom.java.xmi.diff.AssertThrowsRefactoring;
-import gr.uom.java.xmi.diff.CandidateAttributeRefactoring;
-import gr.uom.java.xmi.diff.CandidateMergeVariableRefactoring;
-import gr.uom.java.xmi.diff.CandidateSplitVariableRefactoring;
-import gr.uom.java.xmi.diff.ExtractOperationDetection;
-import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
-import gr.uom.java.xmi.diff.ExtractVariableRefactoring;
-import gr.uom.java.xmi.diff.InlineOperationRefactoring;
-import gr.uom.java.xmi.diff.InlineVariableRefactoring;
-import gr.uom.java.xmi.diff.InvertConditionRefactoring;
-import gr.uom.java.xmi.diff.LeafMappingProvider;
-import gr.uom.java.xmi.diff.MergeCatchRefactoring;
-import gr.uom.java.xmi.diff.MergeConditionalRefactoring;
-import gr.uom.java.xmi.diff.MergeVariableRefactoring;
-import gr.uom.java.xmi.diff.ReferenceBasedRefactoring;
-import gr.uom.java.xmi.diff.RemoveParameterRefactoring;
-import gr.uom.java.xmi.diff.ReplaceAnonymousWithLambdaRefactoring;
-import gr.uom.java.xmi.diff.ReplaceLoopWithPipelineRefactoring;
-import gr.uom.java.xmi.diff.ReplacePipelineWithLoopRefactoring;
-import gr.uom.java.xmi.diff.SplitConditionalRefactoring;
-import gr.uom.java.xmi.diff.SplitVariableRefactoring;
-import gr.uom.java.xmi.diff.StringDistance;
-import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
-import gr.uom.java.xmi.diff.UMLClassMoveDiff;
-import gr.uom.java.xmi.diff.UMLCommentListDiff;
-import gr.uom.java.xmi.diff.UMLDocumentationDiffProvider;
-import gr.uom.java.xmi.diff.UMLJavadocDiff;
-import gr.uom.java.xmi.diff.UMLModelDiff;
-import gr.uom.java.xmi.diff.UMLOperationDiff;
-import gr.uom.java.xmi.diff.UMLParameterDiff;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
+import gr.uom.java.xmi.diff.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 import org.eclipse.jdt.core.dom.ASTNode;
@@ -85,6 +15,18 @@ import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.PrefixSuffixUtils;
+
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import static gr.uom.java.xmi.Constants.JAVA;
+import static gr.uom.java.xmi.UMLModelASTReader.processBlock;
+import static gr.uom.java.xmi.decomposition.ReplacementAlgorithm.*;
+import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.*;
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
+import static gr.uom.java.xmi.diff.UMLClassBaseDiff.getParameterValues;
+import static gr.uom.java.xmi.diff.UMLClassBaseDiff.matchParamsWithReplacements;
 
 public class UMLOperationBodyMapper implements Comparable<UMLOperationBodyMapper>, UMLDocumentationDiffProvider {
 	private VariableDeclarationContainer container1;

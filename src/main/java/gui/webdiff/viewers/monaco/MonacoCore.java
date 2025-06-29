@@ -2,7 +2,6 @@ package gui.webdiff.viewers.monaco;
 
 import com.github.gumtreediff.actions.Diff;
 import com.github.gumtreediff.actions.TreeClassifier;
-import com.github.gumtreediff.matchers.MappingStore;
 import com.github.gumtreediff.tree.Tree;
 import org.refactoringminer.astDiff.actions.classifier.ExtendedTreeClassifier;
 import org.refactoringminer.astDiff.actions.model.MultiMove;
@@ -12,7 +11,8 @@ import org.rendersnake.HtmlCanvas;
 import java.io.IOException;
 import java.util.Set;
 
-import static org.rendersnake.HtmlAttributesFactory.*;
+import static org.rendersnake.HtmlAttributesFactory.class_;
+import static org.rendersnake.HtmlAttributesFactory.style;
 
 /* Created by pourya on 2024-07-05*/
 public class MonacoCore {

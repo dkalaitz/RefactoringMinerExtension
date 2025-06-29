@@ -1,11 +1,11 @@
 package gr.uom.java.xmi.annotation.source;
 
 import gr.uom.java.xmi.*;
-import gr.uom.java.xmi.decomposition.AbstractExpression;
-import gr.uom.java.xmi.decomposition.LeafExpression;
 import gr.uom.java.xmi.annotation.MarkerAnnotation;
 import gr.uom.java.xmi.annotation.NormalAnnotation;
 import gr.uom.java.xmi.annotation.SingleMemberAnnotation;
+import gr.uom.java.xmi.decomposition.AbstractExpression;
+import gr.uom.java.xmi.decomposition.LeafExpression;
 
 import java.util.ArrayList;
 import java.util.Collections;

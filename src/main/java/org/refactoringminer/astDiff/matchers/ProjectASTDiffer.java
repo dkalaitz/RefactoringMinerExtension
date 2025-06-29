@@ -3,7 +3,6 @@ package org.refactoringminer.astDiff.matchers;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.tree.TreeContext;
 import com.github.gumtreediff.utils.Pair;
-
 import gr.uom.java.xmi.diff.ReplaceAnonymousWithClassRefactoring;
 import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
@@ -11,14 +10,16 @@ import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.astDiff.actions.editscript.SimplifiedExtendedChawatheScriptGenerator;
+import org.refactoringminer.astDiff.matchers.vanilla.MissingIdenticalSubtree;
+import org.refactoringminer.astDiff.matchers.wrappers.ASTDiffMappingOptimizer;
+import org.refactoringminer.astDiff.matchers.wrappers.ClassDiffMatcher;
+import org.refactoringminer.astDiff.matchers.wrappers.UnifiedModelDiffRefactoringsMatcher;
+import org.refactoringminer.astDiff.models.ASTDiff;
 import org.refactoringminer.astDiff.models.ExtendedMultiMappingStore;
 import org.refactoringminer.astDiff.models.OptimizationData;
+import org.refactoringminer.astDiff.models.ProjectASTDiff;
 import org.refactoringminer.astDiff.moved.AllSubTreesMovedASTDiffGenerator;
 import org.refactoringminer.astDiff.moved.MovedASTDiffGenerator;
-import org.refactoringminer.astDiff.models.ASTDiff;
-import org.refactoringminer.astDiff.models.ProjectASTDiff;
-import org.refactoringminer.astDiff.matchers.wrappers.*;
-import org.refactoringminer.astDiff.matchers.vanilla.MissingIdenticalSubtree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -8,12 +8,12 @@ import gr.uom.java.xmi.decomposition.replacement.Replacement;
 import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation;
 import gr.uom.java.xmi.diff.*;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static gr.uom.java.xmi.Constants.JAVA;
 
 public class PurityChecker {
 

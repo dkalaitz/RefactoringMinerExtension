@@ -1,9 +1,10 @@
 package gr.uom.java.xmi.decomposition.replacement;
 
-import java.util.ArrayList;
-import java.util.List;
 import gr.uom.java.xmi.decomposition.LeafMapping;
 import gr.uom.java.xmi.diff.LeafMappingProvider;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IntersectionReplacement extends Replacement implements LeafMappingProvider {
 	private List<LeafMapping> subExpressionMappings;
