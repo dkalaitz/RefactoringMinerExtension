@@ -1,20 +1,19 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.decomposition.Visitor.stringify;
+import antlr.ast.node.LangASTNode;
+import antlr.ast.node.unit.LangCompilationUnit;
+import antlr.ast.visitor.LangVisitor;
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.VariableDeclarationContainer;
+import gr.uom.java.xmi.diff.CodeRange;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.Expression;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import antlr.ast.node.LangASTNode;
-import antlr.ast.node.unit.LangCompilationUnit;
-import antlr.ast.visitor.LangVisitor;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-
-import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.VariableDeclarationContainer;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 
 public class AbstractExpression extends AbstractCodeFragment {
 	

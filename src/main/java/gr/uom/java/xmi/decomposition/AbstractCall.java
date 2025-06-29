@@ -1,37 +1,22 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import antlr.ast.node.LangASTNode;
-import antlr.ast.node.expression.LangMethodInvocation;
 import antlr.ast.node.unit.LangCompilationUnit;
-import gr.uom.java.xmi.UMLOperation;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-
 import gr.uom.java.xmi.LeafType;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.VariableDeclarationContainer;
-import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.SPLIT_CONCAT_STRING_PATTERN;
-import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
-import gr.uom.java.xmi.decomposition.replacement.MergeVariableReplacement;
-import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
-import gr.uom.java.xmi.decomposition.replacement.Replacement;
-import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation;
-import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation.Direction;
+import gr.uom.java.xmi.decomposition.replacement.*;
 import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
+import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation.Direction;
 import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
-import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.ASTNode;
+import org.eclipse.jdt.core.dom.CompilationUnit;
+
+import java.util.*;
+
+import static gr.uom.java.xmi.Constants.JAVA;
+import static gr.uom.java.xmi.decomposition.StringBasedHeuristics.SPLIT_CONCAT_STRING_PATTERN;
 
 public abstract class AbstractCall extends LeafExpression {
 	protected int numberOfArguments;

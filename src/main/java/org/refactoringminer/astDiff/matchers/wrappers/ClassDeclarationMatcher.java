@@ -8,10 +8,10 @@ import gr.uom.java.xmi.UMLType;
 import gr.uom.java.xmi.UMLTypeParameter;
 import gr.uom.java.xmi.diff.UMLAnnotationListDiff;
 import gr.uom.java.xmi.diff.UMLClassBaseDiff;
+import org.refactoringminer.astDiff.matchers.TreeMatcher;
+import org.refactoringminer.astDiff.models.ExtendedMultiMappingStore;
 import org.refactoringminer.astDiff.models.OptimizationData;
 import org.refactoringminer.astDiff.utils.Constants;
-import org.refactoringminer.astDiff.models.ExtendedMultiMappingStore;
-import org.refactoringminer.astDiff.matchers.TreeMatcher;
 import org.refactoringminer.astDiff.utils.TreeUtilFunctions;
 
 import java.util.ArrayList;

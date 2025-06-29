@@ -1,11 +1,11 @@
 package gr.uom.java.xmi.decomposition;
 
-import java.util.Iterator;
-import java.util.List;
-
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.InfixExpression;
 import org.eclipse.jdt.internal.core.dom.NaiveASTFlattener;
+
+import java.util.Iterator;
+import java.util.List;
 
 public class ASTFlattener extends NaiveASTFlattener {
 	@Override

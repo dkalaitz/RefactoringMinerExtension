@@ -1,17 +1,16 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.decomposition.Visitor.stringify;
+import gr.uom.java.xmi.LocationInfo;
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.LocationInfoProvider;
+import gr.uom.java.xmi.diff.CodeRange;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-
-import gr.uom.java.xmi.LocationInfo;
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.diff.CodeRange;
-import gr.uom.java.xmi.LocationInfoProvider;
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 
 public class AnonymousClassDeclarationObject implements LocationInfoProvider {
 	private LocationInfo locationInfo;

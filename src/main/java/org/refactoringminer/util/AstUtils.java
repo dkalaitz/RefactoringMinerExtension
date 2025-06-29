@@ -1,22 +1,11 @@
 package org.refactoringminer.util;
 
-import static gr.uom.java.xmi.decomposition.Visitor.stringify;
+import org.eclipse.jdt.core.dom.*;
 
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.IMethodBinding;
-import org.eclipse.jdt.core.dom.ITypeBinding;
-import org.eclipse.jdt.core.dom.IVariableBinding;
-import org.eclipse.jdt.core.dom.Javadoc;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.TagElement;
-import org.eclipse.jdt.core.dom.Type;
+import static gr.uom.java.xmi.decomposition.Visitor.stringify;
 
 public class AstUtils {
 

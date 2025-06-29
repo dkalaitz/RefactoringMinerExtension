@@ -1,42 +1,20 @@
 package gr.uom.java.xmi.decomposition;
 
-import static gr.uom.java.xmi.Constants.JAVA;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
+import gr.uom.java.xmi.LocationInfo.CodeElementType;
+import gr.uom.java.xmi.*;
+import gr.uom.java.xmi.decomposition.replacement.*;
+import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
+import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation.Direction;
+import gr.uom.java.xmi.diff.*;
 import org.apache.commons.lang3.tuple.Pair;
 import org.refactoringminer.api.Refactoring;
 import org.refactoringminer.api.RefactoringMinerTimedOutException;
 import org.refactoringminer.api.RefactoringType;
 import org.refactoringminer.util.PrefixSuffixUtils;
 
-import gr.uom.java.xmi.LocationInfo.CodeElementType;
-import gr.uom.java.xmi.UMLAnonymousClass;
-import gr.uom.java.xmi.UMLAttribute;
-import gr.uom.java.xmi.UMLClass;
-import gr.uom.java.xmi.UMLParameter;
-import gr.uom.java.xmi.UMLType;
-import gr.uom.java.xmi.VariableDeclarationContainer;
-import gr.uom.java.xmi.decomposition.replacement.ClassInstanceCreationWithMethodInvocationReplacement;
-import gr.uom.java.xmi.decomposition.replacement.CompositeReplacement;
-import gr.uom.java.xmi.decomposition.replacement.IntersectionReplacement;
-import gr.uom.java.xmi.decomposition.replacement.MethodInvocationReplacement;
-import gr.uom.java.xmi.decomposition.replacement.MethodInvocationWithClassInstanceCreationReplacement;
-import gr.uom.java.xmi.decomposition.replacement.ObjectCreationReplacement;
-import gr.uom.java.xmi.decomposition.replacement.Replacement;
-import gr.uom.java.xmi.decomposition.replacement.Replacement.ReplacementType;
-import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation.Direction;
-import gr.uom.java.xmi.decomposition.replacement.VariableReplacementWithMethodInvocation;
-import gr.uom.java.xmi.diff.ExtractVariableRefactoring;
-import gr.uom.java.xmi.diff.InlineVariableRefactoring;
-import gr.uom.java.xmi.diff.LeafMappingProvider;
-import gr.uom.java.xmi.diff.RenameOperationRefactoring;
-import gr.uom.java.xmi.diff.UMLAbstractClassDiff;
-import gr.uom.java.xmi.diff.UMLAnonymousClassDiff;
+import java.util.*;
+
+import static gr.uom.java.xmi.Constants.JAVA;
 
 public abstract class AbstractCodeMapping implements LeafMappingProvider {
 

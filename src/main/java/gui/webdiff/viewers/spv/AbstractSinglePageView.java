@@ -1,15 +1,13 @@
 package gui.webdiff.viewers.spv;
 
-import gui.webdiff.viewers.monaco.MonacoCore;
 import gui.webdiff.dir.DirComparator;
 import gui.webdiff.dir.DirectoryDiffView;
+import gui.webdiff.viewers.monaco.MonacoCore;
 import org.rendersnake.DocType;
 import org.rendersnake.HtmlCanvas;
 import org.rendersnake.Renderable;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.rendersnake.HtmlAttributesFactory.*;
 

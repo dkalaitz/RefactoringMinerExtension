@@ -5,11 +5,11 @@ import com.github.gumtreediff.matchers.Mapping;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.utils.Pair;
 import gr.uom.java.xmi.diff.UMLModelDiff;
-import org.refactoringminer.astDiff.models.ASTDiff;
 import org.refactoringminer.astDiff.actions.classifier.ExtendedOnlyRootsClassifier;
-import org.refactoringminer.astDiff.models.ProjectASTDiff;
 import org.refactoringminer.astDiff.actions.model.MoveIn;
 import org.refactoringminer.astDiff.actions.model.MoveOut;
+import org.refactoringminer.astDiff.models.ASTDiff;
+import org.refactoringminer.astDiff.models.ProjectASTDiff;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

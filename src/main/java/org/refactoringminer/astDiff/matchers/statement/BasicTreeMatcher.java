@@ -4,7 +4,7 @@ import com.github.gumtreediff.matchers.Mapping;
 import com.github.gumtreediff.matchers.MappingStore;
 import com.github.gumtreediff.tree.Tree;
 import com.github.gumtreediff.utils.Pair;
-import org.refactoringminer.astDiff.matchers.*;
+import org.refactoringminer.astDiff.matchers.TreeMatcher;
 import org.refactoringminer.astDiff.matchers.vanilla.CustomBottomUpMatcher;
 import org.refactoringminer.astDiff.matchers.vanilla.CustomTopDownMatcher;
 import org.refactoringminer.astDiff.models.ExtendedMultiMappingStore;

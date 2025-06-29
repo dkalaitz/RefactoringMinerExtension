@@ -1,11 +1,11 @@
 package gr.uom.java.xmi;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.TypeDeclarationStatement;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 public class AnonymousClassDeclarationVisitor extends ASTVisitor {
 
