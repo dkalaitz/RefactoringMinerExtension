@@ -2,11 +2,14 @@ package antlr.umladapter.processor;
 
 import antlr.ast.node.LangASTNode;
 import antlr.ast.node.NodeTypeEnum;
+import antlr.ast.node.declaration.LangMethodDeclaration;
 import antlr.ast.node.declaration.LangSingleVariableDeclaration;
+import antlr.ast.node.declaration.LangTypeDeclaration;
 import antlr.ast.node.expression.LangAssignment;
 import antlr.ast.node.expression.LangFieldAccess;
 import antlr.ast.node.expression.LangLambdaExpression;
 import antlr.ast.node.expression.LangMethodInvocation;
+import antlr.ast.node.metadata.LangAnnotation;
 import antlr.ast.node.statement.*;
 import antlr.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo;
@@ -21,9 +24,30 @@ public class UMLAdapterStatementProcessor {
     public static void processStatement(LangASTNode statement, CompositeStatementObject composite,
                                         String sourceFolder, String filePath, UMLOperation container) {
 
-        System.out.println("Processing statement type: " + statement.getNodeType());
+        //System.out.println("Processing statement type: " + statement.getNodeType());
+        if (statement == null) {
+            System.err.println("Warning: Null statement encountered, skipping processing");
+            return;
+        }
 
         switch (statement.getNodeType()) {
+
+            case TYPE_DECLARATION:
+                processTypeDeclaration((LangTypeDeclaration) statement, composite, sourceFolder, filePath, container);
+                break;
+
+            case METHOD_DECLARATION:
+                processMethodDeclaration((LangMethodDeclaration) statement, composite, sourceFolder, filePath, container);
+                break;
+
+            case IMPORT_STATEMENT:
+                processImportStatement((LangImportStatement) statement, composite, sourceFolder, filePath, container);
+                break;
+
+            case ANNOTATION:
+                processAnnotation((LangAnnotation) statement, composite, sourceFolder, filePath, container);
+                break;
+
             case RETURN_STATEMENT:
                 processReturnStatement((LangReturnStatement) statement, composite, sourceFolder, filePath, container);
                 break;
@@ -123,6 +147,131 @@ public class UMLAdapterStatementProcessor {
                 break;
         }
 
+    }
+
+    public static void processTypeDeclaration(LangTypeDeclaration typeDecl, CompositeStatementObject composite,
+                                              String sourceFolder, String filePath, UMLOperation container) {
+        // Create a statement object for the nested class
+        StatementObject classStatement = new StatementObject(
+                typeDecl.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                typeDecl,
+                composite.getDepth() + 1,
+                LocationInfo.CodeElementType.TYPE_DECLARATION,
+                container
+        );
+
+        // Process the class body - methods and nested classes within it
+        if (typeDecl.getChildren() != null) {
+            CompositeStatementObject nestedComposite = new CompositeStatementObject(
+                    typeDecl.getRootCompilationUnit(),
+                    sourceFolder,
+                    filePath,
+                    typeDecl,
+                    composite.getDepth() + 2,
+                    LocationInfo.CodeElementType.BLOCK
+            );
+
+            // Process all members of the nested class
+            for (LangASTNode child : typeDecl.getChildren()) {
+                processStatement(child, nestedComposite, sourceFolder, filePath, container);
+            }
+
+            composite.addStatement(nestedComposite);
+        }
+
+        composite.addStatement(classStatement);
+    }
+
+
+    public static void processMethodDeclaration(LangMethodDeclaration methodDecl, CompositeStatementObject composite,
+                                                String sourceFolder, String filePath, UMLOperation container) {
+        // Create the method declaration statement object
+        StatementObject methodStatement = new StatementObject(
+                methodDecl.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                methodDecl,
+                composite.getDepth() + 1,
+                LocationInfo.CodeElementType.METHOD_DECLARATION,
+                container
+        );
+
+        // Process method parameters as variable declarations
+        if (methodDecl.getParameters() != null) {
+            for (LangSingleVariableDeclaration param : methodDecl.getParameters()) {
+                VariableDeclaration varDecl = new VariableDeclaration(
+                        methodDecl.getRootCompilationUnit(),
+                        sourceFolder,
+                        filePath,
+                        param
+                );
+                composite.addVariableDeclaration(varDecl);
+            }
+        }
+
+        // Process the method body recursively (nested functions can have their own nested functions!)
+        if (methodDecl.getBody() != null) {
+            CompositeStatementObject nestedComposite = new CompositeStatementObject(
+                    methodDecl.getRootCompilationUnit(),
+                    sourceFolder,
+                    filePath,
+                    methodDecl.getBody(),
+                    composite.getDepth() + 2,
+                    LocationInfo.CodeElementType.BLOCK
+            );
+
+            // Process nested method body - call the existing method from UMLModelAdapter
+            processMethodBodyStatements(methodDecl.getBody(), nestedComposite, sourceFolder, filePath, container);
+            composite.addStatement(nestedComposite);
+        }
+
+        composite.addStatement(methodStatement);
+    }
+
+    private static void processMethodBodyStatements(LangBlock methodBody, CompositeStatementObject composite,
+                                                    String sourceFolder, String filePath, UMLOperation container) {
+        if (methodBody.getStatements() != null) {
+            for (LangASTNode statement : methodBody.getStatements()) {
+                if (statement != null) {
+                    processStatement(statement, composite, sourceFolder, filePath, container);
+                }
+            }
+        }
+
+    }
+
+
+    public static void processImportStatement(LangImportStatement importStmt, CompositeStatementObject composite,
+                                              String sourceFolder, String filePath, UMLOperation container) {
+        // Create the import statement object
+        StatementObject importStatement = new StatementObject(
+                importStmt.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                importStmt,
+                composite.getDepth() + 1,
+                LocationInfo.CodeElementType.IMPORT_DECLARATION,
+                container
+        );
+
+        composite.addStatement(importStatement);
+    }
+
+    public static void processAnnotation(LangAnnotation statement, CompositeStatementObject composite, String sourceFolder, String filePath, UMLOperation container) {
+        // Create the annotation statement object
+        StatementObject annotationStatement = new StatementObject(
+                statement.getRootCompilationUnit(),
+                sourceFolder,
+                filePath,
+                statement,
+                composite.getDepth() + 1,
+                LocationInfo.CodeElementType.ANNOTATION,
+                container
+        );
+
+        composite.addStatement(annotationStatement);
     }
 
 

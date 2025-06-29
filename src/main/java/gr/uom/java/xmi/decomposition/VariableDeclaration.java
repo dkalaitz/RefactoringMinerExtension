@@ -484,16 +484,24 @@ public class VariableDeclaration implements LocationInfoProvider, VariableDeclar
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-        sb.append(variableName).append(" : ");
-        if(varargsParameter) {
-        	sb.append(type.toString().substring(0, type.toString().lastIndexOf("[]")));
-        	sb.append("...");
-        }
-        else {
-        	sb.append(type);
-        }
-        return sb.toString();
+		sb.append(variableName).append(" : ");
+		if(varargsParameter) {
+			String typeString = type.toString();
+			int lastArrayIndex = typeString.lastIndexOf("[]");
+			if (lastArrayIndex > 0) {
+				sb.append(typeString.substring(0, lastArrayIndex));
+			} else {
+				// Fallback: if no "[]" found, just append the type as-is
+				sb.append(typeString);
+			}
+			sb.append("...");
+		}
+		else {
+			sb.append(type);
+		}
+		return sb.toString();
 	}
+
 
 	public String toQualifiedString() {
 		StringBuilder sb = new StringBuilder();

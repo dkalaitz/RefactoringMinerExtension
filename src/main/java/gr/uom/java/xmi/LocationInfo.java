@@ -82,12 +82,12 @@ public class LocationInfo {
 		this.sourceFolder = sourceFolder;
 		this.filePath = filePath;
 		this.codeElementType = codeElementType;
-		this.startOffset = node.getStartChar();           // Character offset (start)
+		this.startOffset = node.getStartChar(); // Character offset (start)
 		this.length = node.getLength();
-		this.endOffset = node.getEndChar();               // Character offset (end)
-		this.startLine = node.getStartLine();             // 1-based (according to your LangASTNode)
-		this.endLine = node.getEndLine();                 // 1-based
-		this.startColumn = 1;                             // You may compute this from file contents if desired
+		this.endOffset = node.getEndChar();     // Character offset (end)
+		this.startLine = node.getStartLine();   // 1-based
+		this.endLine = node.getEndLine();   	// 1-based
+		this.startColumn = 1;
 		this.endColumn = 1;
 	}
 

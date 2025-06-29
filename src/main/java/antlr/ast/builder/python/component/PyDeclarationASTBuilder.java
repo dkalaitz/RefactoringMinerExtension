@@ -103,6 +103,11 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
     
     public LangASTNode visitFuncdef(Python3Parser.FuncdefContext ctx) {
 
+        if (ctx.block() == null) {
+            System.err.println("Warning: Function " + ctx.name().getText() + " has no body, skipping");
+            return null;
+        }
+
         // Collect langSingleVariableDeclarations
         List<LangSingleVariableDeclaration> langSingleVariableDeclarations = new ArrayList<>();
         if (ctx.parameters().typedargslist() != null) {
@@ -169,8 +174,6 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
     public LangASTNode visitAsync_funcdef(Python3Parser.Async_funcdefContext ctx) {
         LangASTNode astNode = visitFuncdef(ctx.funcdef());
 
-        System.out.println("AST NODE: " + astNode.getNodeType());
-        System.out.println("AST NODE DETAILS: " + astNode.toString());
 
         if (astNode instanceof LangMethodDeclaration methodDeclaration) {
             LangAnnotation asyncAnnotation = LangASTNodeFactory.createAnnotation(
@@ -273,8 +276,6 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
             String decoratorName = decoratorCtx.dotted_name().getText();
             LangSimpleName decoratorSimpleName = LangASTNodeFactory.createSimpleName(decoratorName, decoratorCtx);
 
-            //TODO class method decorators handling
-
             // Process arguments if any
             List<LangASTNode> arguments = new ArrayList<>();
 
@@ -282,7 +283,6 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
             LangAnnotation annotation = LangASTNodeFactory.createAnnotation(decoratorCtx, decoratorSimpleName, arguments);
             annotations.add(annotation);
 
-            System.out.println("Add annotation: " + annotation);
         }
 
         LangASTNode decoratedNode = null;
@@ -317,6 +317,8 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                     decoratedNode.addChild(annotation);
                 }
             }
+        } else if (ctx.async_funcdef() != null) {
+            decoratedNode = mainBuilder.visitAsync_funcdef(ctx.async_funcdef());
         }
 
         return decoratedNode;

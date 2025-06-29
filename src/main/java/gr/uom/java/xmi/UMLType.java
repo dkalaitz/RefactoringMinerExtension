@@ -282,7 +282,7 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		typeObject.parameterized = parameterized;
 		typeObject.setPythonType(true);
 
-        return (LeafType) typeObject;
+		return (LeafType) typeObject;
 	}
 
 	// Helper methods for Python brackets
@@ -466,4 +466,9 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		}
 		return false;
 	}
+
+	public void setLocationInfo(LocationInfo locationInfo) {
+		this.locationInfo = locationInfo;
+	}
+
 }

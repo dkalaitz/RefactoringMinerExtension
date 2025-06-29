@@ -163,7 +163,7 @@ public class LangVisitor implements LangASTVisitor {
                     infixExpressions.add(syntheticLeaf);
                     infixOperators.add(OperatorEnum.PLUS.name());
 
-                    System.out.println("Created synthetic: " + LangVisitor.stringify(syntheticExpr));
+                    //System.out.println("Created synthetic: " + LangVisitor.stringify(syntheticExpr));
                 }
             }
         }
@@ -309,7 +309,7 @@ public class LangVisitor implements LangASTVisitor {
             VariableDeclaration varDecl = new VariableDeclaration(cu, sourceFolder, filePath,
                     langAssignment, container, varName);
 
-            System.out.println("Added local variable declaration: " + varDecl);
+            //System.out.println("Added local variable declaration: " + varDecl);
             variableDeclarations.add(varDecl);
 
         } // TODO
@@ -458,8 +458,22 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangTryStatement langTryStatement) {
+        // Visit try block
+        if (langTryStatement.getBody() != null) {
+            langTryStatement.getBody().accept(this);
+        }
 
+        // Visit catch clauses
+        for (LangCatchClause catchClause : langTryStatement.getCatchClauses()) {
+            catchClause.accept(this);
+        }
+
+        // Visit finally block
+        if (langTryStatement.getFinallyBlock() != null) {
+            langTryStatement.getFinallyBlock().accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangCatchClause langCatchClause) {
@@ -513,23 +527,54 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangAssertStatement langAssertStatement) {
+        // Visit the test expression (the condition being asserted)
+        if (langAssertStatement.getExpression() != null) {
+            langAssertStatement.getExpression().accept(this);
+        }
+
+        // Visit the optional message expression
+        if (langAssertStatement.getMessage() != null) {
+            langAssertStatement.getMessage().accept(this);
+        }
 
     }
 
     @Override
     public void visit(LangThrowStatement langThrowStatement) {
-
+        // Visit the thrown expression
+        if (langThrowStatement.getExpressions() != null) {
+            langThrowStatement.getExpressions().forEach(expression -> expression.accept(this));
+        }
     }
+
 
     @Override
     public void visit(LangWithContextItem langWithContextItem) {
+        // Visit the context expression
+        if (langWithContextItem.getContextExpression() != null) {
+            langWithContextItem.getContextExpression().accept(this);
+        }
 
+        // Visit the optional variables (could be name, tuple, etc.)
+        if (langWithContextItem.getAlias() != null) {
+            langWithContextItem.getAlias().accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangWithStatement langWithStatement) {
+        // Visit context items
+        for (LangASTNode item : langWithStatement.getContextItems()) {
+            item.accept(this);
+        }
 
+        // Visit body
+        if (langWithStatement.getBody() != null) {
+            langWithStatement.getBody().accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangNonLocalStatement langNonLocalStatement) {
@@ -538,8 +583,12 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangAsyncStatement langAsyncStatement) {
-
+        // Visit the wrapped statement (async def, async with, async for)
+        if (langAsyncStatement.getBody() != null) {
+            langAsyncStatement.getBody().accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangAwaitExpression langAwaitExpression) {
@@ -567,13 +616,30 @@ public class LangVisitor implements LangASTVisitor {
 
     @Override
     public void visit(LangSwitchStatement langSwitchStatement) {
+        // Visit the match expression
+        if (langSwitchStatement.getExpression() != null) {
+            langSwitchStatement.getExpression().accept(this);
+        }
 
+        // Visit all case statements
+        for (LangCaseStatement caseStmt : langSwitchStatement.getCases()) {
+            caseStmt.accept(this);
+        }
     }
 
     @Override
     public void visit(LangCaseStatement langCaseStatement) {
+        // Visit the case pattern (can contain variables and expressions)
+        if (langCaseStatement.getPattern() != null) {
+            langCaseStatement.getPattern().accept(this);
+        }
 
+        // Visit the case body
+        if (langCaseStatement.getBody() != null) {
+            langCaseStatement.getBody().accept(this);
+        }
     }
+
 
     @Override
     public void visit(LangVariablePattern langVariablePattern) {

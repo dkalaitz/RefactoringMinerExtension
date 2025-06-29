@@ -29,10 +29,8 @@ public class PyASTFlattener implements LangASTFlattener {
         return new PyASTFlattener(node).getResult();
     }
 
-
     @Override
     public String getResult() {
-//        root.accept(this); // Start from generic root
         return builder.toString();
     }
 
@@ -92,15 +90,24 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public void visit(LangBlock block) {
+        if (block.getStatements().isEmpty()) {
+            return;
+        }
         for (LangASTNode stmt : block.getStatements()) {
-            stmt.accept(this);
+            if (stmt != null) {
+                stmt.accept(this);
+            }
         }
     }
 
     @Override
     public void visit(LangReturnStatement stmt) {
-        builder.append("return ");
-        stmt.getExpression().accept(this);
+        builder.append("return");
+
+        if (stmt.getExpression() != null) {
+            builder.append(" ");
+            stmt.getExpression().accept(this);
+        }
     }
 
     @Override
@@ -274,8 +281,6 @@ public class PyASTFlattener implements LangASTFlattener {
     public void visit(LangImportStatement langImportStatement) {
         StringBuilder importBuilder = new StringBuilder();
 
-        // TODO: Fix (check testFlattenerWithImportsAndDictionary)
-
         // Handle relative imports (dots for relative levels, only for "from" imports)
         int relativeLevel = langImportStatement.getRelativeLevel();
         if (relativeLevel > 0) {
@@ -380,7 +385,6 @@ public class PyASTFlattener implements LangASTFlattener {
         if (langCatchClause.getExceptionVariable() != null) {
             langCatchClause.getExceptionVariable().accept(this);
         }
-        // TODO
         if (!langCatchClause.getExceptionTypes().isEmpty()) {
             langCatchClause.getExceptionTypes().forEach(type -> type.accept(this));
         }
@@ -417,10 +421,15 @@ public class PyASTFlattener implements LangASTFlattener {
         builder.append("pass");
     }
 
+
     @Override
-    public void visit(LangYieldStatement langYieldStatement) {
-        builder.append("yield ");
-        langYieldStatement.getExpression().accept(this);
+    public void visit(LangYieldStatement stmt) {
+        builder.append("yield");
+
+        if (stmt.getExpression() != null) {
+            builder.append(" ");
+            stmt.getExpression().accept(this);
+        }
     }
 
     @Override
@@ -458,7 +467,7 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public void visit(LangWithContextItem langWithContextItem) {
-        langWithContextItem.getExpression().accept(this);
+        langWithContextItem.getContextExpression().accept(this);
     }
 
     @Override

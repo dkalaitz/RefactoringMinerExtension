@@ -136,16 +136,18 @@ public class UMLAdapterUtil {
     }
 
     public static String extractModuleName(String filename) {
-        // Extract the logical package or namespace
         String packageName = UMLAdapterUtil.extractPackageName(filename);
 
-        // Generate a hash or unique identifier based on the module's content
-        // This ensures stability even if the file name changes
-        String moduleContentHash = Integer.toHexString(filename.hashCode());
+        String baseFileName = Paths.get(filename).getFileName().toString();
+        if (baseFileName.endsWith(".py")) {
+            baseFileName = baseFileName.substring(0, baseFileName.length() - 3);
+        }
 
-        // Combine package and unique identifier to form a stable module name
-        return packageName + ".TopLevelMethodsWrapper$" + moduleContentHash;
+        return packageName.isEmpty() ?
+                baseFileName + "_module" :
+                packageName + "." + baseFileName + "_module";
     }
+
 
 
 

@@ -8,8 +8,8 @@ import antlr.ast.visitor.LangASTVisitor;
 
 public class LangWithContextItem extends LangStatement {
 
-    private LangASTNode expression;
-    private LangSimpleName alias; // may be null
+    private LangASTNode contextExpression;
+    private LangASTNode alias; // may be null
 
 
     public LangWithContextItem(){
@@ -20,9 +20,14 @@ public class LangWithContextItem extends LangStatement {
         super(NodeTypeEnum.WITH_CONTEXT_ITEM, positionInfo);
     }
 
-    public LangWithContextItem(PositionInfo positionInfo, LangASTNode expr, LangSimpleName alias) {
+    public LangWithContextItem(PositionInfo positionInfo, LangASTNode expr) {
         super(NodeTypeEnum.WITH_CONTEXT_ITEM, positionInfo);
-        this.expression = expr;
+        this.contextExpression = expr;
+    }
+
+    public LangWithContextItem(PositionInfo positionInfo, LangASTNode expr, LangASTNode alias) {
+        super(NodeTypeEnum.WITH_CONTEXT_ITEM, positionInfo);
+        this.contextExpression = expr;
         this.alias = alias;
     }
 
@@ -32,26 +37,26 @@ public class LangWithContextItem extends LangStatement {
         visitor.visit(this);
     }
 
-    public LangASTNode getExpression() {
-        return expression;
+    public LangASTNode getContextExpression() {
+        return contextExpression;
     }
 
-    public void setExpression(LangASTNode expression) {
-        this.expression = expression;
+    public void setContextExpression(LangASTNode contextExpression) {
+        this.contextExpression = contextExpression;
     }
 
-    public LangSimpleName getAlias() {
+    public LangASTNode getAlias() {
         return alias;
     }
 
-    public void setAlias(LangSimpleName alias) {
+    public void setAlias(LangASTNode alias) {
         this.alias = alias;
     }
 
     @Override
     public String toString() {
         return "LangWithContextItem{" +
-                "expression=" + expression +
+                "expression=" + contextExpression +
                 ", alias=" + alias +
                 '}';
     }

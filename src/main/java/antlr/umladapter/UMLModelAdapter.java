@@ -56,7 +56,7 @@ public class UMLModelAdapter {
             LangASTNode ast = LangASTUtil.getLangAST(
                     entry.getKey(), // fileName for language detection
                     new StringReader(entry.getValue())); // code content
-            System.out.print("AST Structure: " + ast.toString());
+           // System.out.print("AST Structure: " + ast.toString());
             result.put(entry.getKey(), ast);
         }
 
@@ -238,7 +238,13 @@ public class UMLModelAdapter {
 
         for (int i = paramOffset; i < params.size(); i++) {
             LangSingleVariableDeclaration param = params.get(i);
-            UMLType typeObject = UMLType.extractTypeObject(param.getTypeAnnotation().getName());
+            UMLType typeObject;
+            if (LangSupportedEnum.PYTHON.name().equals(language)) {
+                typeObject = UMLType.extractPythonTypeObject(param.getTypeAnnotation().getName());
+                typeObject.setLocationInfo(new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE));
+            } else {
+                typeObject = UMLType.extractTypeObject(param.getTypeAnnotation().getName());
+            }
             UMLParameter umlParam = new UMLParameter(param.getLangSimpleName().getIdentifier(), typeObject, "parameter", param.isVarArgs());
             processVariableDeclarations(param, umlParam, typeObject, sourceFolder, filePath, methodDecl);
             umlOperation.addParameter(umlParam);
@@ -259,6 +265,7 @@ public class UMLModelAdapter {
         UMLType returnType;
         if (LangSupportedEnum.PYTHON.name().equals(language)){
             returnType = UMLType.extractPythonTypeObject(methodDecl.getReturnTypeAnnotation());
+            returnType.setLocationInfo(new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE));
         } else {
             returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation());
         }
@@ -278,7 +285,7 @@ public class UMLModelAdapter {
         processMethodBody(methodDecl.getBody(), opBody.getCompositeStatement(), sourceFolder, filePath, umlOperation);
 
         umlOperation.setBody(opBody);
-        logUMLOperation(umlOperation, methodDecl);
+        //logUMLOperation(umlOperation, methodDecl);
 
         return umlOperation;
     }

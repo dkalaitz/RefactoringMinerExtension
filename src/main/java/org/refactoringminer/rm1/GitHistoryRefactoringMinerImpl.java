@@ -324,10 +324,10 @@ public class GitHistoryRefactoringMinerImpl implements GitHistoryRefactoringMine
 
 				// Log if the file is a supported type and whether it is a Python file
 				if (PathFileUtils.isSupportedFile(pathString) && pathString.contains("/")) {
-					logger.info("Found supported file: {}", pathString); // Log every supported file
-					if (pathString.endsWith(".py")) { // Check if it's a Python file
-						logger.info("Accessing Python file: {}", pathString);
-					}
+//					logger.info("Found supported file: {}", pathString); // Log every supported file
+//					if (pathString.endsWith(".py")) { // Check if it's a Python file
+//						logger.info("Accessing Python file: {}", pathString);
+//					}
 
 					String directory = pathString.substring(0, pathString.lastIndexOf("/"));
 					repositoryDirectories.add(directory);

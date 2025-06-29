@@ -34,7 +34,9 @@ public class LeafType extends UMLType implements Cloneable {
 		for (int i = 0; i < name.length(); i++) {
 			if (name.charAt(i) == '.') {
 				numberOfDots++;
-				if(Character.isUpperCase(name.charAt(i+1)) &&
+				// Add bounds check before accessing i+1
+				if (i + 1 < name.length() &&
+						Character.isUpperCase(name.charAt(i+1)) &&
 						indexOfFirstUpperCaseCharacterFollowedByDot == -1) {
 					indexOfFirstUpperCaseCharacterFollowedByDot = i+1;
 				}

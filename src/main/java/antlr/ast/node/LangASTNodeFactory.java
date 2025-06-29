@@ -253,7 +253,11 @@ public class LangASTNodeFactory {
         return new LangWithStatement(PositionUtils.getPositionInfo(ctx), contextItems, body);
     }
 
-    public static LangWithContextItem createWithContextItem(Python3Parser.With_itemContext ctx, LangASTNode expr, LangSimpleName alias) {
+    public static LangWithContextItem createWithContextItem(Python3Parser.With_itemContext ctx, LangASTNode expr) {
+        return new LangWithContextItem(PositionUtils.getPositionInfo(ctx), expr);
+    }
+
+    public static LangWithContextItem createWithContextItem(Python3Parser.With_itemContext ctx, LangASTNode expr, LangASTNode alias) {
         return new LangWithContextItem(PositionUtils.getPositionInfo(ctx), expr, alias);
     }
 

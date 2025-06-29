@@ -1058,13 +1058,27 @@ public abstract class AbstractCall extends LeafExpression {
 	}
 
 	private int argumentIsReturned(String statement) {
-		if(statement.startsWith(JAVA.RETURN_SPACE)) {
+		if(statement.startsWith(JAVA.RETURN_SPACE) || statement.startsWith("return")) {
+			// Use different extraction logic based on language
+			String returnedExpression;
+
+			if(statement.startsWith(JAVA.RETURN_SPACE)) {
+				// Java logic
+				int startIndex = JAVA.RETURN_SPACE.length();
+				int endIndex = statement.length() - JAVA.STATEMENT_TERMINATION.length();
+				if (startIndex >= endIndex) return -1;
+				returnedExpression = statement.substring(startIndex, endIndex);
+			} else {
+				// Python logic - no semicolon
+				returnedExpression = statement.substring("return ".length()).trim();
+			}
+
 			int index = 0;
 			for(String argument : arguments()) {
 				if(argument.equals("true") || argument.equals("false") || argument.equals("null")) {
 					return -1;
 				}
-				if(equalsIgnoringExtraParenthesis(argument, statement.substring(JAVA.RETURN_SPACE.length(), statement.length()-JAVA.STATEMENT_TERMINATION.length()))) {
+				if(equalsIgnoringExtraParenthesis(argument, returnedExpression)) {
 					return index;
 				}
 				index++;
