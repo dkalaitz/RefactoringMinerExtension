@@ -22,56 +22,100 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
     }
 
     public LangASTNode visitAtom(Python3Parser.AtomContext ctx) {
-        // Handle identifiers or literals
+        // Handle numbers
         if (ctx.NUMBER() != null) {
             return LangASTNodeFactory.createNumberLiteral(ctx, ctx.NUMBER().getText());
         }
-        if (ctx.name() != null && ctx.name().getText().equals("None")) {
+
+        // Handle None
+        if (ctx.name() != null && "None".equals(ctx.name().getText())) {
             return LangASTNodeFactory.createNullLiteral(ctx);
         }
+        if ("None".equals(ctx.getText())) {
+            return LangASTNodeFactory.createNullLiteral(ctx);
+        }
+
+        // Handle ALL string literals
         if (ctx.getText() != null && PyASTBuilderUtil.isStringLiteral(ctx)) {
             return LangASTNodeFactory.createStringLiteral(ctx, ctx.getText());
         }
+
+        // Handle boolean literals
         if (ctx.TRUE() != null || ctx.FALSE() != null) {
             return LangASTNodeFactory.createBooleanLiteral(ctx, Boolean.parseBoolean(ctx.getText()));
         }
-        if (ctx.getText() != null && PyASTBuilderUtil.isListLiteral(ctx)){
+
+        // Handle empty dictionary {} - FIXED
+        if (ctx.OPEN_BRACE() != null && ctx.CLOSE_BRACE() != null) {
+            if (ctx.dictorsetmaker() == null) {
+                // Empty dictionary
+                return LangASTNodeFactory.createDictionaryLiteral(ctx);
+            } else {
+                // Non-empty dictionary
+                LangDictionaryLiteral dict = LangASTNodeFactory.createDictionaryLiteral(ctx);
+                Python3Parser.DictorsetmakerContext dictCtx = ctx.dictorsetmaker();
+                if (dictCtx.test().size() % 2 == 0) {
+                    for (int i = 0; i < dictCtx.test().size(); i += 2) {
+                        LangASTNode key = mainBuilder.visit(dictCtx.test(i));
+                        LangASTNode value = mainBuilder.visit(dictCtx.test(i + 1));
+                        dict.addEntry(key, value);
+                    }
+                }
+                return dict;
+            }
+        }
+
+        // Handle list literals
+        if (ctx.getText() != null && PyASTBuilderUtil.isListLiteral(ctx)) {
             List<LangASTNode> elements = new ArrayList<>();
-            // If there's a testlist_comp, it contains the elements
             if (ctx.testlist_comp() != null) {
                 for (Python3Parser.TestContext testCtx : ctx.testlist_comp().test()) {
-                    elements.add(mainBuilder.visit(testCtx));
+                    LangASTNode element = mainBuilder.visit(testCtx);
+                    elements.add(element != null ? element :
+                            LangASTNodeFactory.createSimpleName("PARSE_ERROR", testCtx));
                 }
             }
             return LangASTNodeFactory.createListLiteral(ctx, elements);
         }
-        // Handle tuple literals
-        if (ctx.OPEN_PAREN() != null && ctx.CLOSE_PAREN() != null && ctx.testlist_comp() != null) {
-            List<LangASTNode> elements = new ArrayList<>();
-            for (Python3Parser.TestContext testCtx : ctx.testlist_comp().test()) {
-                elements.add(mainBuilder.visit(testCtx));
-            }
-            return LangASTNodeFactory.createTupleLiteral(ctx, elements);
-        }
 
-        // Handle dictionary literals
-        if (ctx.OPEN_BRACE() != null && ctx.CLOSE_BRACE() != null && ctx.dictorsetmaker() != null) {
-            LangDictionaryLiteral dict = LangASTNodeFactory.createDictionaryLiteral(ctx);
-
-            // Process key-value pairs if they exist
-            Python3Parser.DictorsetmakerContext dictCtx = ctx.dictorsetmaker();
-            if (dictCtx != null && dictCtx.test().size() % 2 == 0) {
-                for (int i = 0; i < dictCtx.test().size(); i += 2) {
-                    LangASTNode key = mainBuilder.visit(dictCtx.test(i));
-                    LangASTNode value = mainBuilder.visit(dictCtx.test(i + 1));
-                    dict.addEntry(key, value);
+        // Handle parenthesized expressions and tuples
+        if (ctx.OPEN_PAREN() != null && ctx.CLOSE_PAREN() != null) {
+            if (ctx.testlist_comp() != null) {
+                List<Python3Parser.TestContext> tests = ctx.testlist_comp().test();
+                if (tests != null && !tests.isEmpty()) {
+                    if (tests.size() == 1) {
+                        // Single parenthesized expression
+                        return mainBuilder.visit(tests.get(0));
+                    } else {
+                        // Tuple literal
+                        List<LangASTNode> elements = new ArrayList<>();
+                        for (Python3Parser.TestContext testCtx : tests) {
+                            LangASTNode element = mainBuilder.visit(testCtx);
+                            elements.add(element != null ? element :
+                                    LangASTNodeFactory.createSimpleName("PARSE_ERROR", testCtx));
+                        }
+                        return LangASTNodeFactory.createTupleLiteral(ctx, elements);
+                    }
                 }
             }
-
-            return dict;
+            // Empty parentheses ()
+            return LangASTNodeFactory.createTupleLiteral(ctx, new ArrayList<>());
         }
 
-        return LangASTNodeFactory.createSimpleName(ctx.getText(), ctx);
+        // Handle regular identifiers/names
+        if (ctx.name() != null) {
+            return LangASTNodeFactory.createSimpleName(ctx.name().getText(), ctx);
+        }
+
+        // Fallback
+        String atomText = ctx.getText();
+        if (atomText != null && !atomText.isEmpty()) {
+            System.err.println("Warning: Unhandled atom type, creating SimpleName fallback: " + atomText);
+            return LangASTNodeFactory.createSimpleName(atomText, ctx);
+        }
+
+        System.err.println("Warning: Empty atom context, creating placeholder");
+        return LangASTNodeFactory.createSimpleName("UNKNOWN_ATOM", ctx);
     }
 
     public LangASTNode visitAtom_expr(Python3Parser.Atom_exprContext ctx) {
@@ -207,8 +251,6 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         return false;
     }
 
-
-
     public LangASTNode visitExpr(Python3Parser.ExprContext ctx) {
         if (ctx.atom_expr() != null) {
             return mainBuilder.visitAtom_expr(ctx.atom_expr());
@@ -234,10 +276,29 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         if (ctx.expr().size() >= 2) {
             LangASTNode leftNode = mainBuilder.visit(ctx.expr(0));
 
+            // Check if the first expression failed to parse
+            if (leftNode == null) {
+                System.err.println("Warning: Left operand is null in comparison: " + ctx.getText());
+                return null;
+            }
+
             // For each comparison operator and right operand
             for (int i = 0; i < ctx.comp_op().size(); i++) {
                 LangASTNode rightNode = mainBuilder.visit(ctx.expr(i + 1));
+
+                // Check if the right operand is null
+                if (rightNode == null) {
+                    System.err.println("Warning: Right operand is null in comparison: " + ctx.getText());
+                    return leftNode;
+                }
+
                 String operator = ctx.comp_op(i).getText();
+
+                // Validate operator as well
+                if (operator == null || operator.isEmpty()) {
+                    System.err.println("Warning: Operator is null/empty in comparison: " + ctx.getText());
+                    return leftNode;
+                }
 
                 // Create an infix expression for this comparison
                 leftNode = LangASTNodeFactory.createInfixExpression(leftNode, rightNode, operator, ctx);

@@ -49,11 +49,35 @@ public class PyASTBuilderUtil {
     }
 
     public static boolean isStringLiteral(Python3Parser.AtomContext ctx) {
+        if (ctx == null) {
+            return false;
+        }
+
+        if (ctx.STRING() != null && !ctx.STRING().isEmpty()) {
+            return true;
+        }
+
         String text = ctx.getText();
-        return text.startsWith("\"") && text.endsWith("\"")
-                || text.startsWith("'") && text.endsWith("'")
-                || text.startsWith("r\"") && text.endsWith("\"")
-                || text.startsWith("\"\"\"") && text.endsWith("\"\"\"");
+        if (text == null || text.isEmpty()) {
+            return false;
+        }
+
+        // f-strings and complex strings
+        if (text.length() >= 2) {
+            String lower = text.toLowerCase();
+            // Check for any string prefix followed by quotes
+            if ((lower.startsWith("f") || lower.startsWith("r") || lower.startsWith("b") ||
+                    lower.startsWith("u") || lower.startsWith("fr") || lower.startsWith("rf")) &&
+                    (text.contains("\"") || text.contains("'"))) {
+                return true;
+            }
+
+            // Check for regular strings
+            return text.startsWith("\"") || text.startsWith("'") ||
+                    text.startsWith("\"\"\"") || text.startsWith("'''");
+        }
+
+        return false;
     }
 
     public static String removeQuotes(String text) {
