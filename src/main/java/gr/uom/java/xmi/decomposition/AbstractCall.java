@@ -1,7 +1,7 @@
 package gr.uom.java.xmi.decomposition;
 
-import antlr.ast.node.LangASTNode;
-import antlr.ast.node.unit.LangCompilationUnit;
+import extension.ast.node.LangASTNode;
+import extension.ast.node.unit.LangCompilationUnit;
 import gr.uom.java.xmi.LeafType;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.VariableDeclarationContainer;

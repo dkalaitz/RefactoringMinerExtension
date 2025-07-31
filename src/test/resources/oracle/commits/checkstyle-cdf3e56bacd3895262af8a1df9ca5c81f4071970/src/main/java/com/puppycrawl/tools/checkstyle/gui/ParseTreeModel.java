@@ -21,8 +21,8 @@ package com.puppycrawl.tools.checkstyle.gui;
 
 import javax.swing.tree.TreePath;
 
-import antlr.ASTFactory;
-import antlr.collections.AST;
+import extension.ASTFactory;
+import extension.collections.AST;
 
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;

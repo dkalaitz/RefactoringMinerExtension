@@ -32,7 +32,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import antlr.CommonHiddenStreamToken;
+import extension.CommonHiddenStreamToken;
 
 import com.google.common.collect.Maps;
 import com.puppycrawl.tools.checkstyle.BaseCheckTestSupport;

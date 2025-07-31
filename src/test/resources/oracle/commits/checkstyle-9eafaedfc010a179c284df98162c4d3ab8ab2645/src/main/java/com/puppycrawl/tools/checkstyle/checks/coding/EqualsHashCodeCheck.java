@@ -21,7 +21,7 @@ package com.puppycrawl.tools.checkstyle.checks.coding;
 
 import java.util.Map;
 
-import antlr.collections.AST;
+import extension.collections.AST;
 
 import com.google.common.collect.Maps;
 import com.puppycrawl.tools.checkstyle.api.AbstractCheck;

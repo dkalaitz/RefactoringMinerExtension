@@ -1,6 +1,6 @@
 package org.refactoringminer.test.python;
 
-import antlr.umladapter.UMLAdapterUtil;
+import extension.umladapter.UMLAdapterUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,6 +1,6 @@
 package org.refactoringminer.test.python.refactorings.parameter;
 
-import antlr.umladapter.UMLModelAdapter;
+import extension.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.RenameVariableRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;

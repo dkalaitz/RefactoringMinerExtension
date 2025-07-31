@@ -1,9 +1,9 @@
 package gr.uom.java.xmi.decomposition;
 
-import antlr.ast.node.LangASTNode;
-import antlr.ast.node.expression.*;
-import antlr.ast.node.unit.LangCompilationUnit;
-import antlr.ast.visitor.LangVisitor;
+import extension.ast.node.LangASTNode;
+import extension.ast.node.expression.*;
+import extension.ast.node.unit.LangCompilationUnit;
+import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.*;
 import gr.uom.java.xmi.diff.StringDistance;

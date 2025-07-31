@@ -1,6 +1,6 @@
 package org.refactoringminer.test.python.refactorings.annotation;
 
-import antlr.umladapter.UMLModelAdapter;
+import extension.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.AddMethodAnnotationRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;

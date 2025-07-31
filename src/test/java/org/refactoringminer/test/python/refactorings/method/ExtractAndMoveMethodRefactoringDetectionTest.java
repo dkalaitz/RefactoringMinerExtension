@@ -1,6 +1,6 @@
 package org.refactoringminer.test.python.refactorings.method;
 
-import antlr.umladapter.UMLModelAdapter;
+import extension.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.ExtractOperationRefactoring;
 import gr.uom.java.xmi.diff.MoveOperationRefactoring;
@@ -11,7 +11,6 @@ import org.refactoringminer.api.Refactoring;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;

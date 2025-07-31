@@ -1,6 +1,6 @@
 package org.refactoringminer.test.python.refactorings.attribute;
 
-import antlr.umladapter.UMLModelAdapter;
+import extension.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLAttribute;
 import gr.uom.java.xmi.UMLClass;
 import gr.uom.java.xmi.UMLModel;
@@ -15,7 +15,6 @@ import org.refactoringminer.api.RefactoringType;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.refactoringminer.test.python.refactorings.DiffLogger.logExtractAttributeSpecific;

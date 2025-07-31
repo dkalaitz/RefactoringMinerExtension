@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import antlr.collections.AST;
+import extension.collections.AST;
 import com.google.common.collect.ImmutableList;
 import com.puppycrawl.tools.checkstyle.api.Check;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;

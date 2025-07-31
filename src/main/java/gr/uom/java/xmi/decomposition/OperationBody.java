@@ -1,8 +1,8 @@
 package gr.uom.java.xmi.decomposition;
 
-import antlr.ast.node.statement.LangBlock;
-import antlr.ast.node.unit.LangCompilationUnit;
-import antlr.ast.visitor.LangVisitor;
+import extension.ast.node.statement.LangBlock;
+import extension.ast.node.unit.LangCompilationUnit;
+import extension.ast.visitor.LangVisitor;
 import gr.uom.java.xmi.*;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import org.eclipse.jdt.core.dom.*;

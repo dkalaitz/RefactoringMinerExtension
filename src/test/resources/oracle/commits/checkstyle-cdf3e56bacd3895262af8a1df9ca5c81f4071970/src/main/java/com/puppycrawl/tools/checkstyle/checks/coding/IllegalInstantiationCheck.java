@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import antlr.collections.AST;
+import extension.collections.AST;
 
 import com.google.common.collect.Sets;
 import com.puppycrawl.tools.checkstyle.api.Check;

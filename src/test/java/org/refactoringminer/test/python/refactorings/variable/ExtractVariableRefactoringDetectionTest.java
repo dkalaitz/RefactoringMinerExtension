@@ -1,10 +1,8 @@
 package org.refactoringminer.test.python.refactorings.variable;
 
-import antlr.umladapter.UMLModelAdapter;
+import extension.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
-import gr.uom.java.xmi.decomposition.*;
 import gr.uom.java.xmi.diff.ExtractVariableRefactoring;
-import gr.uom.java.xmi.diff.UMLClassDiff;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;

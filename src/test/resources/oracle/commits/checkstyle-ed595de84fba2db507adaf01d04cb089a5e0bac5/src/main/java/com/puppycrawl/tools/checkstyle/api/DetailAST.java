@@ -21,9 +21,9 @@ package com.puppycrawl.tools.checkstyle.api;
 
 import java.util.BitSet;
 
-import antlr.CommonASTWithHiddenTokens;
-import antlr.Token;
-import antlr.collections.AST;
+import extension.CommonASTWithHiddenTokens;
+import extension.Token;
+import extension.collections.AST;
 
 import com.puppycrawl.tools.checkstyle.utils.Utils;
 

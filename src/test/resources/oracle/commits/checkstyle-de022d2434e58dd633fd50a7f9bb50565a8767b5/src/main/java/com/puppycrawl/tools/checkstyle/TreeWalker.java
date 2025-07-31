@@ -31,12 +31,12 @@ import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import antlr.CommonHiddenStreamToken;
-import antlr.RecognitionException;
-import antlr.Token;
-import antlr.TokenStreamException;
-import antlr.TokenStreamHiddenTokenFilter;
-import antlr.TokenStreamRecognitionException;
+import extension.CommonHiddenStreamToken;
+import extension.RecognitionException;
+import extension.Token;
+import extension.TokenStreamException;
+import extension.TokenStreamHiddenTokenFilter;
+import extension.TokenStreamRecognitionException;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Sets;

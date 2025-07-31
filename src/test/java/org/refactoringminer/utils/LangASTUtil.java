@@ -1,11 +1,11 @@
 package org.refactoringminer.utils;
 
 
-import antlr.ast.builder.python.PyASTBuilder;
-import antlr.ast.node.LangASTNode;
-import antlr.ast.stringifier.PyASTFlattener;
-import antlr.base.lang.python.Python3Lexer;
-import antlr.base.lang.python.Python3Parser;
+import extension.ast.builder.python.PyASTBuilder;
+import extension.ast.node.LangASTNode;
+import extension.ast.stringifier.PyASTFlattener;
+import extension.base.lang.python.Python3Lexer;
+import extension.base.lang.python.Python3Parser;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;

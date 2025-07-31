@@ -1,7 +1,7 @@
 package gr.uom.java.xmi;
 
-import antlr.ast.node.LangASTNode;
-import antlr.ast.node.unit.LangCompilationUnit;
+import extension.ast.node.LangASTNode;
+import extension.ast.node.unit.LangCompilationUnit;
 import gr.uom.java.xmi.decomposition.AbstractCodeFragment;
 import gr.uom.java.xmi.diff.CodeRange;
 import org.eclipse.jdt.core.dom.ASTNode;

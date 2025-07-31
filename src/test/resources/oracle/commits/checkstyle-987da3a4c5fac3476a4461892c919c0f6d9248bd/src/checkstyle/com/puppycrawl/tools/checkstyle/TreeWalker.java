@@ -30,8 +30,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import antlr.RecognitionException;
-import antlr.TokenStreamException;
+import extension.RecognitionException;
+import extension.TokenStreamException;
 import com.puppycrawl.tools.checkstyle.api.Check;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;

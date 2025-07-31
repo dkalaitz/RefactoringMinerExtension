@@ -382,7 +382,7 @@ public class ANTLRv4PluginController implements ProjectComponent {
 		LOG.info("loadGrammars open "+grammarFileName+" "+project.getName());
 		Tool antlr = new Tool();
 		antlr.errMgr = new PluginIgnoreMissingTokensFileErrorManager(antlr);
-		antlr.errMgr.setFormat("antlr");
+		antlr.errMgr.setFormat("extension");
 		MyANTLRToolListener listener = new MyANTLRToolListener(antlr);
 		antlr.addListener(listener);
 

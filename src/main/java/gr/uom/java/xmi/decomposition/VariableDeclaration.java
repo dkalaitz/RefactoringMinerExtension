@@ -1,12 +1,12 @@
 package gr.uom.java.xmi.decomposition;
 
-import antlr.ast.node.LangASTNode;
-import antlr.ast.node.declaration.LangSingleVariableDeclaration;
-import antlr.ast.node.expression.LangAssignment;
-import antlr.ast.node.expression.LangFieldAccess;
-import antlr.ast.node.expression.LangSimpleName;
-import antlr.ast.node.metadata.LangAnnotation;
-import antlr.ast.node.unit.LangCompilationUnit;
+import extension.ast.node.LangASTNode;
+import extension.ast.node.declaration.LangSingleVariableDeclaration;
+import extension.ast.node.expression.LangAssignment;
+import extension.ast.node.expression.LangFieldAccess;
+import extension.ast.node.expression.LangSimpleName;
+import extension.ast.node.metadata.LangAnnotation;
+import extension.ast.node.unit.LangCompilationUnit;
 import gr.uom.java.xmi.*;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;
 import gr.uom.java.xmi.diff.CodeRange;

@@ -1,7 +1,7 @@
 package org.refactoringminer.test.python.refactorings.packagerelated;
 
-import antlr.umladapter.UMLAdapterUtil;
-import antlr.umladapter.UMLModelAdapter;
+import extension.umladapter.UMLAdapterUtil;
+import extension.umladapter.UMLModelAdapter;
 import gr.uom.java.xmi.UMLModel;
 import gr.uom.java.xmi.diff.RenamePackageRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;

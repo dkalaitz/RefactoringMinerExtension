@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import antlr.collections.AST;
+import extension.collections.AST;
 
 import com.puppycrawl.tools.checkstyle.api.Check;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;

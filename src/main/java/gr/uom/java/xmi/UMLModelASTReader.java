@@ -1,6 +1,6 @@
 package gr.uom.java.xmi;
 
-import antlr.umladapter.UMLModelAdapter;
+import extension.umladapter.UMLModelAdapter;
 import com.github.gumtreediff.gen.jdt.JdtVisitor;
 import com.github.gumtreediff.tree.TreeContext;
 import gr.uom.java.xmi.LocationInfo.CodeElementType;

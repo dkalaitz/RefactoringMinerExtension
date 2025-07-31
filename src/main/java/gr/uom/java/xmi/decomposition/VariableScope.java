@@ -1,6 +1,6 @@
 package gr.uom.java.xmi.decomposition;
 
-import antlr.ast.node.unit.LangCompilationUnit;
+import extension.ast.node.unit.LangCompilationUnit;
 import gr.uom.java.xmi.LocationInfo;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 
