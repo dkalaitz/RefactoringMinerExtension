@@ -145,7 +145,4 @@ public class UMLAdapterUtil {
                 packageName + "." + baseFileName + "_module";
     }
 
-
-
-
 }
