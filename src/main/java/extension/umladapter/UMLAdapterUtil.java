@@ -109,7 +109,6 @@ public class UMLAdapterUtil {
                     continue; // Skip the outer import creation since we created individual imports
                 }
             } else {
-                // Regular import (import X)
                 importName = importStmt.getModuleName();
 
                 // If there are aliases, create separate imports for each
