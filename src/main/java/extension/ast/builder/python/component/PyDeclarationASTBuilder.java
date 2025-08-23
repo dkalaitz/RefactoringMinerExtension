@@ -7,6 +7,7 @@ import extension.ast.node.TypeObjectEnum;
 import extension.ast.node.declaration.LangMethodDeclaration;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
 import extension.ast.node.declaration.LangTypeDeclaration;
+import extension.ast.node.expression.LangAssignment;
 import extension.ast.node.expression.LangSimpleName;
 import extension.ast.node.literal.LangStringLiteral;
 import extension.ast.node.metadata.LangAnnotation;
@@ -41,8 +42,9 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                 LangASTNode statement = mainBuilder.visit(stmtContext);
                 if (statement instanceof LangMethodDeclaration) {
                     langTypeDeclaration.addMethod((LangMethodDeclaration) statement);
+                } else if (statement instanceof LangAssignment){
+                    langTypeDeclaration.addAssignment((LangAssignment) statement);
                 }
-
             }
         }
 

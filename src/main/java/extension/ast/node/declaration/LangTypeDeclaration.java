@@ -2,6 +2,7 @@ package extension.ast.node.declaration;
 
 import extension.ast.node.NodeTypeEnum;
 import extension.ast.node.PositionInfo;
+import extension.ast.node.expression.LangAssignment;
 import extension.ast.node.metadata.LangAnnotation;
 import extension.ast.node.metadata.comment.LangComment;
 import extension.ast.visitor.LangASTVisitor;
@@ -14,6 +15,7 @@ import java.util.List;
 public class LangTypeDeclaration extends LangDeclaration {
     private String name;
     private List<LangMethodDeclaration> methods = new ArrayList<>();
+    private List<LangAssignment> classLevelAssignments = new ArrayList<>();
     private List<String> superClassNames = new ArrayList<>();
     private Visibility visibility;
     private boolean isAbstract = false;
@@ -60,6 +62,11 @@ public class LangTypeDeclaration extends LangDeclaration {
     public void addMethod(LangMethodDeclaration method) {
         methods.add(method);
         addChild(method);
+    }
+
+    public void addAssignment(LangAssignment assignment) {
+        classLevelAssignments.add(assignment);
+        addChild(assignment);
     }
 
     public void addComment(LangComment comment) {
@@ -204,10 +211,19 @@ public class LangTypeDeclaration extends LangDeclaration {
         }
     }
 
+    public List<LangAssignment> getClassLevelAssignments() {
+        return classLevelAssignments;
+    }
+
+    public void setClassLevelAssignments(List<LangAssignment> classLevelAssignments) {
+        this.classLevelAssignments = classLevelAssignments;
+    }
+
     public String toString() {
         return "LangTypeDeclaration{" +
                 "name='" + name + '\'' +
                 ", methods=" + methods +
                 '}';
     }
+
 }
