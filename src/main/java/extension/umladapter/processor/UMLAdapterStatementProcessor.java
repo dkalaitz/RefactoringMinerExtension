@@ -361,7 +361,7 @@ public class UMLAdapterStatementProcessor {
         // Check if the expression is a method invocation
         LangASTNode expression = expressionStatement.getExpression();
 
-        if (expression instanceof LangAssignment assignment) {
+        if (expression instanceof LangAssignment) {
             StatementObject assignmentStatement = new StatementObject(
                     expressionStatement.getRootCompilationUnit(),
                     sourceFolder,
@@ -801,7 +801,7 @@ public class UMLAdapterStatementProcessor {
                 filePath,
                 yieldStatement,
                 composite.getDepth() + 1,
-                LocationInfo.CodeElementType.RETURN_STATEMENT,
+                LocationInfo.CodeElementType.YIELD_STATEMENT,
                 container
         );
         composite.addStatement(yieldStmt);
@@ -837,6 +837,17 @@ public class UMLAdapterStatementProcessor {
 
     public static void processAsyncStatement(LangAsyncStatement asyncStatement, CompositeStatementObject composite,
                                              String sourceFolder, String filePath, UMLOperation container) {
+
+        LocationInfo.CodeElementType elementType;
+
+        if (asyncStatement.getBody() instanceof LangForStatement) {
+            elementType = LocationInfo.CodeElementType.ENHANCED_FOR_STATEMENT;
+        } else if (asyncStatement.getBody() instanceof LangWithStatement){
+            elementType = LocationInfo.CodeElementType.SYNCHRONIZED_STATEMENT;
+        } else {
+            elementType = LocationInfo.CodeElementType.BLOCK;
+        }
+
         // Async statements are usually composite (async def, async for, async with)
         CompositeStatementObject asyncComposite = new CompositeStatementObject(
                 asyncStatement.getRootCompilationUnit(),
@@ -844,7 +855,7 @@ public class UMLAdapterStatementProcessor {
                 filePath,
                 asyncStatement,
                 composite.getDepth() + 1,
-                LocationInfo.CodeElementType.BLOCK
+                elementType
         );
         composite.addStatement(asyncComposite);
 
