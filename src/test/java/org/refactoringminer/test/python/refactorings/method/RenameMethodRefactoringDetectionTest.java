@@ -94,7 +94,7 @@ class RenameMethodRefactoringDetectionTest {
         String beforePythonCode = """
                 class DataProcessor:
                     def process_list(self, items):
-                        result = 0
+                        result = []
                         for item in items:
                             processed = item * 2
                             result.append(processed)
@@ -111,7 +111,7 @@ class RenameMethodRefactoringDetectionTest {
         String afterPythonCode = """
                 class DataProcessor:
                     def process_list1(self, items):
-                        result = 0
+                        result = []
                         for item in items:
                             processed = item * 2
                         return result
