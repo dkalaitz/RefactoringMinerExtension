@@ -1,4 +1,4 @@
-package org.refactoringminer.test.python.refactorings.packagerelated;
+package org.refactoringminer.test.python.refactorings.module;
 
 import extension.umladapter.UMLAdapterUtil;
 import extension.umladapter.UMLModelAdapter;

@@ -1,12 +1,14 @@
 package org.refactoringminer.test.python.refactorings.method;
 
 import extension.umladapter.UMLModelAdapter;
-import gr.uom.java.xmi.UMLModel;
-import gr.uom.java.xmi.UMLOperation;
+import gr.uom.java.xmi.*;
+import gr.uom.java.xmi.decomposition.CompositeStatementObject;
+import gr.uom.java.xmi.decomposition.OperationBody;
 import gr.uom.java.xmi.diff.RenameOperationRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -600,7 +602,122 @@ class RenameMethodRefactoringDetectionTest {
                     return false;
                 });
 
+        String operationDump = dumpOperation(beforeUML.getClassList().get(0).getOperations().get(1));
+        System.out.println("Operation dump:\n" + operationDump);
         assertTrue(methodRenameDetected, "Expected a RenameMethodRefactoring from " + beforeName + " to " + afterName);
+    }
+
+    public static String dumpOperation(UMLOperation op) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format(
+                "name=%s, params=%s, signature=%s, isConstructor=%b, static=%b, visibility=%s",
+                op.getName(),
+                op.getParameters().stream().map(UMLParameter::getName).toList(),
+                op.getActualSignature(),
+                op.isConstructor(),
+                op.isStatic(),
+                op.getVisibility()
+        ));
+
+        // Add detailed operation information
+        sb.append(String.format(
+                "\n    CLASS: %s",
+                op.getClassName()
+        ));
+
+        sb.append(String.format(
+                "\n    MODIFIERS: abstract=%b, final=%b, native=%b, synchronized=%b, default=%b",
+                op.isAbstract(),
+                op.isFinal(),
+                op.isNative(),
+                op.isSynchronized(),
+                op.isDefault()
+        ));
+
+        // Add qualified name
+        String qualifiedName = (op.getClassName() != null) ?
+                op.getClassName() + "." + op.getName() :
+                op.getName();
+        sb.append(String.format(
+                "\n    QUALIFIED NAME: %s",
+                qualifiedName
+        ));
+
+
+        // Enhanced parameter details
+        sb.append("\n    PARAMETERS DETAIL:");
+        for (int i = 0; i < op.getParameters().size(); i++) {
+            UMLParameter param = op.getParameters().get(i);
+            sb.append(String.format(
+                    "\n      [%d] %s: %s (kind=%s, varArgs=%b)",
+                    i,
+                    param.getName(),
+                    param.getType().toString(),
+                    param.getKind(),
+                    param.isVarargs()
+            ));
+        }
+
+        // Return parameter details
+        UMLParameter returnParam = op.getReturnParameter();
+        if (returnParam != null) {
+            sb.append(String.format(
+                    "\n    RETURN TYPE: %s (%s)",
+                    returnParam.getType().toString(),
+                    returnParam.getType().getClassType()
+            ));
+        }
+
+        // Annotations
+        if (!op.getAnnotations().isEmpty()) {
+            sb.append("\n    ANNOTATIONS:");
+            for (UMLAnnotation annotation : op.getAnnotations()) {
+                sb.append("\n      @").append(annotation.getTypeName());
+            }
+        }
+
+        // Type parameters if any
+        if (!op.getTypeParameters().isEmpty()) {
+            sb.append("\n    TYPE PARAMETERS:");
+            for (UMLTypeParameter typeParam : op.getTypeParameters()) {
+                sb.append("\n      ").append(typeParam.getName());
+            }
+        }
+
+        // Location info
+        if (op.getLocationInfo() != null) {
+            sb.append(String.format(
+                    "\n    LOCATION: file=%s, startLine=%d, endLine=%d",
+                    op.getLocationInfo().getFilePath(),
+                    op.getLocationInfo().getStartLine(),
+                    op.getLocationInfo().getEndLine()
+            ));
+        }
+
+        // Enhanced body logging
+        OperationBody body = op.getBody();
+        if (body != null) {
+            sb.append("\n    BODY: hashCode=").append(body.getBodyHashCode());
+
+            CompositeStatementObject composite = body.getCompositeStatement();
+            sb.append("\n    STATEMENTS: ").append(composite.getStatements().size())
+                    .append(", LEAVES: ").append(composite.getLeaves().size())
+                    .append(", INNER NODES: ").append(composite.getInnerNodes().size())
+                    .append(", EXPRESSIONS: ").append(composite.getExpressions().size());
+
+            sb.append("\n    VARIABLES: ").append(body.getAllVariables());
+            sb.append("\n    METHOD CALLS: ").append(body.getAllOperationInvocations().size());
+
+            sb.append("\n    STRING REPRESENTATION:");
+            List<String> stringRep = body.stringRepresentation();
+            for (String line : stringRep) {
+                sb.append("\n      ").append(line);
+            }
+        } else {
+            sb.append("\n    BODY: null");
+        }
+
+        return sb.toString();
     }
 
 

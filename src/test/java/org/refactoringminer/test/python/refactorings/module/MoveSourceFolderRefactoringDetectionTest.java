@@ -1,4 +1,4 @@
-package org.refactoringminer.test.python.refactorings.packagerelated;
+package org.refactoringminer.test.python.refactorings.module;
 
 import org.junit.jupiter.api.Test;
 import java.util.Map;
