@@ -12,12 +12,12 @@ import extension.ast.visitor.LangASTVisitor;
 public class LangSingleVariableDeclaration extends LangDeclaration {
     private LangSimpleName langSimpleName;
     private TypeObjectEnum typeAnnotation;
-    private boolean hasTypeAnnotation = false;
-    private boolean isVarArgs = false;
-    private boolean isAttribute = false;
-    private boolean isParameter = false;
-    private boolean isEnumConstant = false;
-    private boolean isFinal = false;
+    private boolean hasTypeAnnotation;
+    private boolean isVarArgs;
+    private boolean isAttribute;
+    private boolean isParameter;
+    private boolean isEnumConstant;
+    private boolean isFinal;
 
     public LangSingleVariableDeclaration() {super(NodeTypeEnum.SINGLE_VARIABLE_DECLARATION);}
 

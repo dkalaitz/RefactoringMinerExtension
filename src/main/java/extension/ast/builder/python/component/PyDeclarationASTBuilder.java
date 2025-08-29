@@ -304,6 +304,9 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
                         method.setAbstract(true);
                     } else if (decoratorName.equals("staticmethod")) {
                         method.setStatic(true);
+                    } else {
+                        method.setAbstract(false);
+                        method.setStatic(false);
                     }
 
                     // Add annotation to the node
