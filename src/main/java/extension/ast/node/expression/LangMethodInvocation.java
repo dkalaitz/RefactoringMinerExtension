@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LangMethodInvocation extends LangExpression {
+    private String name;
     private LangASTNode expression;
     private List<LangASTNode> arguments;
 
@@ -40,6 +41,14 @@ public class LangMethodInvocation extends LangExpression {
         addChild(argument);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public LangASTNode getExpression() {
         return expression;
     }
@@ -66,10 +75,9 @@ public class LangMethodInvocation extends LangExpression {
     @Override
     public String toString() {
         return "LangMethodInvocation{" +
-                "expression=" + expression +
+                "name='" + name + '\'' +
+                ", expression=" + expression +
                 ", arguments=" + arguments +
                 '}';
     }
-
-
 }

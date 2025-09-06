@@ -14,7 +14,9 @@ import extension.ast.node.metadata.LangAnnotation;
 import extension.ast.node.metadata.comment.LangComment;
 import extension.ast.node.statement.LangBlock;
 import extension.ast.node.statement.LangExpressionStatement;
+import extension.base.LangSupportedEnum;
 import extension.base.lang.python.Python3Parser;
+import extension.umladapter.UMLAdapterUtil;
 import gr.uom.java.xmi.Visibility;
 
 import java.util.ArrayList;
@@ -252,10 +254,7 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
         List<LangSingleVariableDeclaration> params = methodDecl.getParameters();
 
         // Determine if we should skip the first parameter (if it's 'self')
-        int startIdx = 0;
-        if (!params.isEmpty() && "self".equals(params.get(0).getLangSimpleName().getIdentifier())) {
-            startIdx = 1;
-        }
+        int startIdx = UMLAdapterUtil.getParamOffset(methodDecl, params, LangSupportedEnum.PYTHON.getLangName());
 
         for (int i = startIdx; i < params.size(); i++) {
             // Use "Object" as the type for all parameters, following Java-style signature

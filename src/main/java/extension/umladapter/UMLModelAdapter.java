@@ -99,20 +99,20 @@ public class UMLModelAdapter {
     private void handleTopLevelMethods(UMLModel model, String filename, LangCompilationUnit compilationUnit, List<UMLImport> imports) {
         List<LangMethodDeclaration> topLevelMethods = compilationUnit.getTopLevelMethods();
         UMLClass moduleClass = createModuleClass(compilationUnit, filename, imports);
-        String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
-        String filepath = UMLAdapterUtil.extractFilePath(filename);
 
         moduleClass.setActualSignature(moduleClass.getName());
         moduleClass.setVisibility(Visibility.PUBLIC);
         moduleClass.setAbstract(false);
         moduleClass.setInterface(false);
         moduleClass.setFinal(false);
-        moduleClass.setStatic(false);
+        moduleClass.setStatic(true);
         moduleClass.setAnnotation(false);
         moduleClass.setEnum(false);
         moduleClass.setRecord(false);
 
         if (!topLevelMethods.isEmpty()) {
+            String sourceFolder = UMLAdapterUtil.extractSourceFolder(filename);
+            String filepath = UMLAdapterUtil.extractFilePath(filename);
             for (LangMethodDeclaration method : topLevelMethods) {
                 UMLOperation operation = createUMLOperation(method, moduleClass.getName(),
                         sourceFolder, filepath);
@@ -138,12 +138,13 @@ public class UMLModelAdapter {
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filepath, compilationUnit,
                 LocationInfo.CodeElementType.TYPE_DECLARATION);
 
-        UMLClass moduleClass = new UMLClass(packageName, moduleName, locationInfo, true, imports);
+        String moduleClassName = moduleName + ".__module__";
+
+        UMLClass moduleClass = new UMLClass(packageName, moduleClassName, locationInfo, true, imports);
         moduleClass.setStatic(true);
 
         return moduleClass;
     }
-
 
     private UMLClass createUMLClass(UMLModel model, LangTypeDeclaration typeDecl, String filename, List<UMLImport> imports) {
 
@@ -169,20 +170,23 @@ public class UMLModelAdapter {
         }
 
         if (!typeDecl.getSuperClassNames().isEmpty()) {
-            // Set the first superclass as the main superclass
-            String primarySuperClass = typeDecl.getSuperClassNames().get(0);
+            // Qualify and set the first superclass as the main superclass
+            String primarySuperClassRaw = typeDecl.getSuperClassNames().get(0);
+            String primarySuperClass = UMLAdapterUtil.resolveQualifiedTypeName(primarySuperClassRaw, imports, packageName);
             UMLType superClassType = UMLType.extractTypeObject(primarySuperClass);
             umlClass.setSuperclass(superClassType);
-            model.addGeneralization(new UMLGeneralization(umlClass, typeDecl.getSuperClassNames().get(0)));
+            model.addGeneralization(new UMLGeneralization(umlClass, primarySuperClass));
 
-            // Add remaining superclasses as interfaces
+            // For additional base classes, also add as generalizations (Python multiple inheritance)
             for (int i = 1; i < typeDecl.getSuperClassNames().size(); i++) {
-                String additionalSuperClass = typeDecl.getSuperClassNames().get(i);
-                UMLType interfaceType = UMLType.extractTypeObject(additionalSuperClass);
-                umlClass.addImplementedInterface(interfaceType);
-                model.addRealization(new UMLRealization(umlClass, typeDecl.getSuperClassNames().get(i)));
+                String additionalSuperClassRaw = typeDecl.getSuperClassNames().get(i);
+                String additionalSuperClass = UMLAdapterUtil.resolveQualifiedTypeName(additionalSuperClassRaw, imports, packageName);
+                // Create additional generalization for multiple inheritance support
+                model.addGeneralization(new UMLGeneralization(umlClass, additionalSuperClass));
             }
         }
+
+      //  storeClassHierarchyInfo(umlClass, typeDecl, model, packageName, imports);
 
         // Handle class-scope assignments as attributes
         List<UMLAttribute> classLevelAttributes = new ArrayList<>();
@@ -214,12 +218,32 @@ public class UMLModelAdapter {
         }
         return umlClass;
     }
+//
+//    private void storeClassHierarchyInfo(UMLClass umlClass, LangTypeDeclaration typeDecl, UMLModel model,
+//                                         String packageName, List<UMLImport> imports) {
+//        // Store complete hierarchy information for better refactoring detection
+//        for (String baseClassName : typeDecl.getSuperClassNames()) {
+//            String qualifiedBaseClass = UMLAdapterUtil.resolveQualifiedTypeName(baseClassName, imports, packageName);
+//
+//            // Add to UML model's tree context for better tracking
+//            LocationInfo hierarchyInfo = new LocationInfo(
+//                    UMLAdapterUtil.extractSourceFolder(umlClass.getSourceFile()),
+//                    UMLAdapterUtil.extractFilePath(umlClass.getSourceFile()),
+//                    typeDecl,
+//                    LocationInfo.CodeElementType.TYPE_DECLARATION
+//            );
+//
+//            // Store inheritance metadata that can be used for inheritance-based refactorings
+//            umlClass.addAttribute(new UMLAttribute("__base_class__",
+//                    UMLType.extractTypeObject(qualifiedBaseClass), hierarchyInfo));
+//        }
+//    }
 
     private UMLOperation createUMLOperation(LangMethodDeclaration methodDecl, String className, String sourceFolder, String filePath) {
 
         LocationInfo locationInfo = new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.METHOD_DECLARATION);
 
-        String operationName = methodDecl.getCleanName();
+        String operationName = methodDecl.getName();
         UMLOperation umlOperation = new UMLOperation(operationName, locationInfo);
         umlOperation.setClassName(className);
 
@@ -235,11 +259,7 @@ public class UMLModelAdapter {
         List<LangSingleVariableDeclaration> params = methodDecl.getParameters();
         List<String> parameterNames = new ArrayList<>();
 
-        // SKIP "self" if present as first parameter
-        int paramOffset = 0;
-        if (!params.isEmpty() && "self".equals(params.get(0).getLangSimpleName().getIdentifier())) {
-            paramOffset = 1;
-        }
+        int paramOffset = UMLAdapterUtil.getParamOffset(methodDecl, params, language);
 
         for (int i = paramOffset; i < params.size(); i++) {
             LangSingleVariableDeclaration param = params.get(i);

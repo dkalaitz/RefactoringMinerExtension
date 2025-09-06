@@ -602,8 +602,6 @@ class RenameMethodRefactoringDetectionTest {
                     return false;
                 });
 
-        String operationDump = dumpOperation(beforeUML.getClassList().get(0).getOperations().get(1));
-        System.out.println("Operation dump:\n" + operationDump);
         assertTrue(methodRenameDetected, "Expected a RenameMethodRefactoring from " + beforeName + " to " + afterName);
     }
 

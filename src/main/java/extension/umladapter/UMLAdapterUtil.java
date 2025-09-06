@@ -1,7 +1,11 @@
 package extension.umladapter;
 
+import extension.ast.node.declaration.LangMethodDeclaration;
+import extension.ast.node.declaration.LangSingleVariableDeclaration;
+import extension.ast.node.metadata.LangAnnotation;
 import extension.ast.node.statement.LangImportStatement;
 import extension.ast.node.unit.LangCompilationUnit;
+import extension.base.LangSupportedEnum;
 import gr.uom.java.xmi.LocationInfo;
 import gr.uom.java.xmi.UMLImport;
 
@@ -13,6 +17,66 @@ import java.util.List;
 import java.util.Set;
 
 public class UMLAdapterUtil {
+
+    public static String resolveQualifiedTypeName(String name, List<UMLImport> imports, String currentPackage) {
+        if (name == null || name.isEmpty()) return name;
+        if (name.contains(".")) return name; // already qualified
+        // Try exact import matches (from X import Name)
+        for (UMLImport imp : imports) {
+            if (!imp.isOnDemand()) {
+                String impName = imp.getName();
+                if (impName != null && impName.endsWith("." + name)) {
+                    return impName;
+                }
+                if (impName != null && impName.equals(name)) {
+                    return impName;
+                }
+            }
+        }
+        // Try module imports (import module) -> module.Name
+        for (UMLImport imp : imports) {
+            if (!imp.isOnDemand()) {
+                String impName = imp.getName();
+                if (impName != null && !impName.contains(".")) {
+                    // simple module import
+                    return impName + "." + name;
+                }
+            }
+        }
+        // Fallback to current package qualification if available
+        if (currentPackage != null && !currentPackage.isEmpty()) {
+            return currentPackage + "." + name;
+        }
+        return name;
+    }
+
+    public static int getParamOffset(LangMethodDeclaration methodDecl, List<LangSingleVariableDeclaration> params, String language) {
+        int paramOffset = 0;
+        if (!params.isEmpty()) {
+            String firstParamName = params.get(0).getLangSimpleName().getIdentifier();
+            boolean isPython = LangSupportedEnum.PYTHON.name().equals(language);
+
+            if (isPython) {
+                // Skip 'self' for instance methods
+                if ("self".equals(firstParamName) && !methodDecl.isStatic()) {
+                    paramOffset = 1;
+                } else if ("cls".equals(firstParamName)) {
+                    // Try to detect @classmethod to skip 'cls'
+                    boolean hasClassMethodDecorator = false;
+                    for (LangAnnotation ann : methodDecl.getAnnotations()) {
+                        if ("classmethod".equalsIgnoreCase(ann.getName().getIdentifier())) {
+                            hasClassMethodDecorator = true;
+                            break;
+                        }
+                    }
+                    if (hasClassMethodDecorator) {
+                        paramOffset = 1;
+                    }
+                }
+            }
+        }
+        return paramOffset;
+    }
 
     public static String extractSourceFolder(String filename) {
         Path path = Paths.get(filename);
