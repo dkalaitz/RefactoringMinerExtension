@@ -246,7 +246,10 @@ public class PushDownAttributeRefactoringDetectionTest {
             
             def make_request(self, method, endpoint):
                 return f"{method} {self.base_url}/{endpoint}"
-        
+                
+            def clear_cache(self):
+                self.query_cache.clear()
+                
         class RestClient(HttpClient):
             def __init__(self, base_url):
                 super().__init__(base_url)
@@ -267,10 +270,7 @@ public class PushDownAttributeRefactoringDetectionTest {
                     return cached_result
                 result = self.make_request("POST", "graphql")
                 self.query_cache[query] = result
-                return result
-            
-            def clear_cache(self):
-                self.query_cache.clear()
+                return result   
         """;
 
         Map<String, String> beforeFiles = Map.of("http/client.py", beforePythonCode);
@@ -735,7 +735,8 @@ public class PushDownAttributeRefactoringDetectionTest {
             def __init__(self, filename):
                 self.filename = filename
                 self.metadata = {}
-            
+                self.current_sheet = 0
+
             def open_document(self):
                 return f"Opening document {self.filename}"
             
@@ -758,11 +759,9 @@ public class PushDownAttributeRefactoringDetectionTest {
                 super().__init__(filename)
                 self.formulas = []
                 self.worksheet_names = []
-                self.current_sheet = 0
             
             def switch_worksheet(self, sheet_name):
                 if sheet_name in self.worksheet_names:
-                    self.current_sheet = self.worksheet_names.index(sheet_name)
                     return f"Switched to worksheet: {sheet_name}"
                 return "Worksheet not found"
         """;

@@ -311,31 +311,31 @@ class RenamePackageRefactoringDetectionTest {
                                                         String oldPackageName,
                                                         String newPackageName) throws Exception {
         // Debug package extraction
-        System.out.println("\n=== DEBUGGING PACKAGE EXTRACTION ===");
-        for (String file : beforeFiles.keySet()) {
-            String sourceFolder = UMLAdapterUtil.extractSourceFolder(file);
-            String packageName = UMLAdapterUtil.extractPackageName(file);
-            System.out.println("BEFORE: " + file + " → sourceFolder: '" + sourceFolder + "', package: '" + packageName + "'");
-        }
-
-        for (String file : afterFiles.keySet()) {
-            String sourceFolder = UMLAdapterUtil.extractSourceFolder(file);
-            String packageName = UMLAdapterUtil.extractPackageName(file);
-            System.out.println("AFTER: " + file + " → sourceFolder: '" + sourceFolder + "', package: '" + packageName + "'");
-        }
+//        System.out.println("\n=== DEBUGGING PACKAGE EXTRACTION ===");
+//        for (String file : beforeFiles.keySet()) {
+//            String sourceFolder = UMLAdapterUtil.extractSourceFolder(file);
+//            String packageName = UMLAdapterUtil.extractPackageName(file);
+//            System.out.println("BEFORE: " + file + " → sourceFolder: '" + sourceFolder + "', package: '" + packageName + "'");
+//        }
+//
+//        for (String file : afterFiles.keySet()) {
+//            String sourceFolder = UMLAdapterUtil.extractSourceFolder(file);
+//            String packageName = UMLAdapterUtil.extractPackageName(file);
+//            System.out.println("AFTER: " + file + " → sourceFolder: '" + sourceFolder + "', package: '" + packageName + "'");
+//        }
 
         UMLModel beforeUML = new UMLModelAdapter(beforeFiles).getUMLModel();
         UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
 
-        // Debug UML classes
-        System.out.println("\n=== UML CLASSES ===");
-        System.out.println("BEFORE UML classes: " + beforeUML.getClassList().size());
-        beforeUML.getClassList().forEach(cls ->
-                System.out.println("  - " + cls.getName() + " in package: '" + cls.getPackageName() + "'"));
-
-        System.out.println("AFTER UML classes: " + afterUML.getClassList().size());
-        afterUML.getClassList().forEach(cls ->
-                System.out.println("  - " + cls.getName() + " in package: '" + cls.getPackageName() + "'"));
+//        // Debug UML classes
+//        System.out.println("\n=== UML CLASSES ===");
+//        System.out.println("BEFORE UML classes: " + beforeUML.getClassList().size());
+//        beforeUML.getClassList().forEach(cls ->
+//                System.out.println("  - " + cls.getName() + " in package: '" + cls.getPackageName() + "'"));
+//
+//        System.out.println("AFTER UML classes: " + afterUML.getClassList().size());
+//        afterUML.getClassList().forEach(cls ->
+//                System.out.println("  - " + cls.getName() + " in package: '" + cls.getPackageName() + "'"));
 
         UMLModelDiff diff = beforeUML.diff(afterUML);
 

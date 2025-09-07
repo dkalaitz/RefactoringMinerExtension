@@ -34,8 +34,8 @@ public class RenameParameterRefactoringDetectionTest {
                 def process(self, info):
                     return info.upper()
                 
-                def validate(self, info):
-                    return len(info) > 0
+                def validate(self, data):
+                    return len(data) > 0
             """;
 
         Map<String, String> beforeFiles = Map.of("processor.py", beforePythonCode);
@@ -61,8 +61,8 @@ public class RenameParameterRefactoringDetectionTest {
                 def add(self, value, y):
                     return value + y
                 
-                def multiply(self, value, y):
-                    return value * y
+                def multiply(self, x, y):
+                    return x * y
             """;
 
         Map<String, String> beforeFiles = Map.of("calculator.py", beforePythonCode);
@@ -90,8 +90,8 @@ public class RenameParameterRefactoringDetectionTest {
                     self.name = username
                     self.email = email
                 
-                def display(self, username):
-                    print(f"User: {username}")
+                def display(self, name):
+                    print(f"User: {name}")
             """;
 
         Map<String, String> beforeFiles = Map.of("user.py", beforePythonCode);
@@ -115,7 +115,7 @@ public class RenameParameterRefactoringDetectionTest {
             def process_list(element):
                 return element.strip().upper()
             
-            def validate_item(element):
+            def validate_item(item):
                 return len(element) > 0
             """;
 
@@ -138,7 +138,7 @@ public class RenameParameterRefactoringDetectionTest {
 
         String afterPythonCode = """
             class Calculator:
-                def calculate(self, num1, num2, operation):
+                def calculate(self, num1, second, operation):
                     if operation == "add":
                         return num1 + num2
                     return num1 - num2
@@ -176,8 +176,8 @@ public class RenameParameterRefactoringDetectionTest {
                     arr = arr[:size]
                 return arr
             
-            def validate_size(self, arr, size):
-                return size > 0 and size <= 1000
+            def validate_size(self, arr, count):
+                return count > 0 and size <= 1000
         """;
 
         Map<String, String> beforeFiles = Map.of("array_processor.py", beforePythonCode);
@@ -220,9 +220,9 @@ public class RenameParameterRefactoringDetectionTest {
                 print(f"Config file not found: {path}")
             return settings
         
-        def backup_file(path):
+        def backup_file(file):
             import shutil
-            shutil.copy(path, f"{path}.backup")
+            shutil.copy(file, f"{file}.backup")
         """;
 
         Map<String, String> beforeFiles = Map.of("config_utils.py", beforePythonCode);
@@ -263,11 +263,11 @@ public class RenameParameterRefactoringDetectionTest {
                     return f"Deposited {amount}. New balance: {self.balance}"
                 return "Invalid deposit amount"
             
-            def withdraw(self, amount):
-                if 0 < amount <= self.balance:
-                    self.balance -= amount
-                    return f"Withdrew {amount}. New balance: {self.balance}"
-                return "Insufficient funds or invalid amount"
+            def withdraw(self, num):
+                if 0 < num <= self.balance:
+                    self.balance -= num
+                    return f"Withdrew {num}. New balance: {self.num}"
+                return "Insufficient funds or invalid num"
         """;
 
         Map<String, String> beforeFiles = Map.of("bank_account.py", beforePythonCode);
@@ -309,8 +309,8 @@ public class RenameParameterRefactoringDetectionTest {
                     processed.append(line)
             return '\\n'.join(processed)
         
-        def count_words(content):
-            return len(content.split())
+        def count_words(text):
+            return len(text.split())
         """;
 
         Map<String, String> beforeFiles = Map.of("document_processor.py", beforePythonCode);
@@ -354,11 +354,11 @@ public class RenameParameterRefactoringDetectionTest {
                     index += 1
                 return result
             
-            def find_maximum(self, items):
-                if not items:
+            def find_maximum(self, list):
+                if not list:
                     return None
-                max_val = items[0]
-                for item in items:
+                max_val = list[0]
+                for item in list:
                     if item > max_val:
                         max_val = item
                 return max_val
@@ -388,10 +388,11 @@ public class RenameParameterRefactoringDetectionTest {
         UMLModelDiff diff = beforeUML.diff(afterUML);
         List<Refactoring> refactorings = diff.getRefactorings();
 
-        // === COMPREHENSIVE REFACTORING DEBUG OUTPUT ===
-        System.out.println("\n=== RENAME PARAMETER TEST: " + originalParameterName + " -> " + renamedParameterName + " ===");
-        System.out.println("Method: " + methodName + (className != null ? " in class " + className : " (module-level)"));
-        System.out.println("Total refactorings detected: " + refactorings.size());
+        System.out.println("Refactorings size " + refactorings.size());
+        refactorings.forEach(System.out::println);
+//        System.out.println("\n=== RENAME PARAMETER TEST: " + originalParameterName + " -> " + renamedParameterName + " ===");
+//        System.out.println("Method: " + methodName + (className != null ? " in class " + className : " (module-level)"));
+//        System.out.println("Total refactorings detected: " + refactorings.size());
 
         // Look for RenameVariableRefactoring with RENAME_PARAMETER type
         boolean renameParameterFound = refactorings.stream()
@@ -414,11 +415,11 @@ public class RenameParameterRefactoringDetectionTest {
                         classMatches = actualClassName.equals(className);
                     }
 
-                    System.out.println("Checking RenameVariableRefactoring:");
-                    System.out.println("  Is RENAME_PARAMETER: " + isRenameParameter);
-                    System.out.println("  Names match: " + namesMatch + " (" + originalName + " -> " + renamedName + ")");
-                    System.out.println("  Method matches: " + methodMatches + " (" + operationName + ")");
-                    System.out.println("  Class matches: " + classMatches);
+//                    System.out.println("Checking RenameVariableRefactoring:");
+//                    System.out.println("  Is RENAME_PARAMETER: " + isRenameParameter);
+//                    System.out.println("  Names match: " + namesMatch + " (" + originalName + " -> " + renamedName + ")");
+//                    System.out.println("  Method matches: " + methodMatches + " (" + operationName + ")");
+//                    System.out.println("  Class matches: " + classMatches);
 
                     return isRenameParameter && namesMatch && methodMatches && classMatches;
                 });

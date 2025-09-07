@@ -33,8 +33,8 @@ public class AddParameterRefactoringDetectionTest {
                 def create_user(self, name, email):
                     return User(name, email)
                 
-                def greet_user(self, user, greeting="Hello"):
-                    return f"{greeting} {user.name}!"
+                def greet_user(self, user):
+                    return f"Hello {user.name}!"
             """;
 
         Map<String, String> beforeFiles = Map.of("user_service.py", beforePythonCode);
@@ -81,7 +81,7 @@ public class AddParameterRefactoringDetectionTest {
             def connect(self, host, port, timeout=30):
                 return f"Connecting to {host}:{port} (timeout: {timeout})"
             
-            def execute_query(self, query, params=None):
+            def execute_query(self, query):
                 if params:
                     return f"Executing: {query} with params {params}"
                 return f"Executing: {query}"
@@ -241,8 +241,8 @@ public class AddParameterRefactoringDetectionTest {
                     return re.match(pattern, email) is not None
                 return basic_check
             
-            def validate_password(self, password, min_length=8):
-                return len(password) >= min_length
+            def validate_password(self, password):
+                return len(password) >= 8
         """;
 
         Map<String, String> beforeFiles = Map.of("validator.py", beforePythonCode);
@@ -283,8 +283,8 @@ public class AddParameterRefactoringDetectionTest {
                             config[key] = value
                 return config
             
-            def get_setting(self, key, config, default_value=None):
-                return config.get(key, default_value)
+            def get_setting(self, key, config):
+                return config.get(key)
         """;
 
         Map<String, String> beforeFiles = Map.of("config_loader.py", beforePythonCode);

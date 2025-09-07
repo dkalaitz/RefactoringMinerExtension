@@ -353,24 +353,21 @@ public class SplitParameterRefactoringDetectionTest {
         UMLModelDiff diff = beforeUML.diff(afterUML);
         List<Refactoring> refactorings = diff.getRefactorings();
 
-        System.out.println("\n=== SPLIT PARAMETER TEST: " + originalParameterName + " -> " + splitParameterNames + " ===");
-        System.out.println("Original parameter: " + originalParameterName);
-        System.out.println("Split parameters: " + splitParameterNames);
-        System.out.println("Method: " + methodName + (className.isEmpty() ? " (module level)" : " in class " + className));
-        System.out.println("Total refactorings detected: " + refactorings.size());
+//        System.out.println("\n=== SPLIT PARAMETER TEST: " + originalParameterName + " -> " + splitParameterNames + " ===");
+//        System.out.println("Original parameter: " + originalParameterName);
+//        System.out.println("Split parameters: " + splitParameterNames);
+//        System.out.println("Method: " + methodName + (className.isEmpty() ? " (module level)" : " in class " + className));
+//        System.out.println("Total refactorings detected: " + refactorings.size());
 
         boolean splitParameterFound = refactorings.stream()
                 .anyMatch(r -> RefactoringType.SPLIT_PARAMETER.equals(r.getRefactoringType()) &&
                         r.toString().contains(originalParameterName) &&
                         r.toString().contains(methodName));
 
-        if (!splitParameterFound) {
-            System.out.println("Available refactorings:");
-            refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
-            fail("Expected split parameter refactoring from parameter '" + originalParameterName +
-                    "' to parameters " + splitParameterNames + " in method '" + methodName + "' was not detected");
-        }
+        System.out.println("Available refactorings:");
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
+
 
         assertTrue(splitParameterFound, "Expected Split Parameter refactoring to be detected");
     }

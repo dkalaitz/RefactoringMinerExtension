@@ -376,6 +376,7 @@ public class RefactoringAssertUtils {
         UMLModelDiff diff = beforeUML.diff(afterUML);
 
         System.out.println("Total refactorings detected: " + diff.getRefactorings().size());
+        diff.getRefactorings().forEach(System.out::println);
 
         boolean pullUpDetected = diff.getRefactorings().stream()
                 .anyMatch(ref ->

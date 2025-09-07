@@ -102,7 +102,7 @@ public class RenameAttributeRefactoringDetectionTest {
             class Rectangle:
                 def __init__(self, width, height):
                     self.width = width
-                    self.height = height
+                    self.h = h
                 
                 def area(self):
                     return self.width * self.height
@@ -138,7 +138,7 @@ public class RenameAttributeRefactoringDetectionTest {
         class User:
             def __init__(self, email, password):
                 self.email = email
-                self.password = password
+                self.pwd = password
             
             def login(self):
                 return f"Login with {self.email}"
@@ -174,10 +174,10 @@ public class RenameAttributeRefactoringDetectionTest {
         class AppConfig:
             def __init__(self):
                 self.database_host = "localhost"
-                self.database_port = 5432
+                self.db_port = 5432
             
             def get_connection_string(self):
-                return f"postgresql://{self.database_host}:{self.database_port}"
+                return f"postgresql://{self.database_host}:{self.db_port}"
             
             def update_database_host(self, host):
                 self.database_host = host

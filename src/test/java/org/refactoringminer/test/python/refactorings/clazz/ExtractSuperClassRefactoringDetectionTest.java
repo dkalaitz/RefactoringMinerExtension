@@ -808,6 +808,7 @@ public class ExtractSuperClassRefactoringDetectionTest {
         List<Refactoring> refactorings = diff.getRefactorings();
 
         System.out.println("Refactorings: " + refactorings.size());
+        refactorings.forEach(System.out::println);
 
         // Find ExtractSuperclassRefactoring that matches our criteria
         boolean found = refactorings.stream()

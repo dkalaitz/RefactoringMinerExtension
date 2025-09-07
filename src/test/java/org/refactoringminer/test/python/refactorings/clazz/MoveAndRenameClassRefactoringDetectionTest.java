@@ -340,6 +340,7 @@ public class MoveAndRenameClassRefactoringDetectionTest {
         List<Refactoring> refactorings = diff.getRefactorings();
 
         System.out.println("Refactorings size: " + refactorings.size());
+        refactorings.forEach(System.out::println);
 
         boolean found = refactorings.stream().anyMatch(r -> {
             if (r.getRefactoringType() != RefactoringType.MOVE_RENAME_CLASS) {

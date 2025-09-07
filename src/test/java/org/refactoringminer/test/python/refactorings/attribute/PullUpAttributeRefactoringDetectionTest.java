@@ -20,7 +20,7 @@ public class PullUpAttributeRefactoringDetectionTest {
 
         class Cat(Animal):
             def __init__(self):
-                self.legs = 4
+                pass
         """;
         String afterPythonCode = """
         class Animal:
@@ -125,7 +125,6 @@ public class PullUpAttributeRefactoringDetectionTest {
         class GraphQLClient(HttpClient):
             def __init__(self, base_url):
                 super().__init__(base_url)
-                self.default_headers = {"Content-Type": "application/json"}
                 self.introspection_enabled = True
             
             def execute_query(self, query):
@@ -187,11 +186,9 @@ public class PullUpAttributeRefactoringDetectionTest {
         class VideoProcessor(FileProcessor):
             def __init__(self, filepath):
                 super().__init__(filepath)
-                self.processing_history = []
                 self.output_format = "mp4"
             
             def convert_format(self, new_format):
-                self.processing_history.append(f"Converted to {new_format}")
                 return f"Video converted to {new_format}"
         """;
 
@@ -252,11 +249,10 @@ public class PullUpAttributeRefactoringDetectionTest {
         class PayPalProcessor(PaymentProcessor):
             def __init__(self, merchant_id):
                 super().__init__(merchant_id)
-                self.transaction_fee = 0.029
                 self.api_credentials = {}
             
             def process_paypal_payment(self, paypal_id, amount):
-                fee = amount * self.transaction_fee
+                fee = amount * 0.29
                 return f"PayPal payment ${amount} + ${fee} fee"
         """;
 
@@ -318,11 +314,10 @@ public class PullUpAttributeRefactoringDetectionTest {
         class RedisCache(CacheManager):
             def __init__(self, name):
                 super().__init__(name)
-                self.max_size = 1000
                 self.connection_pool = None
             
             def set(self, key, value):
-                return f"Set {key} in Redis (max_size: {self.max_size})"
+                return f"Set {key} in Redis (max_size: 1000)"
         """;
 
         String afterPythonCode = """
@@ -383,13 +378,10 @@ public class PullUpAttributeRefactoringDetectionTest {
         class ConsoleLogger(Logger):
             def __init__(self, name):
                 super().__init__(name)
-                self.log_level = "INFO"
                 self.color_enabled = True
             
             def print_to_console(self, message):
-                if self.log_level in ["INFO", "DEBUG", "ERROR"]:
-                    return f"Console: {message}"
-                return "Log level not enabled"
+                return f"Console: {message}"
         """;
 
         String afterPythonCode = """
@@ -451,11 +443,10 @@ public class PullUpAttributeRefactoringDetectionTest {
         class FTPServer(Server):
             def __init__(self, host, port):
                 super().__init__(host, port)
-                self.max_connections = 100
                 self.passive_mode = True
             
             def handle_ftp_command(self, command):
-                return f"FTP command processed (max_conn: {self.max_connections})"
+                return f"FTP command processed (max_conn: 100)"
         """;
 
         String afterPythonCode = """
@@ -514,12 +505,10 @@ public class PullUpAttributeRefactoringDetectionTest {
         class CodeEditor(DocumentEditor):
             def __init__(self, filename):
                 super().__init__(filename)
-                self.undo_stack = []
                 self.language = "python"
             
             def format_code(self):
-                self.undo_stack.append("Format code")
-                return f"Code formatted, undo stack size: {len(self.undo_stack)}"
+                return "Code formatted"
         """;
 
         String afterPythonCode = """
@@ -580,12 +569,9 @@ public class PullUpAttributeRefactoringDetectionTest {
         class Enemy(GameEntity):
             def __init__(self, name):
                 super().__init__(name)
-                self.health = 100
                 self.ai_state = "idle"
             
             def attack(self):
-                if self.health > 0:
-                    return f"Enemy {self.name} attacks!"
                 return "Enemy is defeated"
         """;
 
