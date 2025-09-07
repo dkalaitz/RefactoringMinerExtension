@@ -807,6 +807,8 @@ public class ExtractSuperClassRefactoringDetectionTest {
         UMLModelDiff diff = beforeUML.diff(afterUML);
         List<Refactoring> refactorings = diff.getRefactorings();
 
+        System.out.println("Refactorings: " + refactorings.size());
+
         // Find ExtractSuperclassRefactoring that matches our criteria
         boolean found = refactorings.stream()
                 .filter(r -> r instanceof ExtractSuperclassRefactoring)

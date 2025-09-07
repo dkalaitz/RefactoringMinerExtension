@@ -51,13 +51,13 @@ class MoveMethodRefactoringDetectionTest {
             """;
 
         Map<String, String> beforeFiles = Map.of(
-                "tests/before/calculator.py", beforePythonCode1,
-                "tests/before/math_helper.py", beforePythonCode2
+                "tests/calculator.py", beforePythonCode1,
+                "tests/math_helper.py", beforePythonCode2
         );
 
         Map<String, String> afterFiles = Map.of(
-                "tests/after/calculator.py", afterPythonCode1,
-                "tests/after/math_helper.py", afterPythonCode2
+                "tests/calculator.py", afterPythonCode1,
+                "tests/math_helper.py", afterPythonCode2
         );
 
         assertMoveOperationRefactoringDetected(
@@ -112,13 +112,13 @@ class MoveMethodRefactoringDetectionTest {
             """;
 
         Map<String, String> beforeFiles = Map.of(
-                "tests/before/processor.py", beforePythonCode1,
-                "tests/before/handler.py", beforePythonCode2
+                "tests/processor.py", beforePythonCode1,
+                "tests/handler.py", beforePythonCode2
         );
 
         Map<String, String> afterFiles = Map.of(
-                "tests/after/processor.py", afterPythonCode1,
-                "tests/after/handler.py", afterPythonCode2
+                "tests/processor.py", afterPythonCode1,
+                "tests/handler.py", afterPythonCode2
         );
 
         assertMoveOperationRefactoringDetected(

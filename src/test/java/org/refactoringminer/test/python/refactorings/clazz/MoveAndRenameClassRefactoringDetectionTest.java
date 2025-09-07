@@ -1,349 +1,328 @@
 package org.refactoringminer.test.python.refactorings.clazz;
 
 import extension.umladapter.UMLModelAdapter;
+import gr.uom.java.xmi.UMLClass;
 import gr.uom.java.xmi.UMLModel;
-import gr.uom.java.xmi.diff.MoveClassRefactoring;
-import gr.uom.java.xmi.diff.RenameClassRefactoring;
 import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
+import gr.uom.java.xmi.diff.MoveAndRenameClassRefactoring;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 @Isolated
 public class MoveAndRenameClassRefactoringDetectionTest {
 
+    // ... existing code ...
     @Test
-    void detectsMoveAndRenameClass_CalculatorToMathAdvancedCalculator() throws Exception {
-        String beforeCalculatorCode = """
-            class Calculator:
-                def add(self, x, y):
-                    return x + y
-                
-                def subtract(self, x, y):
-                    return x - y
+    void detectsMoveAndRenameClass_CacheToStorageDataCache() throws Exception {
+        String before = """
+            class Cache:
+                def put(self, k, v): pass
+            """;
+        String after = """
+            class DataCache:
+                def put(self, k, v): pass
             """;
 
-        String afterAdvancedCalculatorCode = """
-            class AdvancedCalculator:
-                def add(self, x, y):
-                    return x + y
-                
-                def subtract(self, x, y):
-                    return x - y
-            """;
+        Map<String, String> beforeFiles = Map.of("src/cache/cache.py", before);
+        Map<String, String> afterFiles = Map.of("src/storage/data_cache.py", after);
 
-        Map<String, String> beforeFiles = Map.of("calculator.py", beforeCalculatorCode);
-        Map<String, String> afterFiles = Map.of("math/advanced_calculator.py", afterAdvancedCalculatorCode);
-
-        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
-                "Calculator", "AdvancedCalculator", "calculator.py", "math/advanced_calculator.py");
+        assertMoveAndRenameClassRefactoringDetected(
+                beforeFiles, afterFiles,
+                "cache.Cache", "storage.DataCache",
+                "src/cache/cache.py", "src/storage/data_cache.py"
+        );
     }
 
     @Test
-    void detectsMoveAndRenameClass_UserToModelsUserAccount() throws Exception {
-        String beforeUserCode = """
-            class User:
-                def __init__(self, name, email):
-                    self.name = name
-                    self.email = email
-                
-                def get_info(self):
-                    return f"{self.name} - {self.email}"
+    void detectsMoveAndRenameClass_ReportToAnalyticsUsageReport() throws Exception {
+        String before = """
+            class Report:
+                def generate(self): return ""
+            """;
+        String after = """
+            class UsageReport:
+                def generate(self): return ""
             """;
 
-        String afterUserAccountCode = """
-            class UserAccount:
-                def __init__(self, name, email):
-                    self.name = name
-                    self.email = email
-                
-                def get_info(self):
-                    return f"{self.name} - {self.email}"
-            """;
+        Map<String, String> beforeFiles = Map.of("src/reports/report.py", before);
+        Map<String, String> afterFiles = Map.of("src/analytics/usage_report.py", after);
 
-        Map<String, String> beforeFiles = Map.of("user.py", beforeUserCode);
-        Map<String, String> afterFiles = Map.of("models/user_account.py", afterUserAccountCode);
-
-        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
-                "User", "UserAccount", "user.py", "models/user_account.py");
+        assertMoveAndRenameClassRefactoringDetected(
+                beforeFiles, afterFiles,
+                "reports.Report", "analytics.UsageReport",
+                "src/reports/report.py", "src/analytics/usage_report.py"
+        );
     }
 
     @Test
-    void detectsMoveAndRenameClass_ProcessorToUtilsDataHandler() throws Exception {
-        String beforeProcessorCode = """
-            class Processor:
-                def process_data(self, data):
-                    return data.strip().upper()
-                
-                def validate_data(self, data):
-                    return len(data) > 0
+    void detectsMoveAndRenameClass_OrderToSalesPurchaseOrder() throws Exception {
+        String before = """
+            class Order:
+                def __init__(self, items):
+                    self.items = items
+
+                def total(self):
+                    return sum(self.items)
+            """;
+        String after = """
+            class PurchaseOrder:
+                def __init__(self, items):
+                    self.items = items
+
+                def total(self):
+                    return sum(self.items)
             """;
 
-        String afterDataHandlerCode = """
-            class DataHandler:
-                def process_data(self, data):
-                    return data.strip().upper()
-                
-                def validate_data(self, data):
-                    return len(data) > 0
+        Map<String, String> beforeFiles = Map.of("src/order/order.py", before);
+        Map<String, String> afterFiles = Map.of("src/sales/purchase_order.py", after);
+
+        assertMoveAndRenameClassRefactoringDetected(
+                beforeFiles, afterFiles,
+                "order.Order", "sales.PurchaseOrder",
+                "src/order/order.py", "src/sales/purchase_order.py"
+        );
+    }
+
+    // 2) Με imports και staticmethod
+    @Test
+    void detectsMoveAndRenameClass_LoggerToMonitoringAppLogger() throws Exception {
+        String before = """
+            import time
+
+            class Logger:
+                @staticmethod
+                def ts():
+                    return int(time.time())
+            """;
+        String after = """
+            import time
+
+            class AppLogger:
+                @staticmethod
+                def ts():
+                    return int(time.time())
             """;
 
-        Map<String, String> beforeFiles = Map.of("processor.py", beforeProcessorCode);
-        Map<String, String> afterFiles = Map.of("utils/data_handler.py", afterDataHandlerCode);
+        Map<String, String> beforeFiles = Map.of("src/log/logger.py", before);
+        Map<String, String> afterFiles = Map.of("src/monitoring/app_logger.py", after);
 
-        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
-                "Processor", "DataHandler", "processor.py", "utils/data_handler.py");
+        assertMoveAndRenameClassRefactoringDetected(
+                beforeFiles, afterFiles,
+                "log.Logger", "monitoring.AppLogger",
+                "src/log/logger.py", "src/monitoring/app_logger.py"
+        );
     }
 
+    // 3) Με class attributes, property & setter
     @Test
-    void detectsMoveAndRenameClass_ManagerToServicesUserService() throws Exception {
-        String beforeManagerCode = """
-            class Manager:
-                def create_user(self, data):
-                    return data
-                
-                def delete_user(self, user_id):
-                    return user_id
+    void detectsMoveAndRenameClass_ConfigToCoreConfiguration() throws Exception {
+        String before = """
+            class Config:
+                DEFAULT_TIMEOUT = 5
+
+                def __init__(self):
+                    self._timeout = self.DEFAULT_TIMEOUT
+
+                @property
+                def timeout(self):
+                    return self._timeout
+
+                @timeout.setter
+                def timeout(self, value):
+                    if value < 0:
+                        value = 0
+                    self._timeout = value
+            """;
+        String after = """
+            class Configuration:
+                DEFAULT_TIMEOUT = 5
+
+                def __init__(self):
+                    self._timeout = self.DEFAULT_TIMEOUT
+
+                @property
+                def timeout(self):
+                    return self._timeout
+
+                @timeout.setter
+                def timeout(self, value):
+                    if value < 0:
+                        value = 0
+                    self._timeout = value
             """;
 
-        String afterUserServiceCode = """
-            class UserService:
-                def create_user(self, data):
-                    return data
-                
-                def delete_user(self, user_id):
-                    return user_id
+        Map<String, String> beforeFiles = Map.of("src/config/config.py", before);
+        Map<String, String> afterFiles = Map.of("src/core/configuration.py", after);
+
+        assertMoveAndRenameClassRefactoringDetected(
+                beforeFiles, afterFiles,
+                "config.Config", "core.Configuration",
+                "src/config/config.py", "src/core/configuration.py"
+        );
+    }
+
+    @Test
+    void detectsMoveAndRenameClass_ParserToIoJsonParser() throws Exception {
+        String before = """
+            class Parser:
+                def parse(self, path):
+                    f = None
+                    try:
+                        f = open(path, 'r')
+                        return f.read()
+                    except FileNotFoundError:
+                        return ""
+                    finally:
+                        if f:
+                            f.close()
+            """;
+        String after = """
+            class JsonParser:
+                def parse(self, path):
+                    f = None
+                    try:
+                        f = open(path, 'r')
+                        return f.read()
+                    except FileNotFoundError:
+                        return ""
+                    finally:
+                        if f:
+                            f.close()
             """;
 
-        Map<String, String> beforeFiles = Map.of("manager.py", beforeManagerCode);
-        Map<String, String> afterFiles = Map.of("services/user_service.py", afterUserServiceCode);
+        Map<String, String> beforeFiles = Map.of("src/parsers/parser.py", before);
+        Map<String, String> afterFiles = Map.of("src/io/json_parser.py", after);
 
-        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
-                "Manager", "UserService", "manager.py", "services/user_service.py");
+        assertMoveAndRenameClassRefactoringDetected(
+                beforeFiles, afterFiles,
+                "parsers.Parser", "io.JsonParser",
+                "src/parsers/parser.py", "src/io/json_parser.py"
+        );
     }
 
     @Test
-    void detectsMoveAndRenameClass_HelperToToolsStringUtils() throws Exception {
-        String beforeHelperCode = """
-            class Helper:
-                def format_string(self, text):
-                    return text.strip().title()
-                
-                def is_empty(self, text):
-                    return len(text) == 0
+    void detectsMoveAndRenameClass_MathUtilsToAlgorithmsAdvancedMathUtils() throws Exception {
+        String before = """
+            class MathUtils:
+                @staticmethod
+                def add(a, b): return a + b
+
+                @classmethod
+                def zero(cls): return 0
+            """;
+        String after = """
+            class AdvancedMathUtils:
+                @staticmethod
+                def add(a, b): return a + b
+
+                @classmethod
+                def zero(cls): return 0
             """;
 
-        String afterStringUtilsCode = """
-            class StringUtils:
-                def format_string(self, text):
-                    return text.strip().title()
-                
-                def is_empty(self, text):
-                    return len(text) == 0
+        Map<String, String> beforeFiles = Map.of("src/math/math_utils.py", before);
+        Map<String, String> afterFiles = Map.of("src/algorithms/advanced_math_utils.py", after);
+
+        assertMoveAndRenameClassRefactoringDetected(
+                beforeFiles, afterFiles,
+                "math.MathUtils", "algorithms.AdvancedMathUtils",
+                "src/math/math_utils.py", "src/algorithms/advanced_math_utils.py"
+        );
+    }
+
+    @Test
+    void detectsMoveAndRenameClass_DataSetToAnalyticsDataSetV2() throws Exception {
+        String before = """
+            class DataSet:
+                def normalize(self, nums):
+                    cleaned = [n for n in nums if n is not None]
+                    return {i: v for i, v in enumerate(cleaned)}
+            """;
+        String after = """
+            class DataSetV2:
+                def normalize(self, nums):
+                    cleaned = [n for n in nums if n is not None]
+                    return {i: v for i, v in enumerate(cleaned)}
             """;
 
-        Map<String, String> beforeFiles = Map.of("helper.py", beforeHelperCode);
-        Map<String, String> afterFiles = Map.of("tools/string_utils.py", afterStringUtilsCode);
+        Map<String, String> beforeFiles = Map.of("src/data/data_set.py", before);
+        Map<String, String> afterFiles = Map.of("src/analytics/data_set_v2.py", after);
 
-        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
-                "Helper", "StringUtils", "helper.py", "tools/string_utils.py");
+        assertMoveAndRenameClassRefactoringDetected(
+                beforeFiles, afterFiles,
+                "data.DataSet", "analytics.DataSetV2",
+                "src/data/data_set.py", "src/analytics/data_set_v2.py"
+        );
     }
 
     @Test
-    void detectsMoveAndRenameClass_ReaderToIoFileReader() throws Exception {
-        String beforeReaderCode = """
-        class Reader:
-            def __init__(self, filename):
-                self.filename = filename
-            
-            def read_content(self):
-                return f"Reading from {self.filename}"
-            
-            def read_lines(self):
-                return ["line1", "line2", "line3"]
-        """;
+    void detectsMoveAndRenameClass_ControllerToApiUserController() throws Exception {
+        String before = """
+            class Controller:
+                def handle(self, users):
+                    def is_active(u): return u.get('active', False)
+                    result = []
+                    for u in users:
+                        if is_active(u):
+                            result.append(u['name'])
+                        else:
+                            continue
+                    return result
+            """;
+        String after = """
+            class UserController:
+                def handle(self, users):
+                    def is_active(u): return u.get('active', False)
+                    result = []
+                    for u in users:
+                        if is_active(u):
+                            result.append(u['name'])
+                        else:
+                            continue
+                    return result
+            """;
 
-        String afterFileReaderCode = """
-        class FileReader:
-            def __init__(self, filename):
-                self.filename = filename
-            
-            def read_content(self):
-                return f"Reading from {self.filename}"
-            
-            def read_lines(self):
-                return ["line1", "line2", "line3"]
-        """;
+        Map<String, String> beforeFiles = Map.of("src/web/controller.py", before);
+        Map<String, String> afterFiles = Map.of("src/api/user_controller.py", after);
 
-        Map<String, String> beforeFiles = Map.of("reader.py", beforeReaderCode);
-        Map<String, String> afterFiles = Map.of("io/file_reader.py", afterFileReaderCode);
-
-        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
-                "Reader", "FileReader", "reader.py", "io/file_reader.py");
+        assertMoveAndRenameClassRefactoringDetected(
+                beforeFiles, afterFiles,
+                "web.Controller", "api.UserController",
+                "src/web/controller.py", "src/api/user_controller.py"
+        );
     }
 
     @Test
-    void detectsMoveAndRenameClass_ClientToNetworkHttpClient() throws Exception {
-        String beforeClientCode = """
-        class Client:
-            def __init__(self, base_url):
-                self.base_url = base_url
-                self.headers = {}
-            
-            def request(self, method, endpoint):
-                return f"{method} {self.base_url}/{endpoint}"
-            
-            def set_header(self, key, value):
-                self.headers[key] = value
-        """;
+    void detectsMoveAndRenameClass_PaymentToBillingPaymentService() throws Exception {
+        String before = """
+            class BaseService:
+                def ping(self): return "ok"
 
-        String afterHttpClientCode = """
-        class HttpClient:
-            def __init__(self, base_url):
-                self.base_url = base_url
-                self.headers = {}
-            
-            def request(self, method, endpoint):
-                return f"{method} {self.base_url}/{endpoint}"
-            
-            def set_header(self, key, value):
-                self.headers[key] = value
-        """;
+            class Payment:
+                def charge(self, amount): return amount > 0
+            """;
+        String after = """
+            class BaseService:
+                def ping(self): return "ok"
 
-        Map<String, String> beforeFiles = Map.of("client.py", beforeClientCode);
-        Map<String, String> afterFiles = Map.of("network/http_client.py", afterHttpClientCode);
+            class PaymentService:
+                def charge(self, amount): return amount > 0
+            """;
 
-        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
-                "Client", "HttpClient", "client.py", "network/http_client.py");
-    }
+        Map<String, String> beforeFiles = Map.of("src/payments/payment.py", before);
+        Map<String, String> afterFiles = Map.of("src/billing/payment_service.py", after);
 
-    @Test
-    void detectsMoveAndRenameClass_HandlerToEventActionHandler() throws Exception {
-        String beforeHandlerCode = """
-        class Handler:
-            def __init__(self, name):
-                self.name = name
-                self.actions = []
-            
-            def execute(self, action):
-                self.actions.append(action)
-                return f"Executed {action}"
-            
-            def get_history(self):
-                return self.actions
-        """;
-
-        String afterActionHandlerCode = """
-        class ActionHandler:
-            def __init__(self, name):
-                self.name = name
-                self.actions = []
-            
-            def execute(self, action):
-                self.actions.append(action)
-                return f"Executed {action}"
-            
-            def get_history(self):
-                return self.actions
-        """;
-
-        Map<String, String> beforeFiles = Map.of("handler.py", beforeHandlerCode);
-        Map<String, String> afterFiles = Map.of("event/action_handler.py", afterActionHandlerCode);
-
-        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
-                "Handler", "ActionHandler", "handler.py", "event/action_handler.py");
-    }
-
-    @Test
-    void detectsMoveAndRenameClass_BuilderToFactoryObjectBuilder() throws Exception {
-        String beforeBuilderCode = """
-        class Builder:
-            def __init__(self):
-                self.components = {}
-            
-            def add_component(self, name, value):
-                self.components[name] = value
-                return self
-            
-            def build(self):
-                return self.components.copy()
-            
-            def reset(self):
-                self.components.clear()
-        """;
-
-        String afterObjectBuilderCode = """
-        class ObjectBuilder:
-            def __init__(self):
-                self.components = {}
-            
-            def add_component(self, name, value):
-                self.components[name] = value
-                return self
-            
-            def build(self):
-                return self.components.copy()
-            
-            def reset(self):
-                self.components.clear()
-        """;
-
-        Map<String, String> beforeFiles = Map.of("builder.py", beforeBuilderCode);
-        Map<String, String> afterFiles = Map.of("factory/object_builder.py", afterObjectBuilderCode);
-
-        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
-                "Builder", "ObjectBuilder", "builder.py", "factory/object_builder.py");
-    }
-
-    @Test
-    void detectsMoveAndRenameClass_ValidatorToChecksDataValidator() throws Exception {
-        String beforeValidatorCode = """
-        class Validator:
-            def __init__(self, rules):
-                self.rules = rules
-            
-            def validate(self, data):
-                for rule in self.rules:
-                    if not self.check_rule(data, rule):
-                        return False
-                return True
-            
-            def check_rule(self, data, rule):
-                return rule in str(data)
-            
-            def add_rule(self, rule):
-                self.rules.append(rule)
-        """;
-
-        String afterDataValidatorCode = """
-        class DataValidator:
-            def __init__(self, rules):
-                self.rules = rules
-            
-            def validate(self, data):
-                for rule in self.rules:
-                    if not self.check_rule(data, rule):
-                        return False
-                return True
-            
-            def check_rule(self, data, rule):
-                return rule in str(data)
-            
-            def add_rule(self, rule):
-                self.rules.append(rule)
-        """;
-
-        Map<String, String> beforeFiles = Map.of("validator.py", beforeValidatorCode);
-        Map<String, String> afterFiles = Map.of("checks/data_validator.py", afterDataValidatorCode);
-
-        assertMoveAndRenameClassRefactoringDetected(beforeFiles, afterFiles,
-                "Validator", "DataValidator", "validator.py", "checks/data_validator.py");
+        assertMoveAndRenameClassRefactoringDetected(
+                beforeFiles, afterFiles,
+                "payments.Payment", "billing.PaymentService",
+                "src/payments/payment.py", "src/billing/payment_service.py"
+        );
     }
 
     public static void assertMoveAndRenameClassRefactoringDetected(
@@ -354,60 +333,40 @@ public class MoveAndRenameClassRefactoringDetectionTest {
             String originalFilePath,
             String newFilePath
     ) throws Exception {
-        UMLModelAdapter beforeAdapter = new UMLModelAdapter(beforeFiles);
-        UMLModelAdapter afterAdapter = new UMLModelAdapter(afterFiles);
-
-        UMLModel beforeUML = beforeAdapter.getUMLModel();
-        UMLModel afterUML = afterAdapter.getUMLModel();
+        UMLModel beforeUML = new UMLModelAdapter(beforeFiles).getUMLModel();
+        UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
 
         UMLModelDiff diff = beforeUML.diff(afterUML);
         List<Refactoring> refactorings = diff.getRefactorings();
 
-        // Look for Move Class refactoring
-        boolean moveFound = refactorings.stream()
-                .filter(r -> r instanceof MoveClassRefactoring)
-                .map(r -> (MoveClassRefactoring) r)
-                .anyMatch(refactoring -> {
-                    String originalName = refactoring.getOriginalClass().getName();
-                    String movedName = refactoring.getMovedClass().getName();
+        System.out.println("Refactorings size: " + refactorings.size());
 
-                    // Check if this move matches our expected pattern
-                    return (originalName.equals(originalClassName) && movedName.equals(renamedClassName)) ||
-                            (originalName.equals(originalClassName) && movedName.equals(originalClassName));
-                });
-
-        // Look for Rename Class refactoring
-        boolean renameFound = refactorings.stream()
-                .filter(r -> r instanceof RenameClassRefactoring)
-                .map(r -> (RenameClassRefactoring) r)
-                .anyMatch(refactoring -> {
-                    String originalName = refactoring.getOriginalClass().getName();
-                    String renamedName = refactoring.getRenamedClass().getName();
-
-                    // Check if this rename matches our expected pattern
-                    return originalName.equals(originalClassName) && renamedName.equals(renamedClassName);
-                });
-
-        // For Move and Rename, we expect either move OR rename (or both)
-        boolean refactoringDetected = moveFound || renameFound;
-
-        if (!refactoringDetected) {
-            StringBuilder errorMessage = new StringBuilder();
-            errorMessage.append("Move and Rename Class refactoring not detected.\n");
-            errorMessage.append("Expected: Move and rename class '").append(originalClassName)
-                    .append("' from '").append(originalFilePath)
-                    .append("' to class '").append(renamedClassName)
-                    .append("' in '").append(newFilePath).append("'\n");
-
-            errorMessage.append("Detected refactorings:\n");
-            for (Refactoring refactoring : refactorings) {
-                errorMessage.append("  - ").append(refactoring.getName()).append(": ")
-                        .append(refactoring.toString()).append("\n");
+        boolean found = refactorings.stream().anyMatch(r -> {
+            if (r.getRefactoringType() != RefactoringType.MOVE_RENAME_CLASS) {
+                return false;
             }
+            MoveAndRenameClassRefactoring mr = (MoveAndRenameClassRefactoring) r;
 
-            fail(errorMessage.toString());
-        }
+            UMLClass orig = mr.getOriginalClass();
+            UMLClass ren = mr.getRenamedClass();
 
-        assertTrue(refactoringDetected, "Expected Move and Rename Class refactoring to be detected");
+            boolean namesMatch =
+                    originalClassName.equals(orig.getName()) &&
+                            renamedClassName.equals(ren.getName());
+
+            boolean filesMatch =
+                    orig.getLocationInfo() != null &&
+                            ren.getLocationInfo() != null &&
+                            originalFilePath.equals(orig.getLocationInfo().getFilePath()) &&
+                            newFilePath.equals(ren.getLocationInfo().getFilePath());
+
+            return namesMatch && filesMatch;
+        });
+
+        assertTrue(
+                found,
+                "Expected MOVE_RENAME_CLASS from " + originalClassName + " (" + originalFilePath + ") to " +
+                        renamedClassName + " (" + newFilePath + "). Actual: " + refactorings
+        );
     }
 }

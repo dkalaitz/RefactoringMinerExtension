@@ -175,6 +175,7 @@ public class MergeParameterRefactoringDetectionTest {
         System.out.println("New parameter: " + newParameterName);
         System.out.println("Method: " + methodName + (className.isEmpty() ? " (module level)" : " in class " + className));
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         boolean mergeParameterFound = refactorings.stream()
                 .anyMatch(r -> RefactoringType.MERGE_PARAMETER.equals(r.getRefactoringType()) &&

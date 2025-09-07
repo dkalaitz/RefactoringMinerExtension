@@ -460,55 +460,6 @@ public class ExtractSubclassRefactoringDetectionTest {
                             originalName.equals(originalClassName);
                 });
 
-        // Second try: Look for any Extract Class refactoring that involves our classes
-        if (!extractSubclassFound) {
-            extractSubclassFound = refactorings.stream()
-                    .filter(r -> r instanceof ExtractClassRefactoring)
-                    .map(r -> (ExtractClassRefactoring) r)
-                    .anyMatch(refactoring -> {
-                        String extractedName = refactoring.getExtractedClass().getName();
-                        String originalName = refactoring.getOriginalClass().getName();
-
-                        return extractedName.equals(extractedSubclassName) &&
-                                originalName.equals(originalClassName);
-                    });
-        }
-
-        if (!extractSubclassFound) {
-            StringBuilder errorMessage = new StringBuilder();
-            errorMessage.append("Extract Subclass refactoring not detected.\n");
-            errorMessage.append("Expected: Extract subclass '").append(extractedSubclassName)
-                    .append("' from class '").append(originalClassName).append("'\n");
-
-            errorMessage.append("Detected refactorings:\n");
-            for (Refactoring refactoring : refactorings) {
-                errorMessage.append("  - ").append(refactoring.getName()).append(": ")
-                        .append(refactoring.toString()).append("\n");
-                if (refactoring instanceof ExtractClassRefactoring) {
-                    ExtractClassRefactoring ecr = (ExtractClassRefactoring) refactoring;
-                    errorMessage.append("    Type: ").append(ecr.getRefactoringType()).append("\n");
-                    errorMessage.append("    Original: ").append(ecr.getOriginalClass().getName()).append("\n");
-                    errorMessage.append("    Extracted: ").append(ecr.getExtractedClass().getName()).append("\n");
-                }
-            }
-
-            // For debugging purposes, let's be more lenient initially
-            System.out.println(errorMessage.toString());
-
-            // Check if we at least have some refactoring related to our classes
-            boolean hasRelatedRefactoring = refactorings.stream()
-                    .anyMatch(r -> r.toString().contains(originalClassName) ||
-                            r.toString().contains(extractedSubclassName));
-
-            if (hasRelatedRefactoring) {
-                System.out.println("Found related refactorings, but not exact Extract Subclass pattern");
-                // For now, pass the test if we found related refactorings
-                return;
-            }
-
-            fail(errorMessage.toString());
-        }
-
         assertTrue(extractSubclassFound, "Expected Extract Subclass refactoring to be detected");
     }
 }

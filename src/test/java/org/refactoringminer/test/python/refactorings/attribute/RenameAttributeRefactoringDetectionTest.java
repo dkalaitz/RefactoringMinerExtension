@@ -454,6 +454,7 @@ public class RenameAttributeRefactoringDetectionTest {
         System.out.println("New attribute: " + newAttributeName);
         System.out.println("Class: " + className);
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         boolean renameAttributeFound = refactorings.stream()
                 .anyMatch(r -> RefactoringType.RENAME_ATTRIBUTE.equals(r.getRefactoringType()) &&

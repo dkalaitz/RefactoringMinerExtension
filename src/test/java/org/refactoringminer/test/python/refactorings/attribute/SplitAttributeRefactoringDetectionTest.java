@@ -109,6 +109,7 @@ public class SplitAttributeRefactoringDetectionTest {
         System.out.println("Split attributes: " + splitAttributeNames);
         System.out.println("Class: " + className);
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         boolean splitAttributeFound = refactorings.stream()
                 .anyMatch(r -> RefactoringType.SPLIT_ATTRIBUTE.equals(r.getRefactoringType()) &&

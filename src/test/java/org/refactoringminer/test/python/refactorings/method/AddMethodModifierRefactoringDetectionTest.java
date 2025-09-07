@@ -585,7 +585,6 @@ public class AddMethodModifierRefactoringDetectionTest {
         String afterPythonCode = """
             from abc import abstractmethod
             
-            class LogAnalyzer:
                 @abstractmethod
                 def analyze_log_patterns(self, log_entries):
                     pattern_counts = {}

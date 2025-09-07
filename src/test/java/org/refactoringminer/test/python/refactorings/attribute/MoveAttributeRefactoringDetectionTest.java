@@ -431,6 +431,9 @@ public class MoveAttributeRefactoringDetectionTest {
         UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
 
         UMLModelDiff diff = beforeUML.diff(afterUML);
+        java.util.List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         boolean moveAttributeDetected = diff.getRefactorings().stream()
                 .anyMatch(ref -> {

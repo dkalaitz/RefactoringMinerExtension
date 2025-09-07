@@ -663,6 +663,8 @@ public class ChangeReturnTypeRefactoringDetectionTest {
 
         UMLModelDiff diff = beforeUML.diff(afterUML);
 
+        System.out.println("Refactorings size " + diff.getRefactorings().size());
+
         boolean returnTypeChangeDetected = diff.getRefactorings().stream()
                 .anyMatch(ref -> {
                     if (ref instanceof ChangeReturnTypeRefactoring returnTypeChange) {

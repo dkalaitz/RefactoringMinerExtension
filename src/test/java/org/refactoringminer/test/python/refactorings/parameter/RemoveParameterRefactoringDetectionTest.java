@@ -362,6 +362,7 @@ public class RemoveParameterRefactoringDetectionTest {
         System.out.println("Removed parameter: " + removedParameterName);
         System.out.println("Method: " + methodName + (className.isEmpty() ? " (module level)" : " in class " + className));
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         boolean removeParameterFound = refactorings.stream()
                 .anyMatch(r -> RefactoringType.REMOVE_PARAMETER.equals(r.getRefactoringType()) &&

@@ -153,6 +153,7 @@ public class MoveAndRenameAttributeRefactoringDetectionTest {
         System.out.println("Old attribute: " + oldAttributeName + " in " + sourceClassName);
         System.out.println("New attribute: " + newAttributeName + " in " + targetClassName);
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         boolean moveAndRenameAttributeFound = refactorings.stream()
                 .anyMatch(r -> RefactoringType.MOVE_RENAME_ATTRIBUTE.equals(r.getRefactoringType()) &&

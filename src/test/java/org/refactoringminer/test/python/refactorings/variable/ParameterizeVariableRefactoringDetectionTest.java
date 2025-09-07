@@ -312,25 +312,6 @@ public class ParameterizeVariableRefactoringDetectionTest {
                 .filter(r -> RefactoringType.PARAMETERIZE_VARIABLE.equals(r.getRefactoringType()))
                 .anyMatch(refactoring -> refactoring.getRefactoringType() == RefactoringType.PARAMETERIZE_VARIABLE);
 
-        // Fallback: Look for any refactoring mentioning our parameter
-        if (!parameterizeVariableFound) {
-            boolean mentionsParameter = refactorings.stream()
-                    .anyMatch(r -> r.toString().contains(parameterName) &&
-                            r.toString().contains(methodName));
-
-            if (mentionsParameter) {
-                System.out.println("Found refactoring mentioning the parameter");
-                parameterizeVariableFound = true; // Accept for debugging
-            }
-        }
-
-        if (!parameterizeVariableFound) {
-            System.out.println("Available refactorings:");
-            refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
-
-            fail("Expected parameterize variable refactoring for '" + parameterName +
-                    "' in method '" + methodName + "' was not detected");
-        }
 
         assertTrue(parameterizeVariableFound, "Expected Parameterize Variable refactoring to be detected");
     }

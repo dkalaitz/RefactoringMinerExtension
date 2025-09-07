@@ -386,6 +386,7 @@ public class AddClassAnnotationRefactoringDetectionTest {
         System.out.println("\n=== ADD CLASS ANNOTATION TEST: @" + annotationName + " ===");
         System.out.println("Class: " + className);
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         // Look for AddClassAnnotationRefactoring
         boolean addAnnotationDetected = refactorings.stream()

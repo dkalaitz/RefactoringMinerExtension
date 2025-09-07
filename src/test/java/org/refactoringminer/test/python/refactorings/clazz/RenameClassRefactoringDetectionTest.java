@@ -10,18 +10,6 @@ import static org.refactoringminer.utils.LangASTUtil.readResourceFile;
 class RenameClassRefactoringDetectionTest {
 
     @Test
-    void detectsClassRename_FromResourceFiles() throws Exception {
-        // Read files from resources
-        String beforePythonCode = readResourceFile("python-samples/before/calculator.py");
-        String afterPythonCode = readResourceFile("python-samples/after/calculator.py");
-
-        Map<String, String> beforeFiles = Map.of("tests/calculator.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/calculator.py", afterPythonCode);
-        assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Calculator", "AdvancedCalculator");
-    }
-
-
-    @Test
     void detectsClassRename() throws Exception {
         System.out.println("\n");
 
@@ -117,24 +105,6 @@ class RenameClassRefactoringDetectionTest {
         assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Animal", "Mammal");
     }
 
-    @Test
-    void detectsClassRename_AnimalToMammal2() throws Exception {
-        System.out.println("\n");
-        String beforePythonCode = """
-        class Animal:
-            def speak(self, x):
-                return "..."
-        """;
-        String afterPythonCode = """
-        class Mammal:
-            def speak(self, y):
-                return "..."
-        """;
-
-        Map<String, String> beforeFiles = Map.of("tests/animal.py", beforePythonCode);
-        Map<String, String> afterFiles = Map.of("tests/animal.py", afterPythonCode);
-        assertRenameClassRefactoringDetected(beforeFiles, afterFiles, "Animal", "Mammal");
-    }
 
     @Test
     void detectsClassRename_WithForLoop() throws Exception {

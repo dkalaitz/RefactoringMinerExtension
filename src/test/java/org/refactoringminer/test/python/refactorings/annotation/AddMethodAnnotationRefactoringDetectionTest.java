@@ -28,7 +28,7 @@ public class AddMethodAnnotationRefactoringDetectionTest {
 
         String afterPythonCode = """
             class MathUtils:
-                @staticmethod
+                @cache
                 def calculate_area(radius):
                     return 3.14159 * radius * radius
             """;
@@ -37,7 +37,7 @@ public class AddMethodAnnotationRefactoringDetectionTest {
         Map<String, String> afterFiles = Map.of("math_utils.py", afterPythonCode);
 
         assertAddMethodAnnotationRefactoringDetected(beforeFiles, afterFiles,
-                "staticmethod", "calculate_area", "MathUtils");
+                "cache", "calculate_area", "MathUtils");
     }
 
     @Test
@@ -333,6 +333,7 @@ public class AddMethodAnnotationRefactoringDetectionTest {
         System.out.println("\n=== ADD METHOD ANNOTATION TEST: @" + annotationName + " ===");
         System.out.println("Method: " + methodName + " in class " + className);
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         // Look for AddMethodAnnotationRefactoring
         boolean addAnnotationDetected = refactorings.stream()

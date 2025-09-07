@@ -386,6 +386,7 @@ public class RemoveClassAnnotationRefactoringDetectionTest {
         System.out.println("\n=== REMOVE CLASS ANNOTATION TEST: @" + annotationName + " ===");
         System.out.println("Class: " + className);
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         // Look for RemoveClassAnnotationRefactoring
         boolean removeAnnotationDetected = refactorings.stream()

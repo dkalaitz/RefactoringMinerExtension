@@ -97,6 +97,7 @@ public class ReplaceAttributeRefactoringDetectionTest {
         System.out.println("New attribute: " + newAttributeName);
         System.out.println("Class: " + className);
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         // Look for Replace Attribute refactoring
         boolean replaceAttributeFound = false;

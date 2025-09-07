@@ -266,31 +266,12 @@ public class InlineVariableRefactoringDetectionTest {
         System.out.println("Inlined expression: " + inlinedExpression);
         System.out.println("Method: " + methodName + (className.isEmpty() ? " (module level)" : " in class " + className));
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         // Look for InlineVariableRefactoring
         boolean inlineVariableFound = refactorings.stream()
                 .filter(r -> RefactoringType.INLINE_VARIABLE.equals(r.getRefactoringType()))
                 .anyMatch(refactoring -> refactoring.getRefactoringType() == RefactoringType.INLINE_VARIABLE);
-
-        // Fallback: Look for any refactoring mentioning our variable
-        if (!inlineVariableFound) {
-            boolean mentionsVariable = refactorings.stream()
-                    .anyMatch(r -> r.toString().contains(inlinedVariableName) &&
-                            r.toString().contains(methodName));
-
-            if (mentionsVariable) {
-                System.out.println("Found refactoring mentioning the variable");
-                inlineVariableFound = true; // Accept for debugging
-            }
-        }
-
-        if (!inlineVariableFound) {
-            System.out.println("Available refactorings:");
-            refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
-
-            fail("Expected inline variable refactoring for '" + inlinedVariableName +
-                    "' in method '" + methodName + "' was not detected");
-        }
 
         assertTrue(inlineVariableFound, "Expected Inline Variable refactoring to be detected");
     }

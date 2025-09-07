@@ -365,79 +365,11 @@ public class MoveAndInlineMethodRefactoringDetectionTest {
         System.out.println("Target method: " + targetMethodName + " in class " + targetClassName);
         System.out.println("Total refactorings detected: " + refactorings.size());
 
-        // Look for Move and Inline Method refactoring (might be detected as combination of MOVE_OPERATION + INLINE_OPERATION)
         boolean moveAndInlineFound = false;
 
-        // Primary check: Look for specific MOVE_AND_INLINE_OPERATION type
         moveAndInlineFound = refactorings.stream()
                 .anyMatch(r -> RefactoringType.MOVE_AND_INLINE_OPERATION.equals(r.getRefactoringType()));
 
-        // Fallback 1: Look for both MOVE_OPERATION and INLINE_OPERATION refactorings
-        if (!moveAndInlineFound) {
-            boolean hasMoveOperation = refactorings.stream()
-                    .anyMatch(r -> RefactoringType.MOVE_OPERATION.equals(r.getRefactoringType()) &&
-                            r.toString().contains(inlinedMethodName));
-
-            boolean hasInlineOperation = refactorings.stream()
-                    .anyMatch(r -> RefactoringType.INLINE_OPERATION.equals(r.getRefactoringType()) &&
-                            r.toString().contains(inlinedMethodName));
-
-            if (hasMoveOperation && hasInlineOperation) {
-                System.out.println("Found both MOVE_OPERATION and INLINE_OPERATION for the method");
-                moveAndInlineFound = true;
-            }
-        }
-
-        // Fallback 2: Look for INLINE_OPERATION that mentions the moved method
-        if (!moveAndInlineFound) {
-            boolean hasInlineWithMove = refactorings.stream()
-                    .filter(r -> RefactoringType.INLINE_OPERATION.equals(r.getRefactoringType()))
-                    .anyMatch(r -> r.toString().contains(inlinedMethodName) &&
-                            r.toString().contains(targetMethodName));
-
-            if (hasInlineWithMove) {
-                System.out.println("Found INLINE_OPERATION that involves cross-class method inlining");
-                moveAndInlineFound = true;
-            }
-        }
-
-        // Fallback 3: Look for any refactoring mentioning both classes and the inlined method
-        if (!moveAndInlineFound) {
-            boolean mentionsBothClassesAndMethod = refactorings.stream()
-                    .anyMatch(r -> r.toString().contains(inlinedMethodName) &&
-                            r.toString().contains(sourceClassName) &&
-                            r.toString().contains(targetClassName));
-
-            if (mentionsBothClassesAndMethod) {
-                System.out.println("Found refactoring mentioning both classes and the inlined method");
-                moveAndInlineFound = true; // Accept for debugging
-            }
-        }
-
-        // Fallback 4: Look for method removal + method modification
-        if (!moveAndInlineFound) {
-            boolean hasMethodRemoval = refactorings.stream()
-                    .anyMatch(r -> r.toString().toLowerCase().contains("remove") &&
-                            r.toString().contains(inlinedMethodName));
-
-            boolean hasMethodModification = refactorings.stream()
-                    .anyMatch(r -> r.toString().toLowerCase().contains("modify") &&
-                            r.toString().contains(targetMethodName));
-
-            if (hasMethodRemoval && hasMethodModification) {
-                System.out.println("Found method removal and modification pattern (move + inline)");
-                moveAndInlineFound = true;
-            }
-        }
-
-        if (!moveAndInlineFound) {
-            System.out.println("Available refactorings:");
-            refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
-
-            fail("Expected move and inline method refactoring for '" + inlinedMethodName +
-                    "' from class '" + sourceClassName + "' to method '" + targetMethodName +
-                    "' in class '" + targetClassName + "' was not detected");
-        }
 
         assertTrue(moveAndInlineFound, "Expected Move and Inline Method refactoring to be detected");
     }

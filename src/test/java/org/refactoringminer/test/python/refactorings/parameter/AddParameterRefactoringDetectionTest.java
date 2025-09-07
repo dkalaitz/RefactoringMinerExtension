@@ -314,6 +314,7 @@ public class AddParameterRefactoringDetectionTest {
         System.out.println("Added parameter: " + addedParameterName);
         System.out.println("Method: " + methodName + (className.isEmpty() ? " (module level)" : " in class " + className));
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         boolean addParameterFound = refactorings.stream()
                 .anyMatch(r -> RefactoringType.ADD_PARAMETER.equals(r.getRefactoringType()) &&

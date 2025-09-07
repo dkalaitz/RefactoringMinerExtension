@@ -109,6 +109,7 @@ public class MergeAttributeRefactoringDetectionTest {
         System.out.println("New attribute: " + newAttributeName);
         System.out.println("Class: " + className);
         System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         boolean mergeAttributeFound = refactorings.stream()
                 .anyMatch(r -> RefactoringType.MERGE_ATTRIBUTE.equals(r.getRefactoringType()) &&

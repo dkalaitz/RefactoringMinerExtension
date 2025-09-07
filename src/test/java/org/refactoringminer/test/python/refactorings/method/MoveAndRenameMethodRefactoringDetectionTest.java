@@ -8,6 +8,7 @@ import gr.uom.java.xmi.diff.UMLModelDiff;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.parallel.Isolated;
 import org.refactoringminer.api.Refactoring;
+import org.refactoringminer.api.RefactoringType;
 
 import java.util.List;
 import java.util.Map;
@@ -487,63 +488,22 @@ public class MoveAndRenameMethodRefactoringDetectionTest {
         UMLModelDiff diff = beforeUML.diff(afterUML);
         List<Refactoring> refactorings = diff.getRefactorings();
 
-        // Look for Move Operation refactoring
-        boolean moveFound = refactorings.stream()
+        System.out.println("Refactorings:" + refactorings.size());
+        refactorings.forEach(System.out::println);
+
+        boolean moveAndRenameDetected = refactorings.stream()
                 .filter(r -> r instanceof MoveOperationRefactoring)
                 .map(r -> (MoveOperationRefactoring) r)
-                .anyMatch(refactoring -> {
-                    String originalName = refactoring.getOriginalOperation().getName();
-                    String originalClass = refactoring.getOriginalOperation().getClassName();
-                    String movedName = refactoring.getMovedOperation().getName();
-                    String movedClass = refactoring.getMovedOperation().getClassName();
+                .anyMatch(ref ->
+                        ref.getRefactoringType() == RefactoringType.MOVE_AND_RENAME_OPERATION &&
+                                ref.getOriginalOperation().getClassName().equals(sourceClassName) &&
+                                ref.getMovedOperation().getClassName().equals(targetClassName) &&
+                                ref.getOriginalOperation().getName().equals(originalMethodName) &&
+                                ref.getMovedOperation().getName().equals(renamedMethodName)
+                );
 
-                    // Check if this move operation matches our expected pattern
-                    boolean namesMatch = (originalName.equals(originalMethodName) && movedName.equals(renamedMethodName)) ||
-                            (originalName.equals(originalMethodName) && movedName.equals(originalMethodName));
-                    boolean classesMatch = originalClass.equals(sourceClassName) && movedClass.equals(targetClassName);
 
-                    return namesMatch && classesMatch;
-                });
 
-        // Look for Rename Operation refactoring
-        boolean renameFound = refactorings.stream()
-                .filter(r -> r instanceof RenameOperationRefactoring)
-                .map(r -> (RenameOperationRefactoring) r)
-                .anyMatch(refactoring -> {
-                    String originalName = refactoring.getOriginalOperation().getName();
-                    String renamedName = refactoring.getRenamedOperation().getName();
-                    String originalClass = refactoring.getOriginalOperation().getClassName();
-                    String renamedClass = refactoring.getRenamedOperation().getClassName();
-
-                    // Check if this rename operation matches our expected pattern
-                    boolean namesMatch = originalName.equals(originalMethodName) && renamedName.equals(renamedMethodName);
-                    boolean classesMatch = (originalClass.equals(sourceClassName) && renamedClass.equals(targetClassName)) ||
-                            (originalClass.equals(sourceClassName) && renamedClass.equals(sourceClassName)) ||
-                            (originalClass.equals(targetClassName) && renamedClass.equals(targetClassName));
-
-                    return namesMatch && classesMatch;
-                });
-
-        // For Move and Rename, we expect either move OR rename (or both)
-        boolean refactoringDetected = moveFound || renameFound;
-
-        if (!refactoringDetected) {
-            StringBuilder errorMessage = new StringBuilder();
-            errorMessage.append("Move and Rename Method refactoring not detected.\n");
-            errorMessage.append("Expected: Move and rename method '").append(originalMethodName)
-                    .append("' from class '").append(sourceClassName)
-                    .append("' to method '").append(renamedMethodName)
-                    .append("' in class '").append(targetClassName).append("'\n");
-
-            errorMessage.append("Detected refactorings:\n");
-            for (Refactoring refactoring : refactorings) {
-                errorMessage.append("  - ").append(refactoring.getName()).append(": ")
-                        .append(refactoring.toString()).append("\n");
-            }
-
-            fail(errorMessage.toString());
-        }
-
-        assertTrue(refactoringDetected, "Expected Move and Rename Method refactoring to be detected");
+        assertTrue(moveAndRenameDetected, "Expected Move and Rename Method refactoring to be detected");
     }
 }

@@ -33,8 +33,9 @@ public class RefactoringAssertUtils {
         System.out.println("==== DIFF ====");
         System.out.println("Animal to Mammal");
         System.out.println("Class rename detected: " + classRenameDetected);
-        System.out.println("Total refactorings: " + diff.getRefactorings().size());
-        diff.getRefactorings().forEach(System.out::println);
+        List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         assertTrue(classRenameDetected, "Expected a RenameClassRefactoring from " + beforeClassName + " to " + afterClassName);
     }
@@ -68,7 +69,9 @@ public class RefactoringAssertUtils {
                         ((ExtractOperationRefactoring) ref).getExtractedOperation().getName().equals(extractedMethodName));
 
         System.out.println("==== DIFF ====");
-        diff.getRefactorings().forEach(System.out::println);
+        List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         return extractDetected;
     }
@@ -128,8 +131,9 @@ public class RefactoringAssertUtils {
 
         System.out.println("==== DIFF ====");
         System.out.println("Source package: " + sourcePackage + " to " + targetPackage);
-        System.out.println("Total refactorings: " + diff.getRefactorings().size());
-        diff.getRefactorings().forEach(System.out::println);
+        List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         assertTrue(renamePackageDetected,
                 "Expected a RenamePackageRefactoring from " + sourcePackage + " to " + targetPackage);
@@ -166,8 +170,9 @@ public class RefactoringAssertUtils {
 
         System.out.println("==== DIFF ====");
         System.out.println("Source package: " + sourcePackage + " to " + targetPackage);
-        System.out.println("Total refactorings: " + diff.getRefactorings().size());
-        diff.getRefactorings().forEach(System.out::println);
+        List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         assertTrue(movePackageDetected,
                 "Expected a MovePackageRefactoring from " + sourcePackage + " to " + targetPackage);
@@ -192,8 +197,9 @@ public class RefactoringAssertUtils {
 
         System.out.println("==== DIFF ====");
         System.out.println("Source folder: " + sourceFolderBefore + " to " + sourceFolderAfter);
-        System.out.println("Total refactorings: " + diff.getRefactorings().size());
-        diff.getRefactorings().forEach(System.out::println);
+        List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         assertTrue(moveSourceFolderDetected,
                 "Expected a Move Source Folder refactoring from " + sourceFolderBefore + " to " + sourceFolderAfter);
@@ -218,7 +224,9 @@ public class RefactoringAssertUtils {
 
         System.out.println("==== DIFF ====");
         System.out.println("Inline method detected: " + inlineDetected);
-        diff.getRefactorings().forEach(System.out::println);
+        List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         assertTrue(inlineDetected, "Expected InlineOperationRefactoring for inlined method: " + inlinedMethod);
     }
@@ -245,7 +253,9 @@ public class RefactoringAssertUtils {
         System.out.println("==== DIFF ====");
         System.out.printf("Push Down detected: %s\n", pushDownDetected);
         System.out.println("Source: " + sourceClassName + ", Target: " + targetClassName + ", Method: " + methodName);
-        diff.getRefactorings().forEach(System.out::println);
+        List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         assertTrue(pushDownDetected, "Expected PushDownOperationRefactoring for method '" + methodName +
                 "' from " + sourceClassName + " to " + targetClassName);
@@ -262,6 +272,10 @@ public class RefactoringAssertUtils {
         UMLModel afterUML = new UMLModelAdapter(afterFiles).getUMLModel();
 
         UMLModelDiff diff = beforeUML.diff(afterUML);
+
+        List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         boolean pullUpDetected = diff.getRefactorings().stream()
                 .anyMatch(ref -> ref instanceof PullUpOperationRefactoring &&
@@ -337,7 +351,9 @@ public class RefactoringAssertUtils {
         System.out.println("Class: " + className + ", Method: " + methodName);
         System.out.println("Params before: " + java.util.Arrays.toString(paramsBefore));
         System.out.println("Params after : " + java.util.Arrays.toString(paramsAfter));
-        diff.getRefactorings().forEach(System.out::println);
+        List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         assertTrue(reorderDetected, String.format(
                 "Expected ReorderParameterRefactoring in '%s.%s' from %s to %s",
@@ -359,9 +375,11 @@ public class RefactoringAssertUtils {
 
         UMLModelDiff diff = beforeUML.diff(afterUML);
 
+        System.out.println("Total refactorings detected: " + diff.getRefactorings().size());
+
         boolean pullUpDetected = diff.getRefactorings().stream()
                 .anyMatch(ref ->
-                        ref.getName().startsWith("Pull Up Attribute") &&
+                        ref.getRefactoringType().equals(RefactoringType.PULL_UP_ATTRIBUTE) &&
                                 ref.toString().contains(sourceClassName) &&
                                 ref.toString().contains(targetClassName) &&
                                 ref.toString().contains(attributeName)
@@ -385,7 +403,7 @@ public class RefactoringAssertUtils {
 
         boolean pushDownDetected = diff.getRefactorings().stream()
                 .anyMatch(ref ->
-                        ref.getName().startsWith("Push Down Attribute") &&
+                        ref.getRefactoringType().equals(RefactoringType.PUSH_DOWN_ATTRIBUTE) &&
                                 ref.toString().contains(sourceClassName) &&
                                 ref.toString().contains(targetClassName) &&
                                 ref.toString().contains(attributeName)
@@ -394,7 +412,9 @@ public class RefactoringAssertUtils {
         System.out.println("==== DIFF ====");
         System.out.printf("Push Down Attribute detected: %s\n", pushDownDetected);
         System.out.println("Source: " + sourceClassName + ", Target: " + targetClassName + ", Attribute: " + attributeName);
-        diff.getRefactorings().forEach(System.out::println);
+        List<org.refactoringminer.api.Refactoring> refactorings = diff.getRefactorings();
+        System.out.println("Total refactorings detected: " + refactorings.size());
+        refactorings.forEach(r -> System.out.println("  " + r.getRefactoringType() + ": " + r.toString()));
 
         assertTrue(pushDownDetected, "Expected PushDownAttributeRefactoring of '" + attributeName +
                 "' from '" + sourceClassName + "' to '" + targetClassName + "'");

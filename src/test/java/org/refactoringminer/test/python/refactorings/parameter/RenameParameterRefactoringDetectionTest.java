@@ -393,34 +393,6 @@ public class RenameParameterRefactoringDetectionTest {
         System.out.println("Method: " + methodName + (className != null ? " in class " + className : " (module-level)"));
         System.out.println("Total refactorings detected: " + refactorings.size());
 
-        if (refactorings.isEmpty()) {
-            System.out.println("NO REFACTORINGS DETECTED");
-        } else {
-            for (int i = 0; i < refactorings.size(); i++) {
-                Refactoring r = refactorings.get(i);
-                System.out.println("Refactoring #" + (i + 1) + ":");
-                System.out.println("  Type: " + r.getRefactoringType());
-                System.out.println("  Name: " + r.getName());
-                System.out.println("  Details: " + r.toString());
-
-                // Additional details for RenameVariableRefactoring
-                if (r instanceof RenameVariableRefactoring) {
-                    RenameVariableRefactoring rvr = (RenameVariableRefactoring) r;
-                    System.out.println("  [RenameVariable] Original: " + rvr.getOriginalVariable().getVariableName());
-                    System.out.println("  [RenameVariable] Renamed: " + rvr.getRenamedVariable().getVariableName());
-                    System.out.println("  [RenameVariable] Operation Before: " + rvr.getOperationBefore().toQualifiedString());
-                    System.out.println("  [RenameVariable] Operation After: " + rvr.getOperationAfter().toQualifiedString());
-                    System.out.println("  [RenameVariable] Is Parameter: " + rvr.getOriginalVariable().isParameter());
-                    System.out.println("  [RenameVariable] Refactoring Type: " + rvr.getRefactoringType());
-                }
-
-                System.out.println("  Involved Classes Before: " + r.getInvolvedClassesBeforeRefactoring());
-                System.out.println("  Involved Classes After: " + r.getInvolvedClassesAfterRefactoring());
-                System.out.println("  ---");
-            }
-        }
-        System.out.println("=== END REFACTORING DEBUG ===\n");
-
         // Look for RenameVariableRefactoring with RENAME_PARAMETER type
         boolean renameParameterFound = refactorings.stream()
                 .filter(r -> r instanceof RenameVariableRefactoring)
@@ -450,62 +422,6 @@ public class RenameParameterRefactoringDetectionTest {
 
                     return isRenameParameter && namesMatch && methodMatches && classMatches;
                 });
-
-        // Second try: Look for any RenameVariableRefactoring with parameter types
-        if (!renameParameterFound) {
-            boolean anyParameterRenameFound = refactorings.stream()
-                    .filter(r -> r instanceof RenameVariableRefactoring)
-                    .map(r -> (RenameVariableRefactoring) r)
-                    .anyMatch(refactoring -> {
-                        boolean isParameter = refactoring.getOriginalVariable().isParameter() &&
-                                refactoring.getRenamedVariable().isParameter();
-                        String originalName = refactoring.getOriginalVariable().getVariableName();
-                        String renamedName = refactoring.getRenamedVariable().getVariableName();
-
-                        boolean namesMatch = originalName.equals(originalParameterName) &&
-                                renamedName.equals(renamedParameterName);
-
-                        System.out.println("Checking any parameter rename:");
-                        System.out.println("  Is Parameter: " + isParameter);
-                        System.out.println("  Names match: " + namesMatch);
-
-                        return isParameter && namesMatch;
-                    });
-
-            if (anyParameterRenameFound) {
-                System.out.println("Found parameter rename but not exact RENAME_PARAMETER type");
-                renameParameterFound = true; // Accept for now to understand the pattern
-            }
-        }
-
-        if (!renameParameterFound) {
-            StringBuilder errorMessage = new StringBuilder();
-            errorMessage.append("Rename Parameter refactoring not detected.\n");
-            errorMessage.append("Expected: Rename parameter '").append(originalParameterName)
-                    .append("' to '").append(renamedParameterName)
-                    .append("' in method '").append(methodName).append("'");
-            if (className != null) {
-                errorMessage.append(" of class '").append(className).append("'");
-            }
-            errorMessage.append("\n");
-
-            errorMessage.append("Analysis:\n");
-            errorMessage.append("- Total refactorings found: ").append(refactorings.size()).append("\n");
-
-            long renameVariableCount = refactorings.stream()
-                    .filter(r -> r instanceof RenameVariableRefactoring)
-                    .count();
-            errorMessage.append("- RenameVariableRefactoring instances: ").append(renameVariableCount).append("\n");
-
-            long parameterRenameCount = refactorings.stream()
-                    .filter(r -> r instanceof RenameVariableRefactoring)
-                    .map(r -> (RenameVariableRefactoring) r)
-                    .filter(r -> r.getRefactoringType() == RefactoringType.RENAME_PARAMETER)
-                    .count();
-            errorMessage.append("- RENAME_PARAMETER type count: ").append(parameterRenameCount).append("\n");
-
-            fail(errorMessage.toString());
-        }
 
         assertTrue(renameParameterFound, "Expected Rename Parameter refactoring to be detected");
     }
