@@ -210,27 +210,79 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
             return LangASTNodeFactory.createExpressionStatement(expr, ctx);
         }
 
-        // Case 2: Augmented assignment (+=, -=, etc.)
+        // Augmented assignment (+=, -=, etc.)
         if (ctx.augassign() != null) {
             LangASTNode left = mainBuilder.visit(ctx.testlist_star_expr(0));
-            LangASTNode right = mainBuilder.visit(ctx.testlist().test(0));
+
+            // Grammar: augassign (yield_expr | testlist)
+            LangASTNode right = null;
+            if (ctx.yield_expr() != null && !ctx.yield_expr().isEmpty()) {
+                right = mainBuilder.visit(ctx.yield_expr(0));
+            } else if (ctx.testlist() != null) {
+                right = mainBuilder.visit(ctx.testlist());
+            }
+
+            if (left == null) left = LangASTNodeFactory.createSimpleName("UNKNOWN_LEFT", ctx);
+            if (right == null) right = LangASTNodeFactory.createSimpleName("UNKNOWN_RIGHT", ctx);
+
             String operator = ctx.augassign().getText();
-
-            // Create the augmented assignment
             LangAssignment assignment = LangASTNodeFactory.createAssignment(operator, left, right, ctx);
-
-            // Wrap in expression statement
             return LangASTNodeFactory.createExpressionStatement(assignment, ctx);
         }
 
-        // Case 3: Regular assignment (=)
-        LangASTNode left = mainBuilder.visit(ctx.testlist_star_expr(0));
-        LangASTNode right = mainBuilder.visit(ctx.testlist_star_expr(1));
 
-        LangAssignment assignment = LangASTNodeFactory.createAssignment("=", left, right, ctx);
+        List<Python3Parser.Testlist_star_exprContext> parts = ctx.testlist_star_expr();
+        int count = parts != null ? parts.size() : 0;
 
-        // Wrap in expression statement
-        return LangASTNodeFactory.createExpressionStatement(assignment, ctx);
+        if (count == 1 && ctx.yield_expr() != null && !ctx.yield_expr().isEmpty()) {
+            LangASTNode left = mainBuilder.visit(parts.get(0));
+            LangASTNode right = mainBuilder.visit(ctx.yield_expr(0));
+
+            if (left == null) left = LangASTNodeFactory.createSimpleName("UNKNOWN_LEFT", ctx);
+            if (right == null) right = LangASTNodeFactory.createSimpleName("UNKNOWN_RIGHT", ctx);
+
+            LangAssignment assignment = LangASTNodeFactory.createAssignment("=", left, right, ctx);
+            return LangASTNodeFactory.createExpressionStatement(assignment, ctx);
+        }
+
+        if (count >= 2 && (ctx.yield_expr() == null || ctx.yield_expr().isEmpty())) {
+            LangASTNode right = mainBuilder.visit(parts.get(count - 1));
+            for (int i = count - 2; i >= 0; i--) {
+                LangASTNode left = mainBuilder.visit(parts.get(i));
+                if (left == null) left = LangASTNodeFactory.createSimpleName("UNKNOWN_LEFT", ctx);
+                if (right == null) right = LangASTNodeFactory.createSimpleName("UNKNOWN_RIGHT", ctx);
+                right = LangASTNodeFactory.createAssignment("=", left, right, ctx);
+            }
+            return LangASTNodeFactory.createExpressionStatement(right, ctx);
+        }
+
+        if (count >= 1 && ctx.yield_expr() != null && !ctx.yield_expr().isEmpty()) {
+            LangASTNode right = mainBuilder.visit(ctx.yield_expr(0));
+            if (right == null) right = LangASTNodeFactory.createSimpleName("UNKNOWN_RIGHT", ctx);
+
+            for (int i = count - 1; i >= 0; i--) {
+                LangASTNode left = mainBuilder.visit(parts.get(i));
+                if (left == null) left = LangASTNodeFactory.createSimpleName("UNKNOWN_LEFT", ctx);
+                right = LangASTNodeFactory.createAssignment("=", left, right, ctx);
+            }
+            return LangASTNodeFactory.createExpressionStatement(right, ctx);
+        }
+
+        LangASTNode fallbackExpr = null;
+        if (count >= 1) {
+            fallbackExpr = mainBuilder.visit(parts.get(0));
+            if (fallbackExpr == null) fallbackExpr = LangASTNodeFactory.createSimpleName("UNKNOWN_EXPR", ctx);
+        } else if (ctx.yield_expr() != null && !ctx.yield_expr().isEmpty()) {
+            fallbackExpr = mainBuilder.visit(ctx.yield_expr(0));
+            if (fallbackExpr == null) fallbackExpr = LangASTNodeFactory.createSimpleName("UNKNOWN_YIELD", ctx);
+        }
+        if (fallbackExpr != null) {
+            return LangASTNodeFactory.createExpressionStatement(fallbackExpr, ctx);
+        }
+
+        System.err.println("Warning: Unhandled expr_stmt context, creating placeholder");
+        LangASTNode placeholder = LangASTNodeFactory.createSimpleName("UNSUPPORTED_EXPR", ctx);
+        return LangASTNodeFactory.createExpressionStatement(placeholder, ctx);
     }
 
 

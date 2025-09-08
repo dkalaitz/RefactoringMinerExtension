@@ -452,7 +452,13 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangAssertStatement langAssertStatement) {
         builder.append("assert ");
-        langAssertStatement.getExpression().accept(this);
+
+        if (langAssertStatement.getExpression() != null) {
+            langAssertStatement.getExpression().accept(this);
+        } else {
+            builder.append("True");
+        }
+
         if (langAssertStatement.getMessage() != null) {
             builder.append(", ");
             langAssertStatement.getMessage().accept(this);

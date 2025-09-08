@@ -247,11 +247,15 @@ public class PyStatementASTBuilder extends PyBaseASTBuilder {
 
 
     public LangASTNode visitAssert_stmt(Python3Parser.Assert_stmtContext ctx) {
-        LangASTNode expression = mainBuilder.visit(ctx.test(0));
+        LangASTNode expression = null;
+
+        if (ctx.test() != null && !ctx.test().isEmpty()) {
+            expression = mainBuilder.visit(ctx.test(0));
+        }
+
         LangASTNode message = null;
 
-        // Check if there's an optional message (after comma)
-        if (ctx.test().size() > 1) {
+        if (ctx.test() != null && ctx.test().size() > 1) {
             message = mainBuilder.visit(ctx.test(1));
         }
 
