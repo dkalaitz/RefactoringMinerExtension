@@ -467,7 +467,13 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public void visit(LangWithContextItem langWithContextItem) {
-        langWithContextItem.getContextExpression().accept(this);
+        if (langWithContextItem.getContextExpression() != null) {
+            langWithContextItem.getContextExpression().accept(this);
+        }
+        if (langWithContextItem.getAlias() != null) {
+            builder.append(" as ");
+            langWithContextItem.getAlias().accept(this);
+        }
     }
 
     @Override

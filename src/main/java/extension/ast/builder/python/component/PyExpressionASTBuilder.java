@@ -111,6 +111,7 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
         String atomText = ctx.getText();
         if (atomText != null && !atomText.isEmpty()) {
             System.err.println("Warning: Unhandled atom type, creating SimpleName fallback: " + atomText);
+            System.err.println("Context: " + ctx.getText());
             return LangASTNodeFactory.createSimpleName(atomText, ctx);
         }
 
@@ -199,16 +200,13 @@ public class PyExpressionASTBuilder extends PyBaseASTBuilder {
     }
 
     public LangASTNode visitExpr_stmt(Python3Parser.Expr_stmtContext ctx) {
-        // Case 1: Simple expression without assignment
         if (ctx.ASSIGN().isEmpty() && ctx.augassign() == null) {
             LangASTNode expr = mainBuilder.visit(ctx.testlist_star_expr(0));
 
-            // Check if this is a module-level docstring
             if (expr instanceof LangStringLiteral && isModuleLevelDocstring(ctx)) {
                 return LangASTNodeFactory.createComment(ctx, ((LangStringLiteral) expr).getValue(), false, true);
             }
 
-            // Create an expression statement to wrap the expression
             return LangASTNodeFactory.createExpressionStatement(expr, ctx);
         }
 
