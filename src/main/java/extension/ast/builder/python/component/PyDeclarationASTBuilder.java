@@ -169,7 +169,7 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
             boolean hasReturn = false;
             if (body.getStatements() != null) {
                 for (LangASTNode statement : body.getStatements()) {
-                    if (statement.getNodeType() == NodeTypeEnum.RETURN_STATEMENT) {
+                    if (NodeTypeEnum.RETURN_STATEMENT.equals(statement.getNodeType())) {
                         hasReturn = true;
                         break;
                     }
