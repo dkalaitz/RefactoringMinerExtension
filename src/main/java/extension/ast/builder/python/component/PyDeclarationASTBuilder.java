@@ -3,6 +3,7 @@ package extension.ast.builder.python.component;
 import extension.ast.builder.python.PyASTBuilder;
 import extension.ast.node.LangASTNode;
 import extension.ast.node.LangASTNodeFactory;
+import extension.ast.node.NodeTypeEnum;
 import extension.ast.node.TypeObjectEnum;
 import extension.ast.node.declaration.LangMethodDeclaration;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
@@ -163,7 +164,23 @@ public class PyDeclarationASTBuilder extends PyBaseASTBuilder {
             String returnType = ctx.test().getText();
             methodDeclaration.setReturnTypeAnnotation(returnType);
         } else {
-            methodDeclaration.setReturnTypeAnnotation(TypeObjectEnum.OBJECT.name());
+            // Check if the method has a return statement
+            // Set return type annotation to "None" if no return statement is found
+            boolean hasReturn = false;
+            if (body.getStatements() != null) {
+                for (LangASTNode statement : body.getStatements()) {
+                    if (statement.getNodeType() == NodeTypeEnum.RETURN_STATEMENT) {
+                        hasReturn = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hasReturn) {
+                methodDeclaration.setReturnTypeAnnotation(TypeObjectEnum.OBJECT.name());
+            } else {
+                methodDeclaration.setReturnTypeAnnotation("None");
+            }
         }
 
         if (docstring != null) {
