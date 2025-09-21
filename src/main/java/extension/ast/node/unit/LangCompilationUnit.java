@@ -15,8 +15,8 @@ import java.util.List;
 // Class representing the entire source file (LangCompilationUnit)
 public class LangCompilationUnit extends LangASTNode {
     private List<LangTypeDeclaration> types = new ArrayList<>();
-    private List<LangMethodDeclaration> topLevelMethods = new ArrayList<>();
-    private List<LangASTNode> topLevelStatements = new ArrayList<>();
+    private List<LangMethodDeclaration> methods = new ArrayList<>();
+    private List<LangASTNode> statements = new ArrayList<>();
     private List<LangImportStatement> imports = new ArrayList<>();
     private List<LangComment> comments = new ArrayList<>();
 
@@ -42,12 +42,12 @@ public class LangCompilationUnit extends LangASTNode {
 
     public void addMethod(LangMethodDeclaration method) {
         method.setStatic(true);
-        topLevelMethods.add(method);
+        methods.add(method);
         addChild(method);
     }
 
     public void addStatement(LangASTNode statement) {
-        topLevelStatements.add(statement);
+        statements.add(statement);
         addChild(statement);
     }
 
@@ -68,20 +68,20 @@ public class LangCompilationUnit extends LangASTNode {
         this.types = types;
     }
 
-    public List<LangMethodDeclaration> getTopLevelMethods() {
-        return topLevelMethods;
+    public List<LangMethodDeclaration> getMethods() {
+        return methods;
     }
 
-    public void setTopLevelMethods(List<LangMethodDeclaration> topLevelMethods) {
-        this.topLevelMethods = topLevelMethods;
+    public void setMethods(List<LangMethodDeclaration> methods) {
+        this.methods = methods;
     }
 
-    public List<LangASTNode> getTopLevelStatements() {
-        return topLevelStatements;
+    public List<LangASTNode> getStatements() {
+        return statements;
     }
 
-    public void setTopLevelStatements(List<LangASTNode> topLevelStatements) {
-        this.topLevelStatements = topLevelStatements;
+    public void setStatements(List<LangASTNode> statements) {
+        this.statements = statements;
     }
 
     public List<LangImportStatement> getImports() {
@@ -104,8 +104,8 @@ public class LangCompilationUnit extends LangASTNode {
     public String toString() {
         return "LangCompilationUnit{" +
                 "types=" + types +
-                ", topLevelMethods=" + topLevelMethods +
-                ", topLevelStatements=" + topLevelStatements +
+                ", topLevelMethods=" + methods +
+                ", topLevelStatements=" + statements +
                 ", imports=" + imports +
                 ", comments=" + comments +
                 '}';

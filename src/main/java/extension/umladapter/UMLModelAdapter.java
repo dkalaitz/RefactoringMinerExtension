@@ -90,14 +90,14 @@ public class UMLModelAdapter {
             }
 
             // Handle top level methods
-            if (compilationUnit.getTopLevelMethods() != null && !compilationUnit.getTopLevelMethods().isEmpty()){
+            if (compilationUnit.getMethods() != null && !compilationUnit.getMethods().isEmpty()){
                 handleTopLevelMethods(model, filename, compilationUnit, imports);
             }
         }
     }
 
     private void handleTopLevelMethods(UMLModel model, String filename, LangCompilationUnit compilationUnit, List<UMLImport> imports) {
-        List<LangMethodDeclaration> topLevelMethods = compilationUnit.getTopLevelMethods();
+        List<LangMethodDeclaration> topLevelMethods = compilationUnit.getMethods();
         UMLClass moduleClass = createModuleClass(compilationUnit, filename, imports);
 
         moduleClass.setActualSignature(moduleClass.getName());
