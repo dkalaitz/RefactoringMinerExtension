@@ -34,7 +34,7 @@ import static extension.umladapter.processor.UMLAdapterVariableProcessor.process
 
 public class UMLModelAdapter {
 
-    private UMLModel umlModel;
+    private final UMLModel umlModel;
     private String language;
 
     private static final Logger LOGGER = Logger.getLogger(UMLModelAdapter.class.getName());
@@ -218,26 +218,6 @@ public class UMLModelAdapter {
         }
         return umlClass;
     }
-//
-//    private void storeClassHierarchyInfo(UMLClass umlClass, LangTypeDeclaration typeDecl, UMLModel model,
-//                                         String packageName, List<UMLImport> imports) {
-//        // Store complete hierarchy information for better refactoring detection
-//        for (String baseClassName : typeDecl.getSuperClassNames()) {
-//            String qualifiedBaseClass = UMLAdapterUtil.resolveQualifiedTypeName(baseClassName, imports, packageName);
-//
-//            // Add to UML model's tree context for better tracking
-//            LocationInfo hierarchyInfo = new LocationInfo(
-//                    UMLAdapterUtil.extractSourceFolder(umlClass.getSourceFile()),
-//                    UMLAdapterUtil.extractFilePath(umlClass.getSourceFile()),
-//                    typeDecl,
-//                    LocationInfo.CodeElementType.TYPE_DECLARATION
-//            );
-//
-//            // Store inheritance metadata that can be used for inheritance-based refactorings
-//            umlClass.addAttribute(new UMLAttribute("__base_class__",
-//                    UMLType.extractTypeObject(qualifiedBaseClass), hierarchyInfo));
-//        }
-//    }
 
     private UMLOperation createUMLOperation(LangMethodDeclaration methodDecl, String className, String sourceFolder, String filePath) {
 
@@ -269,6 +249,7 @@ public class UMLModelAdapter {
                 typeObject.setLocationInfo(new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE));
             } else {
                 typeObject = UMLType.extractTypeObject(param.getTypeAnnotation().getName());
+                typeObject.setLocationInfo(new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE));
             }
             UMLParameter umlParam = new UMLParameter(param.getLangSimpleName().getIdentifier(), typeObject, "parameter", param.isVarArgs());
             processVariableDeclarations(param, umlParam, typeObject, sourceFolder, filePath, methodDecl);
@@ -293,9 +274,13 @@ public class UMLModelAdapter {
             returnType.setLocationInfo(new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE));
         } else {
             returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation());
+            returnType.setLocationInfo(new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE));
         }
-        UMLParameter returnParam = new UMLParameter("", returnType, "return", false);
-        umlOperation.addParameter(returnParam);
+        if (!("void".equals(methodDecl.getReturnTypeAnnotation()))) {
+            UMLParameter returnParam = new UMLParameter("", returnType, "return", false);
+            umlOperation.addParameter(returnParam);
+        }
+
 
         OperationBody opBody = new OperationBody(
                 methodDecl.getRootCompilationUnit(),
