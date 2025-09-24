@@ -81,10 +81,8 @@ public class StatementObject extends AbstractStatement {
 		this.ternaryOperatorExpressions = visitor.getTernaryOperatorExpressions();
 		this.lambdas = visitor.getLambdas();
 
-		// Set the actual code representation - this is critical for comparison
 		this.statement = LangVisitor.stringify(statement);
 
-		// Set the operation signature - needed for body hash calculation
 		this.actualSignature = LangVisitor.stringify(statement);
 
 		// Set depth
