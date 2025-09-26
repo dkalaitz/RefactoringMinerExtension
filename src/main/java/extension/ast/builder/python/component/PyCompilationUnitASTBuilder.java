@@ -10,6 +10,7 @@ import extension.ast.node.declaration.LangTypeDeclaration;
 import extension.ast.node.metadata.comment.LangComment;
 import extension.ast.node.statement.LangImportStatement;
 import extension.ast.node.unit.LangCompilationUnit;
+import extension.base.LangSupportedEnum;
 import extension.base.lang.python.Python3Parser;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ public class PyCompilationUnitASTBuilder extends PyBaseASTBuilder {
 
     public LangASTNode visitFile_input(Python3Parser.File_inputContext ctx) {
         LangCompilationUnit compilationUnit = LangASTNodeFactory.createCompilationUnit(ctx);
+        compilationUnit.setLanguage(LangSupportedEnum.PYTHON);
 
         // Process each statement in the file
         for (Python3Parser.StmtContext stmtCtx : ctx.stmt()) {

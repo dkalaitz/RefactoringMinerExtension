@@ -8,6 +8,7 @@ import extension.ast.node.declaration.LangTypeDeclaration;
 import extension.ast.node.metadata.comment.LangComment;
 import extension.ast.node.statement.LangImportStatement;
 import extension.ast.visitor.LangASTVisitor;
+import extension.base.LangSupportedEnum;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class LangCompilationUnit extends LangASTNode {
     private List<LangASTNode> statements = new ArrayList<>();
     private List<LangImportStatement> imports = new ArrayList<>();
     private List<LangComment> comments = new ArrayList<>();
+    private LangSupportedEnum language;
 
     public LangCompilationUnit() {super(NodeTypeEnum.COMPILATION_UNIT);}
 
@@ -98,6 +100,14 @@ public class LangCompilationUnit extends LangASTNode {
 
     public void setComments(List<LangComment> comments) {
         this.comments = comments;
+    }
+
+    public LangSupportedEnum getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(LangSupportedEnum language) {
+        this.language = language;
     }
 
     @Override
