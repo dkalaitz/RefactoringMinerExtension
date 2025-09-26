@@ -146,21 +146,18 @@ public class PyASTFlattener implements LangASTFlattener {
         builder.append("if ");
         langIfStatement.getCondition().accept(this);
         builder.append(":");
-        // Flatten the 'then' body (if block)
         langIfStatement.getBody().accept(this);
 
         LangASTNode elseBody = langIfStatement.getElseBody();
 
-        // While the else body is another if statement, treat it as an elif
         while (elseBody instanceof LangIfStatement elifStatement) {
             builder.append("elif ");
             elifStatement.getCondition().accept(this);
             builder.append(":");
             elifStatement.getBody().accept(this);
-            elseBody = elifStatement.getElseBody(); // Move down the chain
+            elseBody = elifStatement.getElseBody();
         }
 
-        // Handle the final else block, if it exists
         if (elseBody != null) {
             builder.append("else:");
             elseBody.accept(this);
@@ -179,7 +176,7 @@ public class PyASTFlattener implements LangASTFlattener {
     @Override
     public void visit(LangForStatement langForStatement) {
         builder.append("for ");
-        langForStatement.getCondition().accept(this);          // The loop variable(s)
+        langForStatement.getCondition().accept(this);
         builder.append(" in ");
 
         // Visit the iterable/collection
@@ -188,7 +185,7 @@ public class PyASTFlattener implements LangASTFlattener {
         }
 
         builder.append(":");
-        langForStatement.getBody().accept(this);       // The body of the loop
+        langForStatement.getBody().accept(this);
     }
 
 
@@ -238,7 +235,6 @@ public class PyASTFlattener implements LangASTFlattener {
 
     @Override
     public void visit(LangDictionaryLiteral langDictionaryLiteral) {
-        // Start the dictionary with an opening brace
         builder.append("{");
 
         // Get the list of key-value pairs (entries)
@@ -284,16 +280,15 @@ public class PyASTFlattener implements LangASTFlattener {
         // Handle relative imports (dots for relative levels, only for "from" imports)
         int relativeLevel = langImportStatement.getRelativeLevel();
         if (relativeLevel > 0) {
-            importBuilder.append(".".repeat(relativeLevel)); // Add dots ONLY if relative level > 0
+            importBuilder.append(".".repeat(relativeLevel));
         }
 
         // Check for 'from' style imports
         if (langImportStatement.isFromImport()) {
-            // Append 'from' and the module name if it exists
             if (langImportStatement.getModuleName() != null && !langImportStatement.getModuleName().isEmpty()) {
                 importBuilder.append("from ").append(langImportStatement.getModuleName()).append(" ");
             } else if (relativeLevel > 0) {
-                importBuilder.append("from "); // Ensure 'from' is included for relative imports
+                importBuilder.append("from ");
             }
 
             // Add 'import'
@@ -345,8 +340,8 @@ public class PyASTFlattener implements LangASTFlattener {
             }
         }
 
-        importBuilder.append("\n"); // Add a newline at the end of the import
-        builder.append(importBuilder); // Append formatted import statement to builder
+        importBuilder.append("\n");
+        builder.append(importBuilder);
     }
 
     @Override
