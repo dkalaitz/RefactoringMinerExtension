@@ -1,6 +1,8 @@
 package extension.base.lang.csharp;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.Lexer;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 

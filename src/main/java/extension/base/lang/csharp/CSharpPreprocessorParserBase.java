@@ -1,6 +1,9 @@
 package extension.base.lang.csharp;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.TokenStream;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;

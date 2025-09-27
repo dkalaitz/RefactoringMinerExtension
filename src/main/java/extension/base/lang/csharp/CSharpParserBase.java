@@ -1,6 +1,7 @@
 package extension.base.lang.csharp;
 
-import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.TokenStream;
 
 public abstract class CSharpParserBase extends Parser
 {

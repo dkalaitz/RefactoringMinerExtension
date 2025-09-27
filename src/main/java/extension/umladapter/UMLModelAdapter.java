@@ -28,7 +28,6 @@ import java.io.StringReader;
 import java.util.*;
 import java.util.logging.Logger;
 
-import static extension.ast.visitor.LangVisitor.stringify;
 import static extension.umladapter.UMLAdapterUtil.extractUMLImports;
 import static extension.umladapter.processor.UMLAdapterStatementProcessor.processStatement;
 import static extension.umladapter.processor.UMLAdapterVariableProcessor.processVariableDeclarations;
