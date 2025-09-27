@@ -190,6 +190,14 @@ public abstract class UMLType implements Serializable, LocationInfoProvider {
 		int arrayDimension = 0;
 		boolean parameterized = false;
 		List<UMLType> typeArgumentDecomposition = new ArrayList<UMLType>();
+		// Null or empty qualified name that can happen for C#
+		if (qualifiedName == null || qualifiedName.isEmpty()) {
+			UMLType typeObject = new LeafType("Object");
+			typeObject.arrayDimension = arrayDimension;
+			typeObject.typeArguments = typeArgumentDecomposition;
+			typeObject.parameterized = parameterized;
+			return (LeafType) typeObject;
+		}
 		if(qualifiedName.endsWith("[]")) {
 			while(qualifiedName.endsWith("[]")) {
 				qualifiedName = qualifiedName.substring(0, qualifiedName.lastIndexOf("[]"));

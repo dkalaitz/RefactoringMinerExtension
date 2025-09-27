@@ -7,7 +7,8 @@ import java.util.Arrays;
  */
 public enum LangSupportedEnum {
 
-    PYTHON("py", "python");
+    PYTHON("py", "python"),
+    CSHARP("cs", "csharp");
 
     private final String fileExtension;
     private final String langName;

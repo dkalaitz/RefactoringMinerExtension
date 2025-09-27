@@ -25,6 +25,11 @@ public class LangASTNodeFactory {
         return new LangCompilationUnit(PositionUtils.getPositionInfo(ctx));
     }
 
+    /** Generic overload for non-Python languages (e.g., C#) */
+    public static LangCompilationUnit createCompilationUnit(org.antlr.v4.runtime.ParserRuleContext ctx) {
+        return new LangCompilationUnit(PositionUtils.getPositionInfo(ctx));
+    }
+
     /**
      * Creates a basic import statement with position information only
      */
@@ -46,6 +51,13 @@ public class LangASTNodeFactory {
         return type;
     }
 
+    /** Generic type declaration creation for non-Python languages (e.g., C#) */
+    public static LangTypeDeclaration createTypeDeclaration(String name, ParserRuleContext ctx) {
+        LangTypeDeclaration type = new LangTypeDeclaration(PositionUtils.getPositionInfo(ctx));
+        type.setName(name);
+        return type;
+    }
+
     public static LangMethodDeclaration createMethodDeclaration(String name, ParserRuleContext ctx, List<LangSingleVariableDeclaration> langSingleVariableDeclarations, LangBlock body) {
         LangMethodDeclaration method = new LangMethodDeclaration(PositionUtils.getPositionInfo(ctx));
         method.setName(name);
@@ -60,7 +72,11 @@ public class LangASTNodeFactory {
 
     public static LangSingleVariableDeclaration createSingleVariableDeclaration(String name, ParserRuleContext ctx) {
         LangSimpleName langSimpleName = createSimpleName(name, ctx);
-        return new LangSingleVariableDeclaration(langSimpleName, PositionUtils.getPositionInfo(ctx));
+        LangSingleVariableDeclaration decl = new LangSingleVariableDeclaration(langSimpleName, PositionUtils.getPositionInfo(ctx));
+        // Default sane values for non-annotated languages (e.g., C# minimal support)
+        decl.setTypeAnnotation(TypeObjectEnum.OBJECT);
+        decl.setParameter(true);
+        return decl;
     }
 
     /** Expressions */

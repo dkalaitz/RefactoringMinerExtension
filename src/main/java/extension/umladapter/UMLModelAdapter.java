@@ -2,6 +2,7 @@ package extension.umladapter;
 
 
 import extension.ast.node.LangASTNode;
+import extension.ast.node.TypeObjectEnum;
 import extension.ast.node.declaration.LangMethodDeclaration;
 import extension.ast.node.declaration.LangSingleVariableDeclaration;
 import extension.ast.node.declaration.LangTypeDeclaration;
@@ -243,14 +244,22 @@ public class UMLModelAdapter {
 
         for (int i = paramOffset; i < params.size(); i++) {
             LangSingleVariableDeclaration param = params.get(i);
-            UMLType typeObject;
+            UMLType typeObject = UMLType.extractTypeObject("Object");
             if (LangSupportedEnum.PYTHON.name().equals(language)) {
-                typeObject = UMLType.extractPythonTypeObject(param.getTypeAnnotation().getName());
+                if (param.getTypeAnnotation() != null) {
+                    typeObject = UMLType.extractPythonTypeObject(param.getTypeAnnotation().getName());
+                }
                 typeObject.setLocationInfo(new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE));
             } else {
-                typeObject = UMLType.extractTypeObject(param.getTypeAnnotation().getName());
-                typeObject.setLocationInfo(new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE));
+                if (param.getTypeAnnotation() != null) {
+                    String typeName = param.getTypeAnnotation().getName();
+                    if (typeName != null && !typeName.isEmpty()) {
+                        typeObject = UMLType.extractTypeObject(typeName);
+                    }
+                    typeObject.setLocationInfo(new LocationInfo(sourceFolder, filePath, param, LocationInfo.CodeElementType.TYPE));
+                }
             }
+
             UMLParameter umlParam = new UMLParameter(param.getLangSimpleName().getIdentifier(), typeObject, "parameter", param.isVarArgs());
             processVariableDeclarations(param, umlParam, typeObject, sourceFolder, filePath, methodDecl);
             umlOperation.addParameter(umlParam);
@@ -273,10 +282,18 @@ public class UMLModelAdapter {
             returnType = UMLType.extractPythonTypeObject(methodDecl.getReturnTypeAnnotation());
             returnType.setLocationInfo(new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE));
         } else {
-            returnType = UMLType.extractTypeObject(methodDecl.getReturnTypeAnnotation());
+            String resolvedReturnType = methodDecl.getReturnTypeAnnotation();
+            if (resolvedReturnType == null || resolvedReturnType.isEmpty()) {
+                resolvedReturnType = TypeObjectEnum.VOID.name();
+            }
+            returnType = UMLType.extractTypeObject(resolvedReturnType);
             returnType.setLocationInfo(new LocationInfo(sourceFolder, filePath, methodDecl, LocationInfo.CodeElementType.TYPE));
+            if (methodDecl.getReturnTypeAnnotation() == null) {
+                methodDecl.setReturnTypeAnnotation(resolvedReturnType);
+            }
         }
-        if (!("void".equals(methodDecl.getReturnTypeAnnotation()))) {
+        String returnTypeString = methodDecl.getReturnTypeAnnotation() != null ? methodDecl.getReturnTypeAnnotation() : "void";
+        if (!(TypeObjectEnum.VOID.name().equals(returnTypeString))) {
             UMLParameter returnParam = new UMLParameter("", returnType, "return", false);
             umlOperation.addParameter(returnParam);
         }
@@ -538,29 +555,29 @@ public class UMLModelAdapter {
         LOGGER.info(sb.toString());
     }
 
-    private void logUMLOperation(UMLOperation umlOperation, LangMethodDeclaration methodDecl){
-        String bodyString = stringify(methodDecl.getBody());
-        LOGGER.info(
-                "UMLOperation created: " + umlOperation +
-                        "\nSignature: " + umlOperation.getActualSignature() +
-                        "\nQualified Name: " + umlOperation.getClassName() + "." + umlOperation.getName() +
-                        "\nName: " + umlOperation.getName() +
-                        "\nClass: " + umlOperation.getClassName() +
-                        "\nVisibility: " + umlOperation.getVisibility() +
-                        "\nParameters: " + umlOperation.getParameters() +
-                        "\nIs Constructor: " + umlOperation.isConstructor() +
-                        "\nIs Final: " + umlOperation.isFinal() +
-                        "\nIs Static: " + umlOperation.isStatic() +
-                        "\nIs Abstract: " + umlOperation.isAbstract() +
-                        "\nIs Native: " + umlOperation.isNative() +
-                        "\nReturn Type: " + umlOperation.getReturnParameter() +
-                        "\nBody Hash Code: " + umlOperation.getBody().getBodyHashCode() +
-                        "\nMethod body stringify result for " + methodDecl.getName() + ": " + bodyString +
-                        "\nString hash: " + bodyString.hashCode() +
-                        "\n\n"
-        );
-
-    }
+//    private void logUMLOperation(UMLOperation umlOperation, LangMethodDeclaration methodDecl){
+//        String bodyString = stringify(methodDecl.getBody());
+//        LOGGER.info(
+//                "UMLOperation created: " + umlOperation +
+//                        "\nSignature: " + umlOperation.getActualSignature() +
+//                        "\nQualified Name: " + umlOperation.getClassName() + "." + umlOperation.getName() +
+//                        "\nName: " + umlOperation.getName() +
+//                        "\nClass: " + umlOperation.getClassName() +
+//                        "\nVisibility: " + umlOperation.getVisibility() +
+//                        "\nParameters: " + umlOperation.getParameters() +
+//                        "\nIs Constructor: " + umlOperation.isConstructor() +
+//                        "\nIs Final: " + umlOperation.isFinal() +
+//                        "\nIs Static: " + umlOperation.isStatic() +
+//                        "\nIs Abstract: " + umlOperation.isAbstract() +
+//                        "\nIs Native: " + umlOperation.isNative() +
+//                        "\nReturn Type: " + umlOperation.getReturnParameter() +
+//                        "\nBody Hash Code: " + umlOperation.getBody().getBodyHashCode() +
+//                        "\nMethod body stringify result for " + methodDecl.getName() + ": " + bodyString +
+//                        "\nString hash: " + bodyString.hashCode() +
+//                        "\n\n"
+//        );
+//
+//    }
 
     public UMLModel getUMLModel() {
         return umlModel;
