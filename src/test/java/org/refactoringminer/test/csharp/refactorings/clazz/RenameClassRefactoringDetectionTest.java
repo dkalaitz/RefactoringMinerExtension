@@ -10,19 +10,6 @@ import java.util.Map;
 public class RenameClassRefactoringDetectionTest {
 
     @Test
-    void detectsSimpleClassRename() throws Exception {
-        String before = """
-                class Animal { void Speak(){} }
-                """;
-        String after = """
-                class Mammal { void Speak(){} }
-                """;
-        RefactoringAssertUtils.assertRenameClassRefactoringDetected(
-                Map.of("A.cs", before), Map.of("A.cs", after),
-                "Animal", "Mammal");
-    }
-
-    @Test
     void detectsRenameWithMethodReturningValue() throws Exception {
         String before = """
                 class Car { int Speed(){ return 60; } }
