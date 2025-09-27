@@ -1,7 +1,9 @@
 package extension.base;
 
+import extension.ast.builder.csharp.CSharpASTBuilder;
 import extension.ast.builder.python.PyASTBuilder;
 import extension.ast.node.LangASTNode;
+import extension.base.lang.csharp.CSharpParser;
 import extension.base.lang.python.Python3Lexer;
 import extension.base.lang.python.Python3Parser;
 import org.antlr.v4.runtime.CharStream;
@@ -29,6 +31,8 @@ public class LangASTUtil {
         switch (language) {
             case PYTHON:
                 return getCustomPythonAST(reader);
+            case CSHARP:
+                return getCustomCSharpAST(reader);
             default:
                 throw new UnsupportedOperationException("Parser not implemented for language: " + language);
         }
@@ -52,5 +56,22 @@ public class LangASTUtil {
         return astBuilder.build(parseTree);
     }
 
+
+    public static LangASTNode getCustomCSharpAST(Reader r) throws IOException {
+
+        // Parse the C# code
+        CharStream input = CharStreams.fromReader(r);
+        extension.base.lang.csharp.CSharpLexer lexer = new extension.base.lang.csharp.CSharpLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        CSharpParser parser = new CSharpParser(tokens);
+
+        // Get the parse tree
+        CSharpParser.Compilation_unitContext parseTree = parser.compilation_unit();
+
+        // Build custom AST
+        CSharpASTBuilder astBuilder = new CSharpASTBuilder();
+
+        return astBuilder.build(parseTree);
+    }
 
 }

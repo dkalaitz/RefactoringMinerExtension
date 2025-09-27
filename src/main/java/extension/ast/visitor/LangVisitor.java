@@ -13,6 +13,7 @@ import extension.ast.node.pattern.LangLiteralPattern;
 import extension.ast.node.pattern.LangVariablePattern;
 import extension.ast.node.statement.*;
 import extension.ast.node.unit.LangCompilationUnit;
+import extension.ast.stringifier.CSharpASTFlattener;
 import extension.ast.stringifier.LangASTFlattener;
 import extension.ast.stringifier.PyASTFlattener;
 import gr.uom.java.xmi.LocationInfo;
@@ -780,8 +781,20 @@ public class LangVisitor implements LangASTVisitor {
     }
 
     public static String stringify(LangASTNode node) {
-        LangASTFlattener printer = new PyASTFlattener(node);
+        LangCompilationUnit cu = node.getRootCompilationUnit();
+
+        LangASTFlattener printer;
+        if (cu != null && cu.getLanguage() != null) {
+            printer = switch (cu.getLanguage()) {
+                case PYTHON -> new PyASTFlattener(node);
+                case CSHARP -> new CSharpASTFlattener(node);
+            };
+        } else {
+            printer = new PyASTFlattener(node);
+        }
+
         node.accept(printer);
         return printer.getResult();
     }
+
 }

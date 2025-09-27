@@ -1,9 +1,12 @@
 package org.refactoringminer.utils;
 
 
+import extension.ast.builder.csharp.CSharpASTBuilder;
 import extension.ast.builder.python.PyASTBuilder;
 import extension.ast.node.LangASTNode;
 import extension.ast.stringifier.PyASTFlattener;
+import extension.base.lang.csharp.CSharpLexer;
+import extension.base.lang.csharp.CSharpParser;
 import extension.base.lang.python.Python3Lexer;
 import extension.base.lang.python.Python3Parser;
 import org.antlr.v4.runtime.CharStream;
@@ -63,6 +66,25 @@ public class LangASTUtil {
 //        System.out.println("\nAST Structure:");
 //        LangASTPrinter printer = new LangASTPrinter();
 //        ast.accept(printer);
+    }
+
+    public static void printASTCSharp(String code) {
+        // Parse the C# code using ANTLR
+        CSharpLexer lexer = new CSharpLexer(CharStreams.fromString(code));
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        CSharpParser parser = new CSharpParser(tokens);
+        CSharpParser.Compilation_unitContext parseTree = parser.compilation_unit();  // Generate the parse tree
+
+        // Build the AST using the CSharpASTBuilder
+        CSharpASTBuilder astBuilder = new CSharpASTBuilder();
+        LangASTNode ast = astBuilder.build(parseTree);  // Build the AST
+
+        // Debug: Print the parse tree for reference
+        System.out.println("Parse Tree:");
+        System.out.println(parseTree.toStringTree(parser));
+
+        System.out.println("\nAST Structure:");
+        System.out.println(ast.toString());
     }
 
     public static LangASTNode parsePythonCodeToAST(String code) {
